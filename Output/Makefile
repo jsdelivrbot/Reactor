@@ -19,10 +19,10 @@
 # Tools
 #
 SHELL     		= sh
-CPPC      		= arm-none-eabi-g++
-CC        	    = arm-none-eabi-gcc
-LD        		= arm-none-eabi-gcc
-OBJCOPY   		= arm-none-eabi-objcopy
+CPPC      		= arm-linux-gnueabi-g++
+CC        	    = arm-linux-gnueabi-gcc
+LD        		= arm-linux-gnueabi-gcc
+OBJCOPY   		= arm-linux-gnueabi-objcopy
 RM        		= rm
 MKDIR     		= mkdir
 SIZE      		= size
@@ -35,9 +35,15 @@ ECHO_GREEN		= echo -e "\033[0;32m"
 #
 # Build flags.
 #
-CFLAGS 			= -O2 -g --std=c99
-LDFLAGS			= -g -nostdlib
+CFLAGS 			= -g -fno-common  -march=armv7-a -mlittle-endian -mtune=cortex-a7 
+LDFLAGS			= -g -r -fno-common  -Wl,--build-id=none -Wl,-eEntryPoint -nostdlib -L/usr/lib/arm-none-eabi  -Xlinker -Map=Main.map
 
+
+#
+# System includes.
+#
+ALLOY_BASE		= ../../../BlockWorks/Alloy
+INCLUDES  		+= -I$(ALLOY_BASE)/Source/Module
 
 #########################################################################################################
 
