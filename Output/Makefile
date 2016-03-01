@@ -75,7 +75,7 @@ include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
 #
 #
 #
-LIBS		+= -lc -lgcc
+LIBS		+= -lgcc -lc
 
 
 #########################################################################################################
