@@ -17,7 +17,7 @@
 #include "ErrorHandling.h"
 #include "BoardSupport.h"
 #include "TextFormatter.h"
-
+    
 int snprintf(char *str, size_t len, const char *fmt, ...);
 
 
@@ -30,19 +30,6 @@ int snprintf(char *str, size_t len, const char *fmt, ...);
 
 GlobalData* Globals();
 
-
-//
-// Get the Multiprocessor affinity register (core id).
-//
-uint32_t MPIDR()
-{
-    uint32_t    mpidr;
-
-    __asm__ volatile("mrc p15, 0, %0, c0, c0, 5\n\t" : "=r"(mpidr));    
-
-    uint32_t coreID     = mpidr & 0x03;
-    return coreID;
-}
 
 
 
@@ -102,7 +89,7 @@ void  __attribute__ ((interrupt ("IRQ"))) Handler()
 void TriggerMailboxInterrupt(uint32_t toID)
 {
     uint32_t    mailboxSetAddress;
-    uint32_t    coreID  = MPIDR();
+    uint32_t    coreID  = CoreNumber();
 
     mailboxSetAddress     = 0x40000080 + (0x10*toID);
     *(uint32_t*)mailboxSetAddress     = 1<<coreID;
@@ -113,7 +100,7 @@ void TriggerMailboxInterrupt(uint32_t toID)
 //
 bool IsThereMailFromCore(uint32_t fromID)
 {
-    uint32_t    coreID              = MPIDR();
+    uint32_t    coreID              = CoreNumber();
     uint32_t    mailboxAddress      = 0x400000c0 + (0x10*coreID);;
     uint32_t    mailboxSource       = *(uint32_t*)mailboxAddress;
 
@@ -159,7 +146,7 @@ void ReleaseMessage(CoreMessage* msg)
 void ClearMailboxFromCore(uint32_t fromID)
 {
     uint32_t    mailboxClearAddress;
-    uint32_t    coreID  = MPIDR();
+    uint32_t    coreID  = CoreNumber();
 
     mailboxClearAddress     = 0x400000c0 + (0x10*coreID);
     *(uint32_t*)mailboxClearAddress     = 1<<fromID;
@@ -170,7 +157,7 @@ void ClearMailboxFromCore(uint32_t fromID)
 //
 void EnableMailboxFromCore()
 {
-    uint32_t    coreID  = MPIDR();
+    uint32_t    coreID  = CoreNumber();
     uint32_t    mailboxInterruptControlAddress  = 0x40000050+(coreID*4);
     uint32_t    currentSettings     = *(uint32_t*)mailboxInterruptControlAddress;
 
@@ -184,7 +171,7 @@ void EnableMailboxFromCore()
 //
 void ProcessMessage(CoreMessage* msg)
 {
-    uint32_t    coreID  = MPIDR();
+    uint32_t    coreID  = CoreNumber();
     bridge->messageCounts[coreID]++;
 
     //
@@ -216,7 +203,7 @@ void ProcessMessage(CoreMessage* msg)
 //
 void  __attribute__ ((interrupt ("IRQ"))) IRQHandler()
 {
-    uint32_t    coreID  = MPIDR();
+    uint32_t    coreID  = CoreNumber();
 
     //
     //
@@ -292,7 +279,7 @@ void __attribute__ ( (naked, aligned(128) ) ) VectorTable()
 //
 void DebugText(char* text)
 {
-    uint32_t    coreID  = MPIDR();
+    uint32_t    coreID  = CoreNumber();
 
     SystemCall  systemCall  = 
     {
