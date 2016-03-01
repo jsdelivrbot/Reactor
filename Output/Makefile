@@ -35,8 +35,8 @@ ECHO_GREEN		= echo -e "\033[0;32m"
 #
 # Build flags.
 #
-CFLAGS 			= -g -fno-common  -march=armv7-a -mlittle-endian -mtune=cortex-a7 
-LDFLAGS			= -g -r -fno-common  -Wl,--build-id=none -Wl,-eEntryPoint -nostdlib -L/usr/lib/arm-none-eabi  -Xlinker -Map=Main.map
+CFLAGS 			= -g -fno-common  -march=armv7-a -mlittle-endian -mtune=cortex-a7 -fno-stack-protector -nostdlib
+LDFLAGS			= -g -r -fno-common  -Wl,--build-id=none -Wl,-eEntryPoint -nostdlib -L/usr/lib/arm-none-eabi -T ../Main.ld -Xlinker -Map=Main.map
 
 
 #
@@ -49,27 +49,27 @@ INCLUDES  		+= -I$(ALLOY_BASE)/Source/Module
 
 
 include $(PROJECT_BASE)/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/MemoryPool/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/MemoryPool/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/UARTReceiver/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/Debugger/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/BlockedEvents/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/FileStorage/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/PersistentStorage/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/HashTable/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/I2CMaster/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/KeyValueStore/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/LogStorage/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/PredicatedEvents/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/UnitTest/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/Utilities/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/DebugText/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/UARTReceiver/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/Debugger/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/BlockedEvents/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/FileStorage/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/PersistentStorage/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/HashTable/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/I2CMaster/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/KeyValueStore/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/LogStorage/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/PredicatedEvents/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/UnitTest/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/Utilities/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/DebugText/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
 
 
 #

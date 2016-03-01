@@ -38,17 +38,11 @@ CoreServicesBridge*     bridge                      = (CoreServicesBridge*)BRIDG
 
 
 
-void __stack_chk_guard()
+
+void raise()
 {
-
+    
 }
-
-
-void __stack_chk_fail()
-{
-
-}
-
 
 
 //
