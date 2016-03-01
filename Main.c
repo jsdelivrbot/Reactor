@@ -15,6 +15,8 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include "ErrorHandling.h"
+#include "BoardSupport.h"
+#include "TextFormatter.h"
 
 int snprintf(char *str, size_t len, const char *fmt, ...);
 
@@ -23,20 +25,10 @@ int snprintf(char *str, size_t len, const char *fmt, ...);
 #define EI()        asm volatile ("cpsie i")
 #define DI()        asm volatile ("cpsid i")
 
-//
-//
-//
-typedef struct
-{
-    CoreMessage             message;
-    uint32_t                numberOfMessagesAvailable;
-    
-} GlobalData;
-
-GlobalData              globals[NUMBER_OF_CORES];
-CoreServicesBridge*     bridge                      = (CoreServicesBridge*)BRIDGE_BASE;
 
 
+
+GlobalData* Globals();
 
 
 //
@@ -67,16 +59,6 @@ void CWRR()
 }
 
 
-//
-//
-//
-GlobalData* Globals()
-{
-    uint32_t    coreID              = MPIDR();
-
-    return &globals[coreID];
-}
-
 
 //
 //
@@ -89,11 +71,6 @@ void WaitForMessage()
     }
 }
 
-
-
-#define STACK_SIZE              (1024)
-#define NUMBER_OF_ALLOY_CORES   (4)
-#define NUMBER_OF_VECTORS       (256)
 
 
 
@@ -510,58 +487,6 @@ void CoreMain(uint32_t coreID)
     }
 }
 
-
-
-uint8_t     usrStack[NUMBER_OF_ALLOY_CORES*STACK_SIZE];
-uint8_t     irqStack[NUMBER_OF_ALLOY_CORES*STACK_SIZE];
-
-
-//
-//
-//
-void __attribute__ ( ( naked ) ) EntryPoint()
-{
-    //
-    // Setup the stack(s).
-    //
-    uint32_t   mpidr;
-
-    //
-    //
-    //
-    __asm__ volatile("mrc p15, 0, %0, c0, c0, 5\n\t" : "=r"(mpidr) ); 
-    uint32_t    coreID  = mpidr&0x3;   
-
-    //
-    //
-    //
-    uint32_t            usrStackPointer    = ((uint32_t)&usrStack[coreID*STACK_SIZE]) + STACK_SIZE - 16;
-    __asm__ volatile("MOV sp, %0\n\t" : : "r"(usrStackPointer));
-
-    //
-    //
-    //
-    uint32_t            irqStackPointer    = ((uint32_t)&irqStack[coreID*STACK_SIZE]) + STACK_SIZE - 16;
-    __asm__ volatile("MSR     CPSR_c, 0xd2");
-    __asm__ volatile("MOV sp, %0\n\t" : : "r"(irqStackPointer));
-    __asm__ volatile("MSR     CPSR_c, 0xd3");
-
-    //
-    //
-    //
-    Globals()->numberOfMessagesAvailable   = 0;
-    bridge                      = (CoreServicesBridge*)BRIDGE_BASE;    
-
-    //
-    // Call the CoreMain.
-    //
-    CoreMain(coreID);
-
-    //
-    // Should never get here.
-    //
-    PANIC();
-}
 
 
 
