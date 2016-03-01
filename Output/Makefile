@@ -70,6 +70,7 @@ include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/AlloyBoardSupport/Build.mk
 
 
 #

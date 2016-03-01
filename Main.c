@@ -37,14 +37,8 @@ GlobalData              globals[NUMBER_OF_CORES];
 CoreServicesBridge*     bridge                      = (CoreServicesBridge*)BRIDGE_BASE;
 
 
-/*
 
-void raise()
-{
 
-}
-
-*/
 //
 // Get the Multiprocessor affinity register (core id).
 //
