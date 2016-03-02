@@ -19,8 +19,6 @@
 
 
 
-#define dsb(option) asm volatile ("dsb " #option : : : "memory")
-
 
 GlobalData* Globals();
 
@@ -195,7 +193,7 @@ void DebugText(char* text)
 
     bridge->coreMessages[0][coreID].type    = 123;
     bridge->coreMessages[0][coreID].payload = (uint32_t)&systemCall;
-    dsb();
+    FlushCache();
     TriggerMailboxInterrupt(0);            
 
     while( systemCall.processedFlag == false );    
@@ -225,7 +223,7 @@ void Core1Main(uint32_t coreID)
     while(true)    
     {
         bridge->heartBeats[coreID]++;
-        dsb();
+        FlushCache();
         if( (bridge->heartBeats[coreID] % 0x4ffff) == 0 )
         {
             //
@@ -274,7 +272,7 @@ void Core2Main(uint32_t coreID)
     while(true)    
     {
         bridge->heartBeats[coreID]++;
-        dsb();
+        FlushCache();
         if( (bridge->heartBeats[coreID] % 0x4ffff) == 0 )
         {
             //
@@ -322,7 +320,7 @@ void Core3Main(uint32_t coreID)
     while(true)    
     {
         bridge->heartBeats[coreID]++;
-        dsb();
+        FlushCache();
         if( (bridge->heartBeats[coreID] % 0x4ffff) == 0 )
         {
             //
