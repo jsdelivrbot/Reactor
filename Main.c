@@ -182,6 +182,7 @@ void  __attribute__ ((interrupt ("IRQ"))) IRQHandler()
 //
 void DebugText(char* text)
 {
+#if 0
     uint32_t    coreID  = CoreNumber();
 
     SystemCall  systemCall  = 
@@ -197,6 +198,9 @@ void DebugText(char* text)
     TriggerMailboxInterrupt(0);            
 
     while( systemCall.processedFlag == false );    
+#else
+    DebugTextOutput(text);    
+#endif    
 }
 
 
