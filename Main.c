@@ -180,33 +180,6 @@ void  __attribute__ ((interrupt ("IRQ"))) IRQHandler()
 //
 //
 //
-void DebugText(char* text)
-{
-#if 0
-    uint32_t    coreID  = CoreNumber();
-
-    SystemCall  systemCall  = 
-    {
-        .type           = 0x00000001,
-        .payload        = (uint32_t)text,
-        .processedFlag  = false,
-    };
-
-    bridge->coreMessages[0][coreID].type    = 123;
-    bridge->coreMessages[0][coreID].payload = (uint32_t)&systemCall;
-    FlushCache();
-    TriggerMailboxInterrupt(0);            
-
-    while( systemCall.processedFlag == false );    
-#else
-    DebugTextOutput(text);    
-#endif    
-}
-
-
-//
-//
-//
 void Core1Main(uint32_t coreID)
 {
     //
@@ -235,7 +208,7 @@ void Core1Main(uint32_t coreID)
             //
             char    string[64];
             FormatText(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
-            DebugText( &string[0] );
+            DebugTextOutput( &string[0] );
 
             TriggerMailboxInterrupt(2);            
         }
@@ -247,7 +220,7 @@ void Core1Main(uint32_t coreID)
         if(msg != 0)
         {
             ProcessMessage( msg );
-            DebugText("Message Received!");
+            DebugTextOutput("Message Received!");
             ReleaseMessage( msg );
         }
     }        
@@ -284,7 +257,7 @@ void Core2Main(uint32_t coreID)
             //
             char    string[64];
             FormatText(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
-            DebugText( &string[0] );
+            DebugTextOutput( &string[0] );
         }
 
         //
@@ -294,7 +267,7 @@ void Core2Main(uint32_t coreID)
         if(msg != 0)
         {
             ProcessMessage( msg );
-            DebugText("Message Received!");
+            DebugTextOutput("Message Received!");
             TriggerMailboxInterrupt(3);            
             ReleaseMessage( msg );
         }
@@ -332,7 +305,7 @@ void Core3Main(uint32_t coreID)
             //
             char    string[64];
             FormatText(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
-            DebugText( &string[0] );
+            DebugTextOutput( &string[0] );
         }
 
         //
@@ -342,7 +315,7 @@ void Core3Main(uint32_t coreID)
         if(msg != 0)
         {
             ProcessMessage( msg );
-            DebugText("Message Received!");
+            DebugTextOutput("Message Received!");
             ReleaseMessage( msg );
         }
     }        
