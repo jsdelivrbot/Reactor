@@ -16,11 +16,10 @@
 #include "BoardSupport.h"
 #include "TextFormatter.h"
 #include "DebugText.h"
+#include "ThreadLocalStorage.h"
 
 
 
-
-GlobalData* Globals();
 
 
 //

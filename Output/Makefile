@@ -72,6 +72,7 @@ include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/AlloyBoardSupport/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/AlloyChannel/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/AlloyThreadLocalStorage/Build.mk
 
 
 #
