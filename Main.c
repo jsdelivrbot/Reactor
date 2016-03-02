@@ -15,31 +15,15 @@
 #include "ErrorHandling.h"
 #include "BoardSupport.h"
 #include "TextFormatter.h"
-    
+#include "DebugText.h"
+
 
 
 #define dsb(option) asm volatile ("dsb " #option : : : "memory")
 #define EI()        asm volatile ("cpsie i")
-#define DI()        asm volatile ("cpsid i")
-
-
 
 
 GlobalData* Globals();
-
-
-//
-//
-//
-void WaitForMessage()
-{
-    while(Globals()->numberOfMessagesAvailable == 0)
-    {
-        //WFI();
-    }
-}
-
-
 
 //
 //
@@ -294,7 +278,7 @@ void Core2Main(uint32_t coreID)
     //
     EnableMailboxFromCore();
 
-    EI();
+    EnableInterrupts();
 
     //
     //
@@ -342,7 +326,7 @@ void Core3Main(uint32_t coreID)
     //
     EnableMailboxFromCore();
 
-    EI();
+    EnableInterrupts();
 
     //
     //

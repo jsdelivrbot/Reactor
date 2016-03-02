@@ -66,7 +66,7 @@ include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/PredicatedEvents/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UnitTest/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Utilities/Build.mk
-#include $(SOURCE_LIBRARY)/Implementations/DebugText/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/AlloyDebugText/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
