@@ -12,13 +12,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "Alloy.h"
-#include <stdarg.h>
-#include <sys/types.h>
 #include "ErrorHandling.h"
 #include "BoardSupport.h"
 #include "TextFormatter.h"
     
-int snprintf(char *str, size_t len, const char *fmt, ...);
 
 
 #define dsb(option) asm volatile ("dsb " #option : : : "memory")
@@ -29,22 +26,6 @@ int snprintf(char *str, size_t len, const char *fmt, ...);
 
 
 GlobalData* Globals();
-
-
-
-
-//
-// Cause a reset request.
-//
-void CWRR()
-{
-    //
-    // Cause a reset request.
-    //
-    register uint32_t    cwrr    = 0x00000002;
-    __asm__ volatile("mcr p14, 0, %0, c1, c4, 4\n\t" : : "r"(cwrr));
-}
-
 
 
 //
@@ -58,29 +39,6 @@ void WaitForMessage()
     }
 }
 
-
-
-
-//
-//
-//
-void SetVectorTableAddress(uint32_t address)
-{
-    register uint32_t   temp    = address;
-    asm volatile ("mcr p15, 0, %0, c12, c0,  0" : "=r" (temp));
-}
-
-
-
-
-
-//
-//
-//
-void  __attribute__ ((interrupt ("IRQ"))) Handler()
-{
-    PANIC();
-}
 
 
 //
@@ -247,31 +205,6 @@ void  __attribute__ ((interrupt ("IRQ"))) IRQHandler()
 }
 
 
-//
-//
-//
-void __attribute__ ( (naked, aligned(128) ) ) VectorTable()
-{
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =IRQHandler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-    asm volatile ("ldr pc, =Handler");
-}
-
 
 
 //
@@ -327,7 +260,7 @@ void Core1Main(uint32_t coreID)
             //
             //
             char    string[64];
-            snprintf(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
+            FormatText(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
             DebugText( &string[0] );
 
             TriggerMailboxInterrupt(2);            
@@ -376,7 +309,7 @@ void Core2Main(uint32_t coreID)
             //
             //
             char    string[64];
-            snprintf(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
+            FormatText(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
             DebugText( &string[0] );
         }
 
@@ -424,7 +357,7 @@ void Core3Main(uint32_t coreID)
             //
             //
             char    string[64];
-            snprintf(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
+            FormatText(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
             DebugText( &string[0] );
         }
 
@@ -450,7 +383,7 @@ void CoreMain(uint32_t coreID)
     //
     //
     //
-    SetVectorTableAddress( (uint32_t)&VectorTable );
+    BoardSupportInitialise();
 
     //
     //
