@@ -20,22 +20,10 @@
 
 
 #define dsb(option) asm volatile ("dsb " #option : : : "memory")
-#define EI()        asm volatile ("cpsie i")
 
 
 GlobalData* Globals();
 
-//
-//
-//
-void TriggerMailboxInterrupt(uint32_t toID)
-{
-    uint32_t    mailboxSetAddress;
-    uint32_t    coreID  = CoreNumber();
-
-    mailboxSetAddress     = 0x40000080 + (0x10*toID);
-    *(uint32_t*)mailboxSetAddress     = 1<<coreID;
-}
 
 //
 //
@@ -229,7 +217,7 @@ void Core1Main(uint32_t coreID)
     //
     EnableMailboxFromCore();
 
-    EI();
+    EnableInterrupts();
 
     //
     //
