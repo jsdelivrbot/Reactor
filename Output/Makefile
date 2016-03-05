@@ -74,6 +74,7 @@ include $(SOURCE_LIBRARY)/Implementations/AlloyBoardSupport/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/AlloyChannel/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/AlloyThreadLocalStorage/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/BitStreamCompressor/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/BitArray/Build.mk
 
 
 #
