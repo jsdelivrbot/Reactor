@@ -77,6 +77,7 @@ include $(SOURCE_LIBRARY)/Implementations/BitStreamCompressor/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/BitArray/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/AlloyDigitalInputProcessor/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/AlloyDigitalOutputProcessor/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/AlloyHighResolutionTimestamp/Build.mk
 
 
 #
