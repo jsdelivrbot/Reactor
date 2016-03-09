@@ -18,6 +18,8 @@
 #include "DebugText.h"
 #include "ThreadLocalStorage.h"
 #include "Alloy.h"
+#include "DigitalInputProcessor.h"
+#include "DigitalOutputProcessor.h"
 
 
 
