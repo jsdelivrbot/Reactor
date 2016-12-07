@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stddef.h>
+#include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
 
@@ -306,6 +307,8 @@ int main()
 {
     uint32_t 			start;
     uint32_t			end;
+
+    DebugPrintf("\nReactorInlet.\n");
 
     //
     //

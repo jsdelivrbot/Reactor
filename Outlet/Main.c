@@ -26,7 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
+#include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
 
@@ -97,6 +97,9 @@ uint32_t* SetupGPIO()
 //
 int main()
 {
+    DebugPrintf("\nReactorOutlet.\n");
+
+
 	uint32_t 	start;
 	uint32_t	end;
 	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();

@@ -60,7 +60,7 @@ include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/PredicatedEvents/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UnitTest/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Utilities/Build.mk
-#include $(SOURCE_LIBRARY)/Implementations/NullDebugText/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
