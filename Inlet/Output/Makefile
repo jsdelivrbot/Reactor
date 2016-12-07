@@ -19,10 +19,10 @@
 # Tools
 #
 SHELL     		= sh
-CPPC      		= g++
-CC        	    = gcc
-LD        		= gcc
-OBJCOPY   		= objcopy
+CPPC      		= arm-linux-gnueabihf-g++
+CC        	    = arm-linux-gnueabihf-gcc
+LD        		= arm-linux-gnueabihf-gcc
+OBJCOPY   		= arm-linux-gnueabihf-objcopy
 RM        		= rm
 MKDIR     		= mkdir
 SIZE      		= size
@@ -43,32 +43,32 @@ LDFLAGS			= -g
 
 
 include $(PROJECT_BASE)/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/MemoryPool/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/UARTReceiver/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/Debugger/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/BlockedEvents/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/FileStorage/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/PersistentStorage/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/HashTable/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/I2CMaster/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/KeyValueStore/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/LogStorage/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/PredicatedEvents/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/UnitTest/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/Utilities/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/NullDebugText/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/FLASHDevice/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/LinuxBoardSupport/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/PersistentCircularBuffer/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/IntegrityChecking/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/NonFatalAssertions/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/UARTReceiver/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/Debugger/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/BlockedEvents/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/FileStorage/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/PersistentStorage/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/HashTable/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/I2CMaster/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/KeyValueStore/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/LogStorage/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/PredicatedEvents/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/UnitTest/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/Utilities/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/NullDebugText/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/Safety/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/TextFormatter/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/BlockDevice/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/FLASHDevice/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/LinuxBoardSupport/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/PersistentCircularBuffer/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/IntegrityChecking/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/NonFatalAssertions/Build.mk
 
 
 #

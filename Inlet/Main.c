@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stddef.h>
-#include "armpmu_lib.h"
 
 
 
