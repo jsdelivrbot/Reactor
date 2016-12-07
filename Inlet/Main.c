@@ -1,5 +1,8 @@
 //
-// https://github.com/thoughtpolice/enable_arm_pmu.git
+// Copyright (C) BlockWorks Consulting Ltd - All Rights Reserved.
+// Unauthorized copying of this file, via any medium is strictly prohibited.
+// Proprietary and confidential.
+// Written by Steve Tickle <Steve@BlockWorks.co>, September 2014.
 //
 
 
@@ -17,7 +20,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stddef.h>
-
+#include "Timestamp.h"
 
 
 
@@ -503,7 +506,7 @@ int main()
         //
         // Get the current timestamp.
         //
-        //uint32_t    timestamp 	= rdtsc32();
+        Timestamp    timestamp 	= GetTimestamp();
     }
 
 }

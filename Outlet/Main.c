@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "armpmu_lib.h"
+#include "Timestamp.h"
 
 
 //
@@ -123,6 +123,7 @@ int main()
 		//printf("%08x\n", portA->DAT);
 		//sleep(1);
 
+		Timestamp 	timestamp 	= GetTimestamp();
 #if 0
 		start 	= rdtsc32();
 		for(uint32_t i=0; i<1000; i++)
