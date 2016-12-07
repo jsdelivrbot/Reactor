@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <stddef.h>
 #include "Timestamp.h"
+#include "SharedMemory.h"
 
 
 

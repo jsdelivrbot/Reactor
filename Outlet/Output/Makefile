@@ -44,6 +44,7 @@ LDFLAGS			= -g
 
 include $(PROJECT_BASE)/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk

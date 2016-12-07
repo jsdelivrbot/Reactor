@@ -1,4 +1,14 @@
 //
+// Copyright (C) BlockWorks Consulting Ltd - All Rights Reserved.
+// Unauthorized copying of this file, via any medium is strictly prohibited.
+// Proprietary and confidential.
+// Written by Steve Tickle <Steve@BlockWorks.co>, September 2014.
+//
+
+
+
+
+//
 // https://github.com/thoughtpolice/enable_arm_pmu.git
 //
 
@@ -18,6 +28,7 @@
 #include <fcntl.h>
 
 #include "Timestamp.h"
+#include "SharedMemory.h"
 
 
 //
@@ -124,17 +135,6 @@ int main()
 		//sleep(1);
 
 		Timestamp 	timestamp 	= GetTimestamp();
-#if 0
-		start 	= rdtsc32();
-		for(uint32_t i=0; i<1000; i++)
-		{
-			static volatile 	uint32_t i 	= 0;
-			i++;
-		}
-		end 	= rdtsc32();
-		
-		printf("diff = %d\n", end-start);
-#endif
 	}
 
 }
