@@ -507,12 +507,12 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/5/../../../../arm-linux-gnueabihf/li
  .debug_abbrev  0x000000000000019a      0x124 SharedMemory.o
  .debug_abbrev  0x00000000000002be      0x220 DebugText.o
 
-.debug_line     0x0000000000000000      0x687
+.debug_line     0x0000000000000000      0x66e
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x0000000000000000      0x222 Main.o
- .debug_line    0x0000000000000222      0x115 Timestamp.o
- .debug_line    0x0000000000000337      0x139 SharedMemory.o
- .debug_line    0x0000000000000470      0x217 DebugText.o
+ .debug_line    0x0000000000000000      0x209 Main.o
+ .debug_line    0x0000000000000209      0x115 Timestamp.o
+ .debug_line    0x000000000000031e      0x139 SharedMemory.o
+ .debug_line    0x0000000000000457      0x217 DebugText.o
 
 .debug_frame    0x0000000000000000      0x138
  *(.debug_frame)
@@ -521,15 +521,15 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/5/../../../../arm-linux-gnueabihf/li
  .debug_frame   0x0000000000000058       0x2c SharedMemory.o
  .debug_frame   0x0000000000000084       0xb4 DebugText.o
 
-.debug_str      0x0000000000000000      0x5c9
+.debug_str      0x0000000000000000      0x5b0
  *(.debug_str)
- .debug_str     0x0000000000000000      0x31a Main.o
-                                        0x365 (size before relaxing)
- .debug_str     0x000000000000031a       0x75 Timestamp.o
+ .debug_str     0x0000000000000000      0x301 Main.o
+                                        0x34c (size before relaxing)
+ .debug_str     0x0000000000000301       0x75 Timestamp.o
                                         0x1bf (size before relaxing)
- .debug_str     0x000000000000038f       0xe1 SharedMemory.o
+ .debug_str     0x0000000000000376       0xe1 SharedMemory.o
                                         0x24b (size before relaxing)
- .debug_str     0x0000000000000470      0x159 DebugText.o
+ .debug_str     0x0000000000000457      0x159 DebugText.o
                                         0x468 (size before relaxing)
 
 .debug_loc      0x0000000000000000      0x206

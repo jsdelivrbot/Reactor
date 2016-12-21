@@ -23,7 +23,7 @@
 #include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
-
+#include <time.h>
 
 
 
@@ -479,7 +479,7 @@ int main()
         // Set XCHG and wait for it to complete.
         // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
         //
-        spiX->INTCTL = 0x80000000;
+        spiX->INTCTL = 0x80000002;
         while( (spiX->INT_STA&0x00001000) == 0)
         {
             //printf("  FSR=%08x\n", spiX->FSR);
@@ -500,13 +500,20 @@ int main()
             //printf("3  INT_STA=%08x\n", spiX->INT_STA);
             volatile uint32_t    rxValue     = spiX->RXD;
             //printf("FSR=%08x\n", spiX->FSR);
-            //printf("RXD=%08x\n", rxValue);
+            printf("RXD=%08x\n", rxValue);
         } while( (spiX->INT_STA&0x00000002) == 0 );
 
 
         //i++;
         //sleep(1);
-
+#if 0        
+        {
+            struct timespec tim, tim2;
+            tim.tv_sec      = 0;
+            tim.tv_nsec     = 500000000L;
+            nanosleep(&tim , &tim2);
+        }
+#endif
         //
         // Get the current timestamp.
         //

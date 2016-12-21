@@ -125,6 +125,6 @@ Main.elf: $(OBJS)
 #
 %.o: %.c
 	@ $(ECHO) Building $(basename $<)
-	@ $(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@ -MMD -MP -MF $(notdir $(patsubst %.o,%.d,$@) )
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@ -MMD -MP -MF $(notdir $(patsubst %.o,%.d,$@) )
 
 
