@@ -128,14 +128,14 @@ int main()
 	while(true)
 	{
 		//portA->DAT 	|= 1<<17;
-		portA->DAT 	= 0xffffffff;
+		portA->DAT 	= 0x00000001;
 		//printf("%08x\n", portA->DAT);
-		//sleep(1);
+		sleep(1);
 
 		//portA->DAT 	&= ~(1<<17);
-		portA->DAT 	= 0;
+		portA->DAT 	= 0x00000000;
 		//printf("%08x\n", portA->DAT);
-		//sleep(1);
+		sleep(1);
 
 		Timestamp 	timestamp 	= GetTimestamp();
 	}
