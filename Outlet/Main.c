@@ -124,16 +124,40 @@ int main()
 	portA->PUL1 	= 0x00000000;
 	printf("CFG1=%08x\n",portL->CFG1);
 
+	printf("CFG1=%08x\n",portL->CFG1);
+	portG->CFG0 	= 0x11111111;
+	portG->CFG1 	= 0x11111111;
+	portG->CFG2 	= 0x11111111;
+	portG->CFG3 	= 0x11111111;
+	portG->DAT  	= 0xffffffff;
+	portG->DRV0 	= 0x33333333;
+	portG->DRV1 	= 0x33333333;
+	portG->PUL0 	= 0x00000000;
+	portG->PUL1 	= 0x00000000;
+	printf("CFG1=%08x\n",portL->CFG1);
 
+/*
+Input bits->Port->Pin
+D0  - PG7   - 2
+D1  - PA7   - 3
+D2  - PG6   - 4
+D3  - PA0   - 5
+D4  - PA10  - 6
+D5  - PA2   - 7
+D6  - PA18  - 8
+D7  - PA19  - 9
+*/
 	while(true)
 	{
 		//portA->DAT 	|= 1<<17;
-		portA->DAT 	= 0x00000001;
+		portA->DAT 	= 0x000fffff;
+		portG->DAT 	= 0x000fffff;
 		//printf("%08x\n", portA->DAT);
 		sleep(1);
 
 		//portA->DAT 	&= ~(1<<17);
 		portA->DAT 	= 0x00000000;
+		portG->DAT 	= 0x00000000;
 		//printf("%08x\n", portA->DAT);
 		sleep(1);
 

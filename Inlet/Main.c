@@ -500,7 +500,7 @@ int main()
             //printf("3  INT_STA=%08x\n", spiX->INT_STA);
             volatile uint32_t    rxValue     = spiX->RXD;
             //printf("FSR=%08x\n", spiX->FSR);
-            printf("RXD=%08x\n", rxValue&0x1 );
+            printf("RXD=%08x\n", rxValue );
         } while( (spiX->INT_STA&0x00000002) == 0 );
 
 
