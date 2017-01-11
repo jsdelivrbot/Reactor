@@ -357,8 +357,8 @@ int main()
 	portA->PUL1 	= 0x00000000;
 	printf("CFG1=%08x\n",portL->CFG1);
 
-    portA->CFG1 	&= ~0xfff00000;
-    portA->CFG1 	|=  0x22200000;
+    portA->CFG1 	&= ~0x0ff00000;
+    portA->CFG1 	|=  0x02200000;
 
     portA->CFG2 	&= ~0x0000000f;
     portA->CFG2 	|=  0x00000002;
