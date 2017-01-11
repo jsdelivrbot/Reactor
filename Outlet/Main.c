@@ -6,6 +6,37 @@
 //
 
 
+/*
+
+Hdr26   Funtion              ShiftReg       Hdr10
+---------------------------------------------------------------
+1       3V3                 16/VCC          1/3V3
+7       PWM1/PA6            13/D2           4/D2
+13      UART2_TX/PA0        14/D3           5/D3
+19      SPI1_MOSI/PA15      11/D0           2/D0
+21      SPI1_MISO           9/Q7            -
+23      SPI1_CLK            2/CP            -
+25      GND                 8/GND           10/GND
+12      PA7                 12/D1           3/D1
+16      TWI1_SDA/PA19       6/D7            9/D7
+18      TWI1_SCK/PA18       5/D6            8/D6
+22      UART2_RTS/PA2       4/D5            7/D5
+24      SPI1_CS             1/PL            -
+26      PA10                3/D4            6/D4
+
+
+Input bits->Port->Pin
+D0  - PA6   - 2
+D1  - PA7   - 3
+D2  - PA15  - 4
+D3  - PA0   - 5
+D4  - PA10  - 6
+D5  - PA2   - 7
+D6  - PA18  - 8
+D7  - PA19  - 9
+
+
+*/
 
 
 //
@@ -124,23 +155,11 @@ int main()
 	portA->PUL1 	= 0x00000000;
 	printf("CFG1=%08x\n",portL->CFG1);
 
-	printf("CFG1=%08x\n",portL->CFG1);
-	portG->CFG0 	= 0x11111111;
-	portG->CFG1 	= 0x11111111;
-	portG->CFG2 	= 0x11111111;
-	portG->CFG3 	= 0x11111111;
-	portG->DAT  	= 0xffffffff;
-	portG->DRV0 	= 0x33333333;
-	portG->DRV1 	= 0x33333333;
-	portG->PUL0 	= 0x00000000;
-	portG->PUL1 	= 0x00000000;
-	printf("CFG1=%08x\n",portL->CFG1);
-
 /*
 Input bits->Port->Pin
-D0  - PG7   - 2
+D0  - PG7/PA6- 2
 D1  - PA7   - 3
-D2  - PG6   - 4
+D2  - PG6/PA15- 4
 D3  - PA0   - 5
 D4  - PA10  - 6
 D5  - PA2   - 7
@@ -149,16 +168,10 @@ D7  - PA19  - 9
 */
 	while(true)
 	{
-		//portA->DAT 	|= 1<<17;
-		portA->DAT 	= 0x000fffff;
-		portG->DAT 	= 0x000fffff;
-		//printf("%08x\n", portA->DAT);
+		portA->DAT 	= 0xffffffff;
 		sleep(1);
 
-		//portA->DAT 	&= ~(1<<17);
 		portA->DAT 	= 0x00000000;
-		portG->DAT 	= 0x00000000;
-		//printf("%08x\n", portA->DAT);
 		sleep(1);
 
 		Timestamp 	timestamp 	= GetTimestamp();
