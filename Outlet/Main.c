@@ -195,37 +195,29 @@ int main()
 		//portA->DAT 	= 0xffffffff;
 		//sleep(5);
 
-		//SetLineState( O,O,O,O, O,O,O,O );		// 0x00
-		//sleep(5);
-
-		//SetLineState( O,O,O,O, O,O,O,I ); 		// 0x80
-		//sleep(5);
-
-		//SetLineState( O,O,O,O, O,O,I,O ); 			// 0x40
-		//sleep(5);
-
+		SetLineState( O,O,O,O, O,O,O,O );		// 0x00
+		sleep(5);
+		SetLineState( O,O,I,O, O,O,O,O ); 				// 0x01
+		sleep(5);
+		SetLineState( O,I,O,O, O,O,O,O ); 				// 0x02
+		sleep(5);
+		SetLineState( I,O,O,O, O,O,O,O ); 					// 0x04
+		sleep(5);
+		SetLineState( O,O,O,I, O,O,O,O ); 			// 0x08
+		sleep(5);
+		SetLineState( O,O,O,O, I,O,O,O ); 				// 0x10
+		sleep(5);
 		SetLineState( O,O,O,O, O,I,O,O ); 			// 0x20
 		sleep(5);
-
-		//SetLineState( O,O,O,O, I,O,O,O ); 				// 0x10
-		//sleep(5);
-
-		//SetLineState( O,O,O,I, O,O,O,O ); 			// 0x08
-		//sleep(5);
-
-		//SetLineState( O,O,I,O, O,O,O,O ); 				// 0x01
-		//sleep(5);
-
-		//SetLineState( O,I,O,O, O,O,O,O ); 				// 0x02
-		//sleep(5);
-
-		//SetLineState( I,O,O,O, O,O,O,O ); 					// 0x04
-		//sleep(5);
-
-		printf("off\n");
-		portA->DAT 	= 0x00000000;
+		SetLineState( O,O,O,O, O,O,I,O ); 			// 0x40
 		sleep(5);
-		printf("on\n");
+		SetLineState( O,O,O,O, O,O,O,I ); 		// 0x80
+		sleep(5);
+
+		//printf("off\n");
+		//portA->DAT 	= 0x00000000;
+		//sleep(5);
+		//printf("on\n");
 
 		Timestamp 	timestamp 	= GetTimestamp();
 	}
