@@ -185,44 +185,47 @@ int main()
 	portA->CFG2 	= 0x11111111;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x33333333;
-	portA->DRV1 	= 0x33333333;
-	portA->PUL0 	= 0x00000000;
-	portA->PUL1 	= 0x00000000;
+	portA->DRV0 	= 0x22222222;
+	portA->DRV1 	= 0x22222222;
+	portA->PUL0 	= 0x22222222;
+	portA->PUL1 	= 0x22222222;
 
 	while(true)
 	{
 		//portA->DAT 	= 0xffffffff;
+		//sleep(5);
 
-		SetLineState( O,O,O,O, O,O,O,O );
-		sleep(1);
+		//SetLineState( O,O,O,O, O,O,O,O );		// 0x00
+		//sleep(5);
 
-		SetLineState( O,O,O,O, O,O,O,I );
-		sleep(1);
+		//SetLineState( O,O,O,O, O,O,O,I ); 		// 0x80
+		//sleep(5);
 
-		SetLineState( O,O,O,O, O,O,I,O );
-		sleep(1);
+		//SetLineState( O,O,O,O, O,O,I,O ); 			// 0x40
+		//sleep(5);
 
-		SetLineState( O,O,O,O, O,I,O,O );
-		sleep(1);
+		SetLineState( O,O,O,O, O,I,O,O ); 			// 0x20
+		sleep(5);
 
-		SetLineState( O,O,O,O, I,O,O,O );
-		sleep(1);
+		//SetLineState( O,O,O,O, I,O,O,O ); 				// 0x10
+		//sleep(5);
 
-		SetLineState( O,O,O,I, O,O,O,O );
-		sleep(1);
+		//SetLineState( O,O,O,I, O,O,O,O ); 			// 0x08
+		//sleep(5);
 
-		SetLineState( O,O,I,O, O,O,O,O );
-		sleep(1);
+		//SetLineState( O,O,I,O, O,O,O,O ); 				// 0x01
+		//sleep(5);
 
-		SetLineState( O,I,O,O, O,O,O,O );
-		sleep(1);
+		//SetLineState( O,I,O,O, O,O,O,O ); 				// 0x02
+		//sleep(5);
 
-		SetLineState( I,O,O,O, O,O,O,O );
-		sleep(1);
+		//SetLineState( I,O,O,O, O,O,O,O ); 					// 0x04
+		//sleep(5);
 
-		//portA->DAT 	= 0x00000000;
-		//sleep(1);
+		printf("off\n");
+		portA->DAT 	= 0x00000000;
+		sleep(5);
+		printf("on\n");
 
 		Timestamp 	timestamp 	= GetTimestamp();
 	}
