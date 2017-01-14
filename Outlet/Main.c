@@ -12,9 +12,9 @@
 Hdr26   Funtion              ShiftReg       Hdr10
 ---------------------------------------------------------------
 1       3V3                 16/VCC          1/3V3
-7       PWM1/PA6            13/D2           4/D2
+7       PWM1/PA6            13/D2           4/D2 !
 13      UART2_TX/PA0        14/D3           5/D3
-19      SPI1_MOSI/PA15      11/D0           2/D0
+19      SPI1_MOSI/PA15      11/D0           2/D0 !
 21      SPI1_MISO           9/Q7            -
 23      SPI1_CLK            2/CP            -
 25      GND                 8/GND           10/GND
@@ -151,14 +151,14 @@ void SetLineState(bool d0, bool d1, bool d2, bool d3, bool d4, bool d5, bool d6,
 {
 	uint32_t 	portValue 	= portA->DAT;
 
-	SET_OR_CLEAR_BIT( portValue, 15, d0 );
-	SET_OR_CLEAR_BIT( portValue, 7,  d1 );
-	SET_OR_CLEAR_BIT( portValue, 6,  d2 );
-	SET_OR_CLEAR_BIT( portValue, 0,  d3 );
-	SET_OR_CLEAR_BIT( portValue, 10, d4 );
-	SET_OR_CLEAR_BIT( portValue, 2,  d5 );
-	SET_OR_CLEAR_BIT( portValue, 18, d6 );
-	SET_OR_CLEAR_BIT( portValue, 19, d7 );
+	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
+	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
+	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
+	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
+	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
+	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
+	SET_OR_CLEAR_BIT( portValue, 18, d6 ); 	// d6 18
+	SET_OR_CLEAR_BIT( portValue, 19, d7 ); 	// d7 19
 	
 	portA->DAT 	= portValue;
 }
@@ -192,33 +192,50 @@ int main()
 
 	while(true)
 	{
-		//portA->DAT 	= 0xffffffff;
-		//sleep(5);
-
+#if 1		
+		SetLineState( I,I,I,I, I,I,I,I );		// 0x00
+		sleep(1);
+		SetLineState( I,O,I,O, I,O,I,O );		// 0x00
+		sleep(1);
+		SetLineState( O,I,O,I, O,I,O,I );		// 0x00
+		sleep(1);
+#endif		
+#if 0
+		portA->DAT 	= 0xffffffff;
+		sleep(5);
+		portA->DAT 	= 0x00000000;
+		sleep(5);
+		portA->DAT 	= 0xaaaaaaaa;
+		sleep(5);
+		portA->DAT 	= 0x55555555;
+		sleep(5);
+#endif
+#if 1
+		//            0 1 2 3  4 5 6 7
 		SetLineState( O,O,O,O, O,O,O,O );		// 0x00
-		sleep(5);
-		SetLineState( O,O,I,O, O,O,O,O ); 				// 0x01
-		sleep(5);
+		sleep(1);
+		SetLineState( I,O,O,O, O,O,O,O ); 				// 0x01
+		sleep(1);
 		SetLineState( O,I,O,O, O,O,O,O ); 				// 0x02
-		sleep(5);
-		SetLineState( I,O,O,O, O,O,O,O ); 					// 0x04
-		sleep(5);
+		sleep(1);
+		SetLineState( O,O,I,O, O,O,O,O ); 					// 0x04
+		sleep(1);
 		SetLineState( O,O,O,I, O,O,O,O ); 			// 0x08
-		sleep(5);
+		sleep(1);
 		SetLineState( O,O,O,O, I,O,O,O ); 				// 0x10
-		sleep(5);
+		sleep(1);
 		SetLineState( O,O,O,O, O,I,O,O ); 			// 0x20
-		sleep(5);
+		sleep(1);
 		SetLineState( O,O,O,O, O,O,I,O ); 			// 0x40
-		sleep(5);
+		sleep(1);
 		SetLineState( O,O,O,O, O,O,O,I ); 		// 0x80
-		sleep(5);
+		sleep(1);
 
 		//printf("off\n");
 		//portA->DAT 	= 0x00000000;
 		//sleep(5);
 		//printf("on\n");
-
+#endif
 		Timestamp 	timestamp 	= GetTimestamp();
 	}
 
