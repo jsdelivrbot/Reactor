@@ -36,6 +36,11 @@ D5  - PA2   - 7
 D6  - PA18  - 8
 D7  - PA19  - 9
 
+TWI0-SDA = 3 = PA12 = LED1
+TWI0-SCK = 5 = PA11 = LED2
+UART1_TX = 8 = PG6 = LED3
+UART1_RX = 10 = PG7 = LED4
+
 */
 
 
