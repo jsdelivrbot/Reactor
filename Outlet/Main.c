@@ -12,15 +12,15 @@
 Hdr26   Funtion              ShiftReg       Hdr10
 ---------------------------------------------------------------
 1       3V3                 16/VCC          1/3V3
-7       PWM1/PA6            13/D2           4/D2 !
+7       PWM1/PA6            13/D2           4/D2 
+11      TWI1_SDA/PA1        6/D7            9/D7 !
 13      UART2_TX/PA0        14/D3           5/D3
-19      SPI1_MOSI/PA15      11/D0           2/D0 !
+15      TWI1_SCK/PA3        5/D6            8/D6 !
+19      SPI1_MOSI/PA15      11/D0           2/D0
 21      SPI1_MISO           9/Q7            -
 23      SPI1_CLK            2/CP            -
 25      GND                 8/GND           10/GND
 12      PA7                 12/D1           3/D1
-16      TWI1_SDA/PA19       6/D7            9/D7
-18      TWI1_SCK/PA18       5/D6            8/D6
 22      UART2_RTS/PA2       4/D5            7/D5
 24      SPI1_CS             1/PL            -
 26      PA10                3/D4            6/D4
@@ -33,8 +33,8 @@ D2  - PA6   - 4
 D3  - PA0   - 5
 D4  - PA10  - 6
 D5  - PA2   - 7
-D6  - PA18  - 8
-D7  - PA19  - 9
+D6  - PA3   - 8
+D7  - PA1   - 9
 
 TWI0-SDA = 3 = PA12 = LED1
 TWI0-SCK = 5 = PA11 = LED2
@@ -149,8 +149,8 @@ D2  - PA15  - 4
 D3  - PA0   - 5
 D4  - PA10  - 6
 D5  - PA2   - 7
-D6  - PA18  - 8
-D7  - PA19  - 9
+D6  - PA3   - 8
+D7  - PA1   - 9
 */
 void SetLineState(bool d0, bool d1, bool d2, bool d3, bool d4, bool d5, bool d6, bool d7)
 {
@@ -162,8 +162,8 @@ void SetLineState(bool d0, bool d1, bool d2, bool d3, bool d4, bool d5, bool d6,
 	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
 	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
 	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
-	SET_OR_CLEAR_BIT( portValue, 18, d6 ); 	// d6 18
-	SET_OR_CLEAR_BIT( portValue, 19, d7 ); 	// d7 19
+	SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
+	SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
 	
 	portA->DAT 	= portValue;
 }

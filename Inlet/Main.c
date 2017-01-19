@@ -505,8 +505,8 @@ int main()
 
 
         //i++;
-        //sleep(1);
-#if 0        
+        sleep(1);
+#if 0
         {
             struct timespec tim, tim2;
             tim.tv_sec      = 0;
