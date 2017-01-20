@@ -120,7 +120,7 @@ module CaseTopWithLogo(size,height,radius, wallWidth)
 	difference()
 	{
 		CaseTop(size, height, radius, wallWidth);
-		translate([0,0,height-0.5]) scale([0.3, 0.3, 1.0]) ReactorLogo(2.0);
+		translate([0,0,height-3.5]) scale([0.3, 0.3, 2.0]) ReactorLogo(2.0);
 	}
 }
 
@@ -261,6 +261,11 @@ module MotherboardPCB(size,height,radius, wallWidth, standoffOffset)
 
 	echo("Motherboard size = ",w1,"x",b1, " and ",w2,"x",b2);
 
+    w1 = 66;
+    b1=41;
+    w2 = 40;
+    b2 = 10;
+
 	difference()
 	{
 		union()
@@ -291,16 +296,20 @@ module MotherboardPCB(size,height,radius, wallWidth, standoffOffset)
 
 
 pcbHeight		= 2;
-wallWidth = 3;
+wallWidth = 2;
 internalHeight = 25;
-size = 35;
+size = 50;
 height = (wallWidth*2)+internalHeight;
-radius = 30;
-standoffOffset = (size/2) + 15;
+radius = 20;
+standoffOffset = (size/2) + 5;
+
+
+//projection(cut=true) 
+//translate([0,0,-10])
 union()
 {
 	CaseTopWithLogo(size, height, radius, wallWidth);
-	PCBStandOffs(size, height, radius, wallWidth, standoffOffset);
+	PCBStandOffs(size-40, height, radius, wallWidth, standoffOffset);
 /*
 	translate([0, 0, pcbHeight-20])
 	{
@@ -312,13 +321,13 @@ union()
 		CaseBottom(size, height, radius, wallWidth, standoffOffset, wallWidth+2);
 	}
 
+
 	translate([0, 0, 0-20])
 	{
 		MotherboardPCB(size, height, radius, wallWidth, standoffOffset);
 	}
+
 */
-
-
 
 }
 
