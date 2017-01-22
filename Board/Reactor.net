@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/steve/BlockWorks/Reactor/Board/Reactor.sch)
-    (date "Fri 20 Jan 2017 23:02:48 GMT")
+    (date "Sun 22 Jan 2017 12:06:16 GMT")
     (tool "Eeschema 4.0.5-e0-6337~49~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -71,7 +71,7 @@
       (tstamp 587D6674))
     (comp (ref P5)
       (value USB_OTG)
-      (footprint Connect:USB_Micro-B_10103594-0001LF)
+      (footprint Reactor:MiniUSB_ThruHole_Molex_54819_0519)
       (libsource (lib conn) (part USB_OTG))
       (sheetpath (names /) (tstamps /))
       (tstamp 58828F74)))
