@@ -35,7 +35,7 @@ module Body()
 //
 module Board()
 {
-    color([.8,0,0.8]) translate([-40,-40,-5]) import("../Board/ReactorBoardEdgeCuts.dxf");
+    rotate([0,0,90]) color([.8,0,0.8]) translate([-40,-40,-5]) import("../Board/ReactorBoardEdgeCuts.dxf");
 }
 
 
