@@ -10,11 +10,16 @@ include <ReactorLogo.scad>
 //
 module CaseTopWithLogo()
 {
-	difference()
-	{
-		cylinder(h=2, r1=40, r2=40, center=true);
-		translate([0,0,-10]) scale([0.3, 0.3, 4.0]) ReactorLogo(10.0);
-	}
+    difference()
+    {
+        difference()
+        {
+            cylinder(h=2, r1=40, r2=40, center=true);
+            translate([0,0,-10]) scale([0.3, 0.3, 4.0]) ReactorLogo(10.0);
+        }
+        
+        translate([0,0,-1]) cylinder(h=2, r1=20, r2=20, center=true);
+    }
 }
 
 
@@ -41,7 +46,7 @@ module Board()
 
 Body();
 translate([0,0,7]) CaseTopWithLogo();
-translate([0,0,-10]) Board();
+//translate([0,0,-10]) Board();
 
 
 
