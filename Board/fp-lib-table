@@ -1,3 +1,3 @@
 (fp_lib_table
-  (lib (name ReactorProject)(type KiCad)(uri /home/steve/Documents/Reactor)(options "")(descr ""))
+  (lib (name ReactorProject)(type KiCad)(uri /home/steve/BlockWorks/Reactor/Board)(options "")(descr ""))
 )
