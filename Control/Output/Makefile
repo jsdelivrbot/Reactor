@@ -35,8 +35,8 @@ ECHO_GREEN		= echo -e "\033[0;32m"
 #
 # Build flags.
 #
-CFLAGS 			= -O2 -g --std=c99 -Wno-unused-result
-LDFLAGS			= -g
+CFLAGS 			= -O2 -g --std=c99 -Wno-unused-result -D_GNU_SOURCE
+LDFLAGS			= -g 
 
 
 #########################################################################################################
@@ -74,7 +74,7 @@ include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #
 #
 #
-LIBS		+= -lc -lgcc
+LIBS		+= -lc -lgcc -lrt
 
 
 #########################################################################################################
