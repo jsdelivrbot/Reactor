@@ -74,7 +74,7 @@ include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #
 #
 #
-LIBS		+= -lc -lgcc
+LIBS		+= -lc -lgcc -lrt
 
 
 #########################################################################################################
