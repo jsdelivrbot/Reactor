@@ -1,5 +1,5 @@
 
-$fn=100;
+$fn=150;
 
 
 //
@@ -38,6 +38,7 @@ module CaseTopWithLogo()
 }
 
 
+
 //
 //
 //
@@ -52,12 +53,14 @@ module Body()
                 //
                 // External body
                 //
-                cylinder(h=15, r1=40, r2=40, center=true);
+                translate([0,0,-3.3])
+                  cylinder(h=20.5, r1=40, r2=40, center=true);
                 
                 //
                 // Internal cutout.
                 //
-                cylinder(h=16, r1=38, r2=38, center=true);
+                translate([0,0,-3.3])
+                  cylinder(h=21, r1=38, r2=38, center=true);
             };
             
             //
@@ -89,11 +92,45 @@ module Board()
         import("../Board/ReactorBoardEdgeCutsWithMountingHoles2.dxf");
 }
 
+//
+//
+//
+module Posts()
+{
+}
+
+//
+//
+//
+module Bottom()
+{
+    //color([1,0,0]) 
+    translate([0,0,-10])
+    difference()
+    {
+        union()
+        {
+            rotate_extrude(convexity = 5) translate([38, 0, 0]) circle(r = 2);
+            cylinder(h=4, r1=38, r2=38, center=true);
+
+            translate([-27.5,-20.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
+            translate([ 27.5,-20.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
+            translate([-27.5, 18.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
+            translate([ 27.5, 18.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
+        }
+        
+        //
+        // Internal lid cutout for circular diffusion sheet.
+        //
+        translate([0,0,1]) cylinder(h=3, r1=20, r2=20, center=true);
+    }
+}
 
 
 Body();
 translate([0,0,7]) CaseTopWithLogo();
-translate([0,0,8]) Board();
+translate([0,0,-20]) Board();
+translate([0,0,-25]) Bottom();
 
 //translate([0,0,10]) Logo();
 
