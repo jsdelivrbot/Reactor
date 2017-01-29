@@ -43,6 +43,7 @@ LDFLAGS			= -g
 
 
 include $(PROJECT_BASE)/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/CircularBuffer/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk

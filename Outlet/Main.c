@@ -65,6 +65,7 @@ UART1_RX = 10 = PG7 = LED4
 #include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
+#include "CircularBuffer.h"
 
 
 //
@@ -189,6 +190,24 @@ int main()
     }
 
     printf("[%s]\n", &sharedMemory[100] );
+
+    //
+    // InletToControl = 1000->2000;
+    // ControlToOutlet = 2000->3000;
+    //
+    CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
+	CircularBufferInitialise( controlToOutlet, sizeof(uint32_t), (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+
+	while(true)
+	{
+        //
+        //
+        //
+        uint32_t  outData  = 0;
+        CircularBufferGet( controlToOutlet, &outData );
+		
+		printf("[%d]\n", outData );
+	}
 
 
 	uint32_t 	start;

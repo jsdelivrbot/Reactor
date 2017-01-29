@@ -24,6 +24,7 @@
 #include "Timestamp.h"
 #include "SharedMemory.h"
 #include <time.h>
+#include "CircularBuffer.h"
 
 
 
@@ -321,6 +322,26 @@ int main()
     strcpy( (char*)sharedMemory, "Hello World." );
 
     printf("<%s>\n", sharedMemory );
+
+    //
+    // InletToControl = 1000->2000;
+    // ControlToOutlet = 2000->3000;
+    //
+    CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
+    CircularBufferInitialise( inletToControl, sizeof(uint32_t), (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+
+    CircularBufferShow( inletToControl );
+
+    while(true)
+    {
+        //
+        //
+        //
+        uint32_t  inData   = 0;
+        CircularBufferPut( inletToControl, &inData );
+        inData++;
+        
+    }
 
     //
     //

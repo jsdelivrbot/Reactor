@@ -11,24 +11,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <stddef.h>
 #include "Timestamp.h"
 #include "DebugText.h"
 #include "SharedMemory.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/shm.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
+#include "CircularBuffer.h"
 
 
 
@@ -53,16 +40,38 @@ int main()
     strcpy( (char*)&sharedMemory[100], "Hello Mars!" );
 
     //
+    // InletToControl = 1000->2000;
+    // ControlToOutlet = 2000->3000;
+    //
+    CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
+    CircularBufferInitialise( inletToControl, sizeof(uint32_t), (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+
+    CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
+    CircularBufferInitialise( controlToOutlet, sizeof(uint32_t), (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+
+    //
     //
     //
     uint32_t 	i 	= 0;
     while(true)
     {
+        //
+        //
+        //
+        uint32_t  inData  = 0;
+        CircularBufferGet( inletToControl, &inData );
 
         //
         // Get the current timestamp.
         //
         Timestamp    timestamp 	= GetTimestamp();
+
+        //
+        //
+        //
+        uint32_t  outData   = 0;
+        CircularBufferPut( controlToOutlet, &outData );
+        outData++;
     }
 
 }
