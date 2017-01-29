@@ -1,0 +1,3042 @@
+
+Main.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <MPIDR>:
+
+//
+// Get the Multiprocessor affinity register (core id).
+//
+uint32_t MPIDR()
+{
+       0:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+       4:	e28db000 	add	fp, sp, #0
+       8:	e24dd00c 	sub	sp, sp, #12
+    uint32_t    mpidr;
+
+    __asm__ volatile("mrc p15, 0, %0, c0, c0, 5\n\t" : "=r"(mpidr));    
+       c:	ee103fb0 	mrc	15, 0, r3, cr0, cr0, {5}
+      10:	e50b3008 	str	r3, [fp, #-8]
+
+    uint32_t coreID     = mpidr & 0x03;
+      14:	e51b3008 	ldr	r3, [fp, #-8]
+      18:	e2033003 	and	r3, r3, #3
+      1c:	e50b300c 	str	r3, [fp, #-12]
+    return coreID;
+      20:	e51b300c 	ldr	r3, [fp, #-12]
+}
+      24:	e1a00003 	mov	r0, r3
+      28:	e24bd000 	sub	sp, fp, #0
+      2c:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+      30:	e12fff1e 	bx	lr
+
+00000034 <CWRR>:
+
+//
+// Cause a reset request.
+//
+void CWRR()
+{
+      34:	e92d0810 	push	{r4, fp}
+      38:	e28db004 	add	fp, sp, #4
+    //
+    // Cause a reset request.
+    //
+    register uint32_t    cwrr    = 0x00000002;
+      3c:	e3a04002 	mov	r4, #2
+    __asm__ volatile("mcr p14, 0, %0, c1, c4, 4\n\t" : : "r"(cwrr));
+      40:	ee014e94 	mcr	14, 0, r4, cr1, cr4, {4}
+}
+      44:	e1a00000 	nop			; (mov r0, r0)
+      48:	e24bd004 	sub	sp, fp, #4
+      4c:	e8bd0810 	pop	{r4, fp}
+      50:	e12fff1e 	bx	lr
+
+00000054 <Globals>:
+
+//
+//
+//
+GlobalData* Globals()
+{
+      54:	e92d4800 	push	{fp, lr}
+      58:	e28db004 	add	fp, sp, #4
+      5c:	e24dd008 	sub	sp, sp, #8
+    uint32_t    coreID              = MPIDR();
+      60:	ebfffffe 	bl	0 <MPIDR>
+      64:	e50b0008 	str	r0, [fp, #-8]
+
+    return &globals[coreID];
+      68:	e51b3008 	ldr	r3, [fp, #-8]
+      6c:	e3a0200c 	mov	r2, #12
+      70:	e0020392 	mul	r2, r2, r3
+      74:	e3003000 	movw	r3, #0
+      78:	e3403000 	movt	r3, #0
+      7c:	e0823003 	add	r3, r2, r3
+}
+      80:	e1a00003 	mov	r0, r3
+      84:	e24bd004 	sub	sp, fp, #4
+      88:	e8bd8800 	pop	{fp, pc}
+
+0000008c <WaitForMessage>:
+
+//
+//
+//
+void WaitForMessage()
+{
+      8c:	e92d4800 	push	{fp, lr}
+      90:	e28db004 	add	fp, sp, #4
+    while(Globals()->numberOfMessagesAvailable == 0)
+      94:	e1a00000 	nop			; (mov r0, r0)
+      98:	ebfffffe 	bl	54 <Globals>
+      9c:	e1a03000 	mov	r3, r0
+      a0:	e5933008 	ldr	r3, [r3, #8]
+      a4:	e3530000 	cmp	r3, #0
+      a8:	0afffffa 	beq	98 <WaitForMessage+0xc>
+    {
+        //WFI();
+    }
+}
+      ac:	e1a00000 	nop			; (mov r0, r0)
+      b0:	e8bd8800 	pop	{fp, pc}
+
+000000b4 <SetVectorTableAddress>:
+
+//
+//
+//
+void SetVectorTableAddress(uint32_t address)
+{
+      b4:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+      b8:	e28db000 	add	fp, sp, #0
+      bc:	e24dd00c 	sub	sp, sp, #12
+      c0:	e50b0008 	str	r0, [fp, #-8]
+    register uint32_t   temp    = address;
+    asm volatile ("mcr p15, 0, %0, c12, c0,  0" : "=r" (temp));
+      c4:	ee0c3f10 	mcr	15, 0, r3, cr12, cr0, {0}
+}
+      c8:	e1a00000 	nop			; (mov r0, r0)
+      cc:	e24bd000 	sub	sp, fp, #0
+      d0:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+      d4:	e12fff1e 	bx	lr
+
+000000d8 <Handler>:
+
+//
+//
+//
+void  __attribute__ ((interrupt ("IRQ"))) Handler()
+{
+      d8:	e24ee004 	sub	lr, lr, #4
+      dc:	e92d581f 	push	{r0, r1, r2, r3, r4, fp, ip, lr}
+      e0:	e28db01c 	add	fp, sp, #28
+    PANIC();
+      e4:	ebfffffe 	bl	b00 <PANIC>
+}
+      e8:	e1a00000 	nop			; (mov r0, r0)
+      ec:	e24bd01c 	sub	sp, fp, #28
+      f0:	e8fd981f 	ldm	sp!, {r0, r1, r2, r3, r4, fp, ip, pc}^
+
+000000f4 <TriggerMailboxInterrupt>:
+
+//
+//
+//
+void TriggerMailboxInterrupt(uint32_t toID)
+{
+      f4:	e92d4800 	push	{fp, lr}
+      f8:	e28db004 	add	fp, sp, #4
+      fc:	e24dd010 	sub	sp, sp, #16
+     100:	e50b0010 	str	r0, [fp, #-16]
+    uint32_t    mailboxSetAddress;
+    uint32_t    coreID  = MPIDR();
+     104:	ebfffffe 	bl	0 <MPIDR>
+     108:	e50b0008 	str	r0, [fp, #-8]
+
+    mailboxSetAddress     = 0x40000080 + (0x10*toID);
+     10c:	e51b3010 	ldr	r3, [fp, #-16]
+     110:	e2833301 	add	r3, r3, #67108864	; 0x4000000
+     114:	e2833008 	add	r3, r3, #8
+     118:	e1a03203 	lsl	r3, r3, #4
+     11c:	e50b300c 	str	r3, [fp, #-12]
+    *(uint32_t*)mailboxSetAddress     = 1<<coreID;
+     120:	e51b300c 	ldr	r3, [fp, #-12]
+     124:	e3a01001 	mov	r1, #1
+     128:	e51b2008 	ldr	r2, [fp, #-8]
+     12c:	e1a02211 	lsl	r2, r1, r2
+     130:	e5832000 	str	r2, [r3]
+}
+     134:	e1a00000 	nop			; (mov r0, r0)
+     138:	e24bd004 	sub	sp, fp, #4
+     13c:	e8bd8800 	pop	{fp, pc}
+
+00000140 <IsThereMailFromCore>:
+
+//
+//
+//
+bool IsThereMailFromCore(uint32_t fromID)
+{
+     140:	e92d4800 	push	{fp, lr}
+     144:	e28db004 	add	fp, sp, #4
+     148:	e24dd018 	sub	sp, sp, #24
+     14c:	e50b0018 	str	r0, [fp, #-24]	; 0xffffffe8
+    uint32_t    coreID              = MPIDR();
+     150:	ebfffffe 	bl	0 <MPIDR>
+     154:	e50b0008 	str	r0, [fp, #-8]
+    uint32_t    mailboxAddress      = 0x400000c0 + (0x10*coreID);;
+     158:	e51b3008 	ldr	r3, [fp, #-8]
+     15c:	e2833301 	add	r3, r3, #67108864	; 0x4000000
+     160:	e283300c 	add	r3, r3, #12
+     164:	e1a03203 	lsl	r3, r3, #4
+     168:	e50b300c 	str	r3, [fp, #-12]
+    uint32_t    mailboxSource       = *(uint32_t*)mailboxAddress;
+     16c:	e51b300c 	ldr	r3, [fp, #-12]
+     170:	e5933000 	ldr	r3, [r3]
+     174:	e50b3010 	str	r3, [fp, #-16]
+
+    if( (mailboxSource&(1<<fromID)) != 0)
+     178:	e3a02001 	mov	r2, #1
+     17c:	e51b3018 	ldr	r3, [fp, #-24]	; 0xffffffe8
+     180:	e1a03312 	lsl	r3, r2, r3
+     184:	e1a02003 	mov	r2, r3
+     188:	e51b3010 	ldr	r3, [fp, #-16]
+     18c:	e0033002 	and	r3, r3, r2
+     190:	e3530000 	cmp	r3, #0
+     194:	0a000001 	beq	1a0 <IsThereMailFromCore+0x60>
+    {
+        return true;
+     198:	e3a03001 	mov	r3, #1
+     19c:	ea000000 	b	1a4 <IsThereMailFromCore+0x64>
+    }
+    else
+    {
+        return false;
+     1a0:	e3a03000 	mov	r3, #0
+    }
+
+}
+     1a4:	e1a00003 	mov	r0, r3
+     1a8:	e24bd004 	sub	sp, fp, #4
+     1ac:	e8bd8800 	pop	{fp, pc}
+
+000001b0 <NextMessage>:
+
+//
+//
+//
+CoreMessage* NextMessage()
+{
+     1b0:	e92d4800 	push	{fp, lr}
+     1b4:	e28db004 	add	fp, sp, #4
+    if(Globals()->numberOfMessagesAvailable > 0)
+     1b8:	ebfffffe 	bl	54 <Globals>
+     1bc:	e1a03000 	mov	r3, r0
+     1c0:	e5933008 	ldr	r3, [r3, #8]
+     1c4:	e3530000 	cmp	r3, #0
+     1c8:	0a000002 	beq	1d8 <NextMessage+0x28>
+    {
+        return &Globals()->message;
+     1cc:	ebfffffe 	bl	54 <Globals>
+     1d0:	e1a03000 	mov	r3, r0
+     1d4:	ea000000 	b	1dc <NextMessage+0x2c>
+    }
+    else
+    {
+        return 0;
+     1d8:	e3a03000 	mov	r3, #0
+    }
+}
+     1dc:	e1a00003 	mov	r0, r3
+     1e0:	e8bd8800 	pop	{fp, pc}
+
+000001e4 <ReleaseMessage>:
+
+//
+//
+//
+void ReleaseMessage(CoreMessage* msg)
+{
+     1e4:	e92d4800 	push	{fp, lr}
+     1e8:	e28db004 	add	fp, sp, #4
+     1ec:	e24dd008 	sub	sp, sp, #8
+     1f0:	e50b0008 	str	r0, [fp, #-8]
+    Globals()->numberOfMessagesAvailable--;
+     1f4:	ebfffffe 	bl	54 <Globals>
+     1f8:	e1a03000 	mov	r3, r0
+     1fc:	e5932008 	ldr	r2, [r3, #8]
+     200:	e2422001 	sub	r2, r2, #1
+     204:	e5832008 	str	r2, [r3, #8]
+}
+     208:	e1a00000 	nop			; (mov r0, r0)
+     20c:	e24bd004 	sub	sp, fp, #4
+     210:	e8bd8800 	pop	{fp, pc}
+
+00000214 <ClearMailboxFromCore>:
+
+//
+//
+//
+void ClearMailboxFromCore(uint32_t fromID)
+{
+     214:	e92d4800 	push	{fp, lr}
+     218:	e28db004 	add	fp, sp, #4
+     21c:	e24dd010 	sub	sp, sp, #16
+     220:	e50b0010 	str	r0, [fp, #-16]
+    uint32_t    mailboxClearAddress;
+    uint32_t    coreID  = MPIDR();
+     224:	ebfffffe 	bl	0 <MPIDR>
+     228:	e50b0008 	str	r0, [fp, #-8]
+
+    mailboxClearAddress     = 0x400000c0 + (0x10*coreID);
+     22c:	e51b3008 	ldr	r3, [fp, #-8]
+     230:	e2833301 	add	r3, r3, #67108864	; 0x4000000
+     234:	e283300c 	add	r3, r3, #12
+     238:	e1a03203 	lsl	r3, r3, #4
+     23c:	e50b300c 	str	r3, [fp, #-12]
+    *(uint32_t*)mailboxClearAddress     = 1<<fromID;
+     240:	e51b300c 	ldr	r3, [fp, #-12]
+     244:	e3a01001 	mov	r1, #1
+     248:	e51b2010 	ldr	r2, [fp, #-16]
+     24c:	e1a02211 	lsl	r2, r1, r2
+     250:	e5832000 	str	r2, [r3]
+}
+     254:	e1a00000 	nop			; (mov r0, r0)
+     258:	e24bd004 	sub	sp, fp, #4
+     25c:	e8bd8800 	pop	{fp, pc}
+
+00000260 <EnableMailboxFromCore>:
+
+//
+//
+//
+void EnableMailboxFromCore()
+{
+     260:	e92d4800 	push	{fp, lr}
+     264:	e28db004 	add	fp, sp, #4
+     268:	e24dd010 	sub	sp, sp, #16
+    uint32_t    coreID  = MPIDR();
+     26c:	ebfffffe 	bl	0 <MPIDR>
+     270:	e50b0008 	str	r0, [fp, #-8]
+    uint32_t    mailboxInterruptControlAddress  = 0x40000050+(coreID*4);
+     274:	e51b3008 	ldr	r3, [fp, #-8]
+     278:	e2833201 	add	r3, r3, #268435456	; 0x10000000
+     27c:	e2833014 	add	r3, r3, #20
+     280:	e1a03103 	lsl	r3, r3, #2
+     284:	e50b300c 	str	r3, [fp, #-12]
+    uint32_t    currentSettings     = *(uint32_t*)mailboxInterruptControlAddress;
+     288:	e51b300c 	ldr	r3, [fp, #-12]
+     28c:	e5933000 	ldr	r3, [r3]
+     290:	e50b3010 	str	r3, [fp, #-16]
+
+    currentSettings |= 0x0000000f;
+     294:	e51b3010 	ldr	r3, [fp, #-16]
+     298:	e383300f 	orr	r3, r3, #15
+     29c:	e50b3010 	str	r3, [fp, #-16]
+    *(uint32_t*)mailboxInterruptControlAddress   = currentSettings;
+     2a0:	e51b300c 	ldr	r3, [fp, #-12]
+     2a4:	e51b2010 	ldr	r2, [fp, #-16]
+     2a8:	e5832000 	str	r2, [r3]
+}
+     2ac:	e1a00000 	nop			; (mov r0, r0)
+     2b0:	e24bd004 	sub	sp, fp, #4
+     2b4:	e8bd8800 	pop	{fp, pc}
+
+000002b8 <ProcessMessage>:
+
+//
+//
+//
+void ProcessMessage(CoreMessage* msg)
+{
+     2b8:	e92d4800 	push	{fp, lr}
+     2bc:	e28db004 	add	fp, sp, #4
+     2c0:	e24dd010 	sub	sp, sp, #16
+     2c4:	e50b0010 	str	r0, [fp, #-16]
+    uint32_t    coreID  = MPIDR();
+     2c8:	ebfffffe 	bl	0 <MPIDR>
+     2cc:	e50b0008 	str	r0, [fp, #-8]
+    bridge->messageCounts[coreID]++;
+     2d0:	e3003000 	movw	r3, #0
+     2d4:	e3403000 	movt	r3, #0
+     2d8:	e5933000 	ldr	r3, [r3]
+     2dc:	e51b2008 	ldr	r2, [fp, #-8]
+     2e0:	e2822024 	add	r2, r2, #36	; 0x24
+     2e4:	e7932102 	ldr	r2, [r3, r2, lsl #2]
+     2e8:	e2821001 	add	r1, r2, #1
+     2ec:	e51b2008 	ldr	r2, [fp, #-8]
+     2f0:	e2822024 	add	r2, r2, #36	; 0x24
+     2f4:	e7831102 	str	r1, [r3, r2, lsl #2]
+    if(coreID == 3)
+    {
+        TriggerMailboxInterrupt( 1 );        
+    }
+#endif    
+}
+     2f8:	e1a00000 	nop			; (mov r0, r0)
+     2fc:	e24bd004 	sub	sp, fp, #4
+     300:	e8bd8800 	pop	{fp, pc}
+
+00000304 <IRQHandler>:
+
+//
+//
+//
+void  __attribute__ ((interrupt ("IRQ"))) IRQHandler()
+{
+     304:	e24ee004 	sub	lr, lr, #4
+     308:	e92d580f 	push	{r0, r1, r2, r3, fp, ip, lr}
+     30c:	e28db018 	add	fp, sp, #24
+     310:	e24dd00c 	sub	sp, sp, #12
+    uint32_t    coreID  = MPIDR();
+     314:	ebfffffe 	bl	0 <MPIDR>
+     318:	e50b0020 	str	r0, [fp, #-32]	; 0xffffffe0
+
+    //
+    //
+    //
+    if(IsThereMailFromCore(0) == true)
+     31c:	e3a00000 	mov	r0, #0
+     320:	ebfffffe 	bl	140 <IsThereMailFromCore>
+     324:	e1a03000 	mov	r3, r0
+     328:	e3530000 	cmp	r3, #0
+     32c:	0a000018 	beq	394 <IRQHandler+0x90>
+    {
+        Globals()->message.type    = bridge->coreMessages[coreID][0].type;
+     330:	ebfffffe 	bl	54 <Globals>
+     334:	e1a01000 	mov	r1, r0
+     338:	e3003000 	movw	r3, #0
+     33c:	e3403000 	movt	r3, #0
+     340:	e5933000 	ldr	r3, [r3]
+     344:	e51b2020 	ldr	r2, [fp, #-32]	; 0xffffffe0
+     348:	e7933282 	ldr	r3, [r3, r2, lsl #5]
+     34c:	e5813000 	str	r3, [r1]
+        Globals()->message.payload = bridge->coreMessages[coreID][0].payload;
+     350:	ebfffffe 	bl	54 <Globals>
+     354:	e1a01000 	mov	r1, r0
+     358:	e3003000 	movw	r3, #0
+     35c:	e3403000 	movt	r3, #0
+     360:	e5932000 	ldr	r2, [r3]
+     364:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     368:	e1a03283 	lsl	r3, r3, #5
+     36c:	e0823003 	add	r3, r2, r3
+     370:	e5933004 	ldr	r3, [r3, #4]
+     374:	e5813004 	str	r3, [r1, #4]
+        Globals()->numberOfMessagesAvailable++;
+     378:	ebfffffe 	bl	54 <Globals>
+     37c:	e1a03000 	mov	r3, r0
+     380:	e5932008 	ldr	r2, [r3, #8]
+     384:	e2822001 	add	r2, r2, #1
+     388:	e5832008 	str	r2, [r3, #8]
+
+        ClearMailboxFromCore( 0 );
+     38c:	e3a00000 	mov	r0, #0
+     390:	ebfffffe 	bl	214 <ClearMailboxFromCore>
+    }
+
+    if(IsThereMailFromCore(1) == true)
+     394:	e3a00001 	mov	r0, #1
+     398:	ebfffffe 	bl	140 <IsThereMailFromCore>
+     39c:	e1a03000 	mov	r3, r0
+     3a0:	e3530000 	cmp	r3, #0
+     3a4:	0a00001a 	beq	414 <IRQHandler+0x110>
+    {
+        Globals()->message.type    = bridge->coreMessages[coreID][1].type;
+     3a8:	ebfffffe 	bl	54 <Globals>
+     3ac:	e1a01000 	mov	r1, r0
+     3b0:	e3003000 	movw	r3, #0
+     3b4:	e3403000 	movt	r3, #0
+     3b8:	e5932000 	ldr	r2, [r3]
+     3bc:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     3c0:	e1a03283 	lsl	r3, r3, #5
+     3c4:	e0823003 	add	r3, r2, r3
+     3c8:	e5933008 	ldr	r3, [r3, #8]
+     3cc:	e5813000 	str	r3, [r1]
+        Globals()->message.payload = bridge->coreMessages[coreID][1].payload;
+     3d0:	ebfffffe 	bl	54 <Globals>
+     3d4:	e1a01000 	mov	r1, r0
+     3d8:	e3003000 	movw	r3, #0
+     3dc:	e3403000 	movt	r3, #0
+     3e0:	e5932000 	ldr	r2, [r3]
+     3e4:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     3e8:	e1a03283 	lsl	r3, r3, #5
+     3ec:	e0823003 	add	r3, r2, r3
+     3f0:	e593300c 	ldr	r3, [r3, #12]
+     3f4:	e5813004 	str	r3, [r1, #4]
+        Globals()->numberOfMessagesAvailable++;
+     3f8:	ebfffffe 	bl	54 <Globals>
+     3fc:	e1a03000 	mov	r3, r0
+     400:	e5932008 	ldr	r2, [r3, #8]
+     404:	e2822001 	add	r2, r2, #1
+     408:	e5832008 	str	r2, [r3, #8]
+        
+        ClearMailboxFromCore( 1 );
+     40c:	e3a00001 	mov	r0, #1
+     410:	ebfffffe 	bl	214 <ClearMailboxFromCore>
+    }
+
+    if(IsThereMailFromCore(2) == true)
+     414:	e3a00002 	mov	r0, #2
+     418:	ebfffffe 	bl	140 <IsThereMailFromCore>
+     41c:	e1a03000 	mov	r3, r0
+     420:	e3530000 	cmp	r3, #0
+     424:	0a00001a 	beq	494 <IRQHandler+0x190>
+    {
+        Globals()->message.type    = bridge->coreMessages[coreID][2].type;
+     428:	ebfffffe 	bl	54 <Globals>
+     42c:	e1a01000 	mov	r1, r0
+     430:	e3003000 	movw	r3, #0
+     434:	e3403000 	movt	r3, #0
+     438:	e5932000 	ldr	r2, [r3]
+     43c:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     440:	e1a03283 	lsl	r3, r3, #5
+     444:	e0823003 	add	r3, r2, r3
+     448:	e5933010 	ldr	r3, [r3, #16]
+     44c:	e5813000 	str	r3, [r1]
+        Globals()->message.payload = bridge->coreMessages[coreID][2].payload;
+     450:	ebfffffe 	bl	54 <Globals>
+     454:	e1a01000 	mov	r1, r0
+     458:	e3003000 	movw	r3, #0
+     45c:	e3403000 	movt	r3, #0
+     460:	e5932000 	ldr	r2, [r3]
+     464:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     468:	e1a03283 	lsl	r3, r3, #5
+     46c:	e0823003 	add	r3, r2, r3
+     470:	e5933014 	ldr	r3, [r3, #20]
+     474:	e5813004 	str	r3, [r1, #4]
+        Globals()->numberOfMessagesAvailable++;
+     478:	ebfffffe 	bl	54 <Globals>
+     47c:	e1a03000 	mov	r3, r0
+     480:	e5932008 	ldr	r2, [r3, #8]
+     484:	e2822001 	add	r2, r2, #1
+     488:	e5832008 	str	r2, [r3, #8]
+        
+        ClearMailboxFromCore( 2 );
+     48c:	e3a00002 	mov	r0, #2
+     490:	ebfffffe 	bl	214 <ClearMailboxFromCore>
+    }
+
+    if(IsThereMailFromCore(3) == true)
+     494:	e3a00003 	mov	r0, #3
+     498:	ebfffffe 	bl	140 <IsThereMailFromCore>
+     49c:	e1a03000 	mov	r3, r0
+     4a0:	e3530000 	cmp	r3, #0
+     4a4:	0a00001a 	beq	514 <IRQHandler+0x210>
+    {
+        Globals()->message.type    = bridge->coreMessages[coreID][3].type;
+     4a8:	ebfffffe 	bl	54 <Globals>
+     4ac:	e1a01000 	mov	r1, r0
+     4b0:	e3003000 	movw	r3, #0
+     4b4:	e3403000 	movt	r3, #0
+     4b8:	e5932000 	ldr	r2, [r3]
+     4bc:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     4c0:	e1a03283 	lsl	r3, r3, #5
+     4c4:	e0823003 	add	r3, r2, r3
+     4c8:	e5933018 	ldr	r3, [r3, #24]
+     4cc:	e5813000 	str	r3, [r1]
+        Globals()->message.payload = bridge->coreMessages[coreID][3].payload;
+     4d0:	ebfffffe 	bl	54 <Globals>
+     4d4:	e1a01000 	mov	r1, r0
+     4d8:	e3003000 	movw	r3, #0
+     4dc:	e3403000 	movt	r3, #0
+     4e0:	e5932000 	ldr	r2, [r3]
+     4e4:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+     4e8:	e1a03283 	lsl	r3, r3, #5
+     4ec:	e0823003 	add	r3, r2, r3
+     4f0:	e593301c 	ldr	r3, [r3, #28]
+     4f4:	e5813004 	str	r3, [r1, #4]
+        Globals()->numberOfMessagesAvailable++;
+     4f8:	ebfffffe 	bl	54 <Globals>
+     4fc:	e1a03000 	mov	r3, r0
+     500:	e5932008 	ldr	r2, [r3, #8]
+     504:	e2822001 	add	r2, r2, #1
+     508:	e5832008 	str	r2, [r3, #8]
+        
+        ClearMailboxFromCore( 3 );
+     50c:	e3a00003 	mov	r0, #3
+     510:	ebfffffe 	bl	214 <ClearMailboxFromCore>
+    }
+
+}
+     514:	e1a00000 	nop			; (mov r0, r0)
+     518:	e24bd018 	sub	sp, fp, #24
+     51c:	e8fd980f 	ldm	sp!, {r0, r1, r2, r3, fp, ip, pc}^
+     520:	e320f000 	nop	{0}
+     524:	e320f000 	nop	{0}
+     528:	e320f000 	nop	{0}
+     52c:	e320f000 	nop	{0}
+     530:	e320f000 	nop	{0}
+     534:	e320f000 	nop	{0}
+     538:	e320f000 	nop	{0}
+     53c:	e320f000 	nop	{0}
+	...
+
+00000580 <VectorTable>:
+//
+//
+//
+void __attribute__ ( (naked, aligned(128) ) ) VectorTable()
+{
+    asm volatile ("ldr pc, =Handler");
+     580:	e59ff50c 	ldr	pc, [pc, #1292]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     584:	e59ff508 	ldr	pc, [pc, #1288]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     588:	e59ff504 	ldr	pc, [pc, #1284]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     58c:	e59ff500 	ldr	pc, [pc, #1280]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     590:	e59ff4fc 	ldr	pc, [pc, #1276]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     594:	e59ff4f8 	ldr	pc, [pc, #1272]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =IRQHandler");
+     598:	e59ff4f8 	ldr	pc, [pc, #1272]	; a98 <EntryPoint+0x78>
+    asm volatile ("ldr pc, =Handler");
+     59c:	e59ff4f0 	ldr	pc, [pc, #1264]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5a0:	e59ff4ec 	ldr	pc, [pc, #1260]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5a4:	e59ff4e8 	ldr	pc, [pc, #1256]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5a8:	e59ff4e4 	ldr	pc, [pc, #1252]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5ac:	e59ff4e0 	ldr	pc, [pc, #1248]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5b0:	e59ff4dc 	ldr	pc, [pc, #1244]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5b4:	e59ff4d8 	ldr	pc, [pc, #1240]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5b8:	e59ff4d4 	ldr	pc, [pc, #1236]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5bc:	e59ff4d0 	ldr	pc, [pc, #1232]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5c0:	e59ff4cc 	ldr	pc, [pc, #1228]	; a94 <EntryPoint+0x74>
+    asm volatile ("ldr pc, =Handler");
+     5c4:	e59ff4c8 	ldr	pc, [pc, #1224]	; a94 <EntryPoint+0x74>
+}
+     5c8:	e1a00000 	nop			; (mov r0, r0)
+
+000005cc <DebugText>:
+
+//
+//
+//
+void DebugText(char* text)
+{
+     5cc:	e92d4800 	push	{fp, lr}
+     5d0:	e28db004 	add	fp, sp, #4
+     5d4:	e24dd018 	sub	sp, sp, #24
+     5d8:	e50b0018 	str	r0, [fp, #-24]	; 0xffffffe8
+    uint32_t    coreID  = MPIDR();
+     5dc:	ebfffffe 	bl	0 <MPIDR>
+     5e0:	e50b0008 	str	r0, [fp, #-8]
+
+    SystemCall  systemCall  = 
+     5e4:	e3a03001 	mov	r3, #1
+     5e8:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    {
+        .type           = 0x00000001,
+        .payload        = (uint32_t)text,
+     5ec:	e51b3018 	ldr	r3, [fp, #-24]	; 0xffffffe8
+//
+void DebugText(char* text)
+{
+    uint32_t    coreID  = MPIDR();
+
+    SystemCall  systemCall  = 
+     5f0:	e50b3010 	str	r3, [fp, #-16]
+     5f4:	e3a03000 	mov	r3, #0
+     5f8:	e54b300c 	strb	r3, [fp, #-12]
+        .type           = 0x00000001,
+        .payload        = (uint32_t)text,
+        .processedFlag  = false,
+    };
+
+    bridge->coreMessages[0][coreID].type    = 123;
+     5fc:	e3003000 	movw	r3, #0
+     600:	e3403000 	movt	r3, #0
+     604:	e5933000 	ldr	r3, [r3]
+     608:	e51b2008 	ldr	r2, [fp, #-8]
+     60c:	e3a0107b 	mov	r1, #123	; 0x7b
+     610:	e7831182 	str	r1, [r3, r2, lsl #3]
+    bridge->coreMessages[0][coreID].payload = (uint32_t)&systemCall;
+     614:	e3003000 	movw	r3, #0
+     618:	e3403000 	movt	r3, #0
+     61c:	e5931000 	ldr	r1, [r3]
+     620:	e24b2014 	sub	r2, fp, #20
+     624:	e51b3008 	ldr	r3, [fp, #-8]
+     628:	e1a03183 	lsl	r3, r3, #3
+     62c:	e0813003 	add	r3, r1, r3
+     630:	e5832004 	str	r2, [r3, #4]
+    dsb();
+     634:	f57ff04f 	dsb	sy
+    TriggerMailboxInterrupt(0);            
+     638:	e3a00000 	mov	r0, #0
+     63c:	ebfffffe 	bl	f4 <TriggerMailboxInterrupt>
+
+    while( systemCall.processedFlag == false );    
+     640:	e1a00000 	nop			; (mov r0, r0)
+     644:	e55b300c 	ldrb	r3, [fp, #-12]
+     648:	e2233001 	eor	r3, r3, #1
+     64c:	e6ef3073 	uxtb	r3, r3
+     650:	e3530000 	cmp	r3, #0
+     654:	1afffffa 	bne	644 <DebugText+0x78>
+}
+     658:	e1a00000 	nop			; (mov r0, r0)
+     65c:	e24bd004 	sub	sp, fp, #4
+     660:	e8bd8800 	pop	{fp, pc}
+
+00000664 <Core1Main>:
+
+//
+//
+//
+void Core1Main(uint32_t coreID)
+{
+     664:	e92d4800 	push	{fp, lr}
+     668:	e28db004 	add	fp, sp, #4
+     66c:	e24dd058 	sub	sp, sp, #88	; 0x58
+     670:	e50b0050 	str	r0, [fp, #-80]	; 0xffffffb0
+    //
+    //
+    //
+    bridge->heartBeats[coreID]   = 0;
+     674:	e3003000 	movw	r3, #0
+     678:	e3403000 	movt	r3, #0
+     67c:	e5933000 	ldr	r3, [r3]
+     680:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     684:	e2822020 	add	r2, r2, #32
+     688:	e3a01000 	mov	r1, #0
+     68c:	e7831102 	str	r1, [r3, r2, lsl #2]
+
+    //
+    // Enable the malbox interrupt.
+    //
+    EnableMailboxFromCore();
+     690:	ebfffffe 	bl	260 <EnableMailboxFromCore>
+
+    EI();
+     694:	f1080080 	cpsie	i
+    //
+    //
+    //
+    while(true)    
+    {
+        bridge->heartBeats[coreID]++;
+     698:	e3003000 	movw	r3, #0
+     69c:	e3403000 	movt	r3, #0
+     6a0:	e5933000 	ldr	r3, [r3]
+     6a4:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     6a8:	e2822020 	add	r2, r2, #32
+     6ac:	e7932102 	ldr	r2, [r3, r2, lsl #2]
+     6b0:	e2821001 	add	r1, r2, #1
+     6b4:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     6b8:	e2822020 	add	r2, r2, #32
+     6bc:	e7831102 	str	r1, [r3, r2, lsl #2]
+        dsb();
+     6c0:	f57ff04f 	dsb	sy
+        if( (bridge->heartBeats[coreID] % 0x4ffff) == 0 )
+     6c4:	e3003000 	movw	r3, #0
+     6c8:	e3403000 	movt	r3, #0
+     6cc:	e5933000 	ldr	r3, [r3]
+     6d0:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     6d4:	e2822020 	add	r2, r2, #32
+     6d8:	e7931102 	ldr	r1, [r3, r2, lsl #2]
+     6dc:	e30f35c3 	movw	r3, #62915	; 0xf5c3
+     6e0:	e34c3ccc 	movt	r3, #52428	; 0xcccc
+     6e4:	e0832391 	umull	r2, r3, r1, r3
+     6e8:	e1a03923 	lsr	r3, r3, #18
+     6ec:	e30f2fff 	movw	r2, #65535	; 0xffff
+     6f0:	e3402004 	movt	r2, #4
+     6f4:	e0030392 	mul	r3, r2, r3
+     6f8:	e0633001 	rsb	r3, r3, r1
+     6fc:	e3530000 	cmp	r3, #0
+     700:	1a000011 	bne	74c <Core1Main+0xe8>
+        {
+            //
+            //
+            //
+            char    string[64];
+            snprintf(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
+     704:	e3003000 	movw	r3, #0
+     708:	e3403000 	movt	r3, #0
+     70c:	e5933000 	ldr	r3, [r3]
+     710:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     714:	e2822020 	add	r2, r2, #32
+     718:	e7933102 	ldr	r3, [r3, r2, lsl #2]
+     71c:	e24b0048 	sub	r0, fp, #72	; 0x48
+     720:	e58d3000 	str	r3, [sp]
+     724:	e51b3050 	ldr	r3, [fp, #-80]	; 0xffffffb0
+     728:	e3002000 	movw	r2, #0
+     72c:	e3402000 	movt	r2, #0
+     730:	e3a01040 	mov	r1, #64	; 0x40
+     734:	ebfffffe 	bl	ba0 <snprintf>
+            DebugText( &string[0] );
+     738:	e24b3048 	sub	r3, fp, #72	; 0x48
+     73c:	e1a00003 	mov	r0, r3
+     740:	ebfffffe 	bl	5cc <DebugText>
+
+            TriggerMailboxInterrupt(2);            
+     744:	e3a00002 	mov	r0, #2
+     748:	ebfffffe 	bl	f4 <TriggerMailboxInterrupt>
+        }
+
+        //
+        //
+        //
+        CoreMessage*    msg     = NextMessage();
+     74c:	ebfffffe 	bl	1b0 <NextMessage>
+     750:	e50b0008 	str	r0, [fp, #-8]
+        if(msg != 0)
+     754:	e51b3008 	ldr	r3, [fp, #-8]
+     758:	e3530000 	cmp	r3, #0
+     75c:	0affffcd 	beq	698 <Core1Main+0x34>
+        {
+            ProcessMessage( msg );
+     760:	e51b0008 	ldr	r0, [fp, #-8]
+     764:	ebfffffe 	bl	2b8 <ProcessMessage>
+            DebugText("Message Received!");
+     768:	e3000000 	movw	r0, #0
+     76c:	e3400000 	movt	r0, #0
+     770:	ebfffffe 	bl	5cc <DebugText>
+            ReleaseMessage( msg );
+     774:	e51b0008 	ldr	r0, [fp, #-8]
+     778:	ebfffffe 	bl	1e4 <ReleaseMessage>
+        }
+    }        
+     77c:	eaffffc5 	b	698 <Core1Main+0x34>
+
+00000780 <Core2Main>:
+
+//
+//
+//
+void Core2Main(uint32_t coreID)
+{
+     780:	e92d4800 	push	{fp, lr}
+     784:	e28db004 	add	fp, sp, #4
+     788:	e24dd058 	sub	sp, sp, #88	; 0x58
+     78c:	e50b0050 	str	r0, [fp, #-80]	; 0xffffffb0
+    //
+    //
+    //
+    bridge->heartBeats[coreID]   = 0;
+     790:	e3003000 	movw	r3, #0
+     794:	e3403000 	movt	r3, #0
+     798:	e5933000 	ldr	r3, [r3]
+     79c:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     7a0:	e2822020 	add	r2, r2, #32
+     7a4:	e3a01000 	mov	r1, #0
+     7a8:	e7831102 	str	r1, [r3, r2, lsl #2]
+
+    //
+    // Enable the malbox interrupt.
+    //
+    EnableMailboxFromCore();
+     7ac:	ebfffffe 	bl	260 <EnableMailboxFromCore>
+
+    EI();
+     7b0:	f1080080 	cpsie	i
+    //
+    //
+    //
+    while(true)    
+    {
+        bridge->heartBeats[coreID]++;
+     7b4:	e3003000 	movw	r3, #0
+     7b8:	e3403000 	movt	r3, #0
+     7bc:	e5933000 	ldr	r3, [r3]
+     7c0:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     7c4:	e2822020 	add	r2, r2, #32
+     7c8:	e7932102 	ldr	r2, [r3, r2, lsl #2]
+     7cc:	e2821001 	add	r1, r2, #1
+     7d0:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     7d4:	e2822020 	add	r2, r2, #32
+     7d8:	e7831102 	str	r1, [r3, r2, lsl #2]
+        dsb();
+     7dc:	f57ff04f 	dsb	sy
+        if( (bridge->heartBeats[coreID] % 0x4ffff) == 0 )
+     7e0:	e3003000 	movw	r3, #0
+     7e4:	e3403000 	movt	r3, #0
+     7e8:	e5933000 	ldr	r3, [r3]
+     7ec:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     7f0:	e2822020 	add	r2, r2, #32
+     7f4:	e7931102 	ldr	r1, [r3, r2, lsl #2]
+     7f8:	e30f35c3 	movw	r3, #62915	; 0xf5c3
+     7fc:	e34c3ccc 	movt	r3, #52428	; 0xcccc
+     800:	e0832391 	umull	r2, r3, r1, r3
+     804:	e1a03923 	lsr	r3, r3, #18
+     808:	e30f2fff 	movw	r2, #65535	; 0xffff
+     80c:	e3402004 	movt	r2, #4
+     810:	e0030392 	mul	r3, r2, r3
+     814:	e0633001 	rsb	r3, r3, r1
+     818:	e3530000 	cmp	r3, #0
+     81c:	1a00000f 	bne	860 <Core2Main+0xe0>
+        {
+            //
+            //
+            //
+            char    string[64];
+            snprintf(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
+     820:	e3003000 	movw	r3, #0
+     824:	e3403000 	movt	r3, #0
+     828:	e5933000 	ldr	r3, [r3]
+     82c:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     830:	e2822020 	add	r2, r2, #32
+     834:	e7933102 	ldr	r3, [r3, r2, lsl #2]
+     838:	e24b0048 	sub	r0, fp, #72	; 0x48
+     83c:	e58d3000 	str	r3, [sp]
+     840:	e51b3050 	ldr	r3, [fp, #-80]	; 0xffffffb0
+     844:	e3002000 	movw	r2, #0
+     848:	e3402000 	movt	r2, #0
+     84c:	e3a01040 	mov	r1, #64	; 0x40
+     850:	ebfffffe 	bl	ba0 <snprintf>
+            DebugText( &string[0] );
+     854:	e24b3048 	sub	r3, fp, #72	; 0x48
+     858:	e1a00003 	mov	r0, r3
+     85c:	ebfffffe 	bl	5cc <DebugText>
+        }
+
+        //
+        //
+        //
+        CoreMessage*    msg     = NextMessage();
+     860:	ebfffffe 	bl	1b0 <NextMessage>
+     864:	e50b0008 	str	r0, [fp, #-8]
+        if(msg != 0)
+     868:	e51b3008 	ldr	r3, [fp, #-8]
+     86c:	e3530000 	cmp	r3, #0
+     870:	0affffcf 	beq	7b4 <Core2Main+0x34>
+        {
+            ProcessMessage( msg );
+     874:	e51b0008 	ldr	r0, [fp, #-8]
+     878:	ebfffffe 	bl	2b8 <ProcessMessage>
+            DebugText("Message Received!");
+     87c:	e3000000 	movw	r0, #0
+     880:	e3400000 	movt	r0, #0
+     884:	ebfffffe 	bl	5cc <DebugText>
+            TriggerMailboxInterrupt(3);            
+     888:	e3a00003 	mov	r0, #3
+     88c:	ebfffffe 	bl	f4 <TriggerMailboxInterrupt>
+            ReleaseMessage( msg );
+     890:	e51b0008 	ldr	r0, [fp, #-8]
+     894:	ebfffffe 	bl	1e4 <ReleaseMessage>
+        }
+    }        
+     898:	eaffffc5 	b	7b4 <Core2Main+0x34>
+
+0000089c <Core3Main>:
+
+//
+//
+//
+void Core3Main(uint32_t coreID)
+{
+     89c:	e92d4800 	push	{fp, lr}
+     8a0:	e28db004 	add	fp, sp, #4
+     8a4:	e24dd058 	sub	sp, sp, #88	; 0x58
+     8a8:	e50b0050 	str	r0, [fp, #-80]	; 0xffffffb0
+    //
+    //
+    //
+    bridge->heartBeats[coreID]   = 0;
+     8ac:	e3003000 	movw	r3, #0
+     8b0:	e3403000 	movt	r3, #0
+     8b4:	e5933000 	ldr	r3, [r3]
+     8b8:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     8bc:	e2822020 	add	r2, r2, #32
+     8c0:	e3a01000 	mov	r1, #0
+     8c4:	e7831102 	str	r1, [r3, r2, lsl #2]
+
+    //
+    // Enable the malbox interrupt.
+    //
+    EnableMailboxFromCore();
+     8c8:	ebfffffe 	bl	260 <EnableMailboxFromCore>
+
+    EI();
+     8cc:	f1080080 	cpsie	i
+    //
+    //
+    //
+    while(true)    
+    {
+        bridge->heartBeats[coreID]++;
+     8d0:	e3003000 	movw	r3, #0
+     8d4:	e3403000 	movt	r3, #0
+     8d8:	e5933000 	ldr	r3, [r3]
+     8dc:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     8e0:	e2822020 	add	r2, r2, #32
+     8e4:	e7932102 	ldr	r2, [r3, r2, lsl #2]
+     8e8:	e2821001 	add	r1, r2, #1
+     8ec:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     8f0:	e2822020 	add	r2, r2, #32
+     8f4:	e7831102 	str	r1, [r3, r2, lsl #2]
+        dsb();
+     8f8:	f57ff04f 	dsb	sy
+        if( (bridge->heartBeats[coreID] % 0x4ffff) == 0 )
+     8fc:	e3003000 	movw	r3, #0
+     900:	e3403000 	movt	r3, #0
+     904:	e5933000 	ldr	r3, [r3]
+     908:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     90c:	e2822020 	add	r2, r2, #32
+     910:	e7931102 	ldr	r1, [r3, r2, lsl #2]
+     914:	e30f35c3 	movw	r3, #62915	; 0xf5c3
+     918:	e34c3ccc 	movt	r3, #52428	; 0xcccc
+     91c:	e0832391 	umull	r2, r3, r1, r3
+     920:	e1a03923 	lsr	r3, r3, #18
+     924:	e30f2fff 	movw	r2, #65535	; 0xffff
+     928:	e3402004 	movt	r2, #4
+     92c:	e0030392 	mul	r3, r2, r3
+     930:	e0633001 	rsb	r3, r3, r1
+     934:	e3530000 	cmp	r3, #0
+     938:	1a00000f 	bne	97c <Core3Main+0xe0>
+        {
+            //
+            //
+            //
+            char    string[64];
+            snprintf(string, sizeof(string), "Count on core %d is %d", coreID, bridge->heartBeats[coreID] );
+     93c:	e3003000 	movw	r3, #0
+     940:	e3403000 	movt	r3, #0
+     944:	e5933000 	ldr	r3, [r3]
+     948:	e51b2050 	ldr	r2, [fp, #-80]	; 0xffffffb0
+     94c:	e2822020 	add	r2, r2, #32
+     950:	e7933102 	ldr	r3, [r3, r2, lsl #2]
+     954:	e24b0048 	sub	r0, fp, #72	; 0x48
+     958:	e58d3000 	str	r3, [sp]
+     95c:	e51b3050 	ldr	r3, [fp, #-80]	; 0xffffffb0
+     960:	e3002000 	movw	r2, #0
+     964:	e3402000 	movt	r2, #0
+     968:	e3a01040 	mov	r1, #64	; 0x40
+     96c:	ebfffffe 	bl	ba0 <snprintf>
+            DebugText( &string[0] );
+     970:	e24b3048 	sub	r3, fp, #72	; 0x48
+     974:	e1a00003 	mov	r0, r3
+     978:	ebfffffe 	bl	5cc <DebugText>
+        }
+
+        //
+        //
+        //
+        CoreMessage*    msg     = NextMessage();
+     97c:	ebfffffe 	bl	1b0 <NextMessage>
+     980:	e50b0008 	str	r0, [fp, #-8]
+        if(msg != 0)
+     984:	e51b3008 	ldr	r3, [fp, #-8]
+     988:	e3530000 	cmp	r3, #0
+     98c:	0affffcf 	beq	8d0 <Core3Main+0x34>
+        {
+            ProcessMessage( msg );
+     990:	e51b0008 	ldr	r0, [fp, #-8]
+     994:	ebfffffe 	bl	2b8 <ProcessMessage>
+            DebugText("Message Received!");
+     998:	e3000000 	movw	r0, #0
+     99c:	e3400000 	movt	r0, #0
+     9a0:	ebfffffe 	bl	5cc <DebugText>
+            ReleaseMessage( msg );
+     9a4:	e51b0008 	ldr	r0, [fp, #-8]
+     9a8:	ebfffffe 	bl	1e4 <ReleaseMessage>
+        }
+    }        
+     9ac:	eaffffc7 	b	8d0 <Core3Main+0x34>
+
+000009b0 <CoreMain>:
+
+//
+//
+//
+void CoreMain(uint32_t coreID)
+{
+     9b0:	e92d4800 	push	{fp, lr}
+     9b4:	e28db004 	add	fp, sp, #4
+     9b8:	e24dd008 	sub	sp, sp, #8
+     9bc:	e50b0008 	str	r0, [fp, #-8]
+    //
+    //
+    //
+    SetVectorTableAddress( (uint32_t)&VectorTable );
+     9c0:	e3003000 	movw	r3, #0
+     9c4:	e3403000 	movt	r3, #0
+     9c8:	e1a00003 	mov	r0, r3
+     9cc:	ebfffffe 	bl	b4 <SetVectorTableAddress>
+
+    //
+    //
+    //
+    switch(coreID)
+     9d0:	e51b3008 	ldr	r3, [fp, #-8]
+     9d4:	e3530002 	cmp	r3, #2
+     9d8:	0a000007 	beq	9fc <CoreMain+0x4c>
+     9dc:	e3530003 	cmp	r3, #3
+     9e0:	0a000008 	beq	a08 <CoreMain+0x58>
+     9e4:	e3530001 	cmp	r3, #1
+     9e8:	0a000000 	beq	9f0 <CoreMain+0x40>
+        case 3:
+            Core3Main(coreID);
+            break;
+            
+        default:
+            break;
+     9ec:	ea000008 	b	a14 <CoreMain+0x64>
+    //
+    //
+    switch(coreID)
+    {
+        case 1:
+            Core1Main(coreID);
+     9f0:	e51b0008 	ldr	r0, [fp, #-8]
+     9f4:	ebfffffe 	bl	664 <Core1Main>
+            break;
+     9f8:	ea000005 	b	a14 <CoreMain+0x64>
+            
+        case 2:
+            Core2Main(coreID);
+     9fc:	e51b0008 	ldr	r0, [fp, #-8]
+     a00:	ebfffffe 	bl	780 <Core2Main>
+            break;
+     a04:	ea000002 	b	a14 <CoreMain+0x64>
+            
+        case 3:
+            Core3Main(coreID);
+     a08:	e51b0008 	ldr	r0, [fp, #-8]
+     a0c:	ebfffffe 	bl	89c <Core3Main>
+            break;
+     a10:	e1a00000 	nop			; (mov r0, r0)
+            
+        default:
+            break;
+    }
+}
+     a14:	e1a00000 	nop			; (mov r0, r0)
+     a18:	e24bd004 	sub	sp, fp, #4
+     a1c:	e8bd8800 	pop	{fp, pc}
+
+00000a20 <EntryPoint>:
+    uint32_t   mpidr;
+
+    //
+    //
+    //
+    __asm__ volatile("mrc p15, 0, %0, c0, c0, 5\n\t" : "=r"(mpidr) ); 
+     a20:	ee103fb0 	mrc	15, 0, r3, cr0, cr0, {5}
+     a24:	e1a04003 	mov	r4, r3
+    uint32_t    coreID  = mpidr&0x3;   
+     a28:	e2044003 	and	r4, r4, #3
+
+    //
+    //
+    //
+    uint32_t            usrStackPointer    = ((uint32_t)&usrStack[coreID*STACK_SIZE]) + STACK_SIZE - 16;
+     a2c:	e1a02504 	lsl	r2, r4, #10
+     a30:	e3003000 	movw	r3, #0
+     a34:	e3403000 	movt	r3, #0
+     a38:	e0823003 	add	r3, r2, r3
+     a3c:	e2835e3f 	add	r5, r3, #1008	; 0x3f0
+    __asm__ volatile("MOV sp, %0\n\t" : : "r"(usrStackPointer));
+     a40:	e1a0d005 	mov	sp, r5
+
+    //
+    //
+    //
+    uint32_t            irqStackPointer    = ((uint32_t)&irqStack[coreID*STACK_SIZE]) + STACK_SIZE - 16;
+     a44:	e1a02504 	lsl	r2, r4, #10
+     a48:	e3003000 	movw	r3, #0
+     a4c:	e3403000 	movt	r3, #0
+     a50:	e0823003 	add	r3, r2, r3
+     a54:	e2835e3f 	add	r5, r3, #1008	; 0x3f0
+    __asm__ volatile("MSR     CPSR_c, 0xd2");
+     a58:	e321f0d2 	msr	CPSR_c, #210	; 0xd2
+    __asm__ volatile("MOV sp, %0\n\t" : : "r"(irqStackPointer));
+     a5c:	e1a0d005 	mov	sp, r5
+    __asm__ volatile("MSR     CPSR_c, 0xd3");
+     a60:	e321f0d3 	msr	CPSR_c, #211	; 0xd3
+
+    //
+    //
+    //
+    Globals()->numberOfMessagesAvailable   = 0;
+     a64:	ebfffffe 	bl	54 <Globals>
+     a68:	e1a02000 	mov	r2, r0
+     a6c:	e3a03000 	mov	r3, #0
+     a70:	e5823008 	str	r3, [r2, #8]
+    bridge                      = (CoreServicesBridge*)BRIDGE_BASE;    
+     a74:	e3003000 	movw	r3, #0
+     a78:	e3403000 	movt	r3, #0
+     a7c:	e3a02201 	mov	r2, #268435456	; 0x10000000
+     a80:	e5832000 	str	r2, [r3]
+
+    //
+    // Call the CoreMain.
+    //
+    CoreMain(coreID);
+     a84:	e1a00004 	mov	r0, r4
+     a88:	ebfffffe 	bl	9b0 <CoreMain>
+
+    //
+    // Should never get here.
+    //
+    PANIC();
+     a8c:	ebfffffe 	bl	b00 <PANIC>
+}
+     a90:	e1a00000 	nop			; (mov r0, r0)
+	...
+     a9c:	e320f000 	nop	{0}
+     aa0:	e320f000 	nop	{0}
+     aa4:	e320f000 	nop	{0}
+     aa8:	e320f000 	nop	{0}
+     aac:	e320f000 	nop	{0}
+     ab0:	e320f000 	nop	{0}
+     ab4:	e320f000 	nop	{0}
+     ab8:	e320f000 	nop	{0}
+     abc:	e320f000 	nop	{0}
+	...
+
+00000b00 <PANIC>:
+
+
+
+
+void PANIC()
+{
+     b00:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+     b04:	e28db000 	add	fp, sp, #0
+    while(true);
+     b08:	eafffffe 	b	b08 <PANIC+0x8>
+
+00000b0c <FormatTextFromVaList>:
+
+//
+//
+//
+void FormatTextFromVaList(char* output, uint32_t numberOfBytesInOutput, char* format, va_list vaList )
+{
+     b0c:	e92d4800 	push	{fp, lr}
+     b10:	e28db004 	add	fp, sp, #4
+     b14:	e24dd010 	sub	sp, sp, #16
+     b18:	e50b0008 	str	r0, [fp, #-8]
+     b1c:	e50b100c 	str	r1, [fp, #-12]
+     b20:	e50b2010 	str	r2, [fp, #-16]
+     b24:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    memset( output, 0, numberOfBytesInOutput );
+     b28:	e51b200c 	ldr	r2, [fp, #-12]
+     b2c:	e3a01000 	mov	r1, #0
+     b30:	e51b0008 	ldr	r0, [fp, #-8]
+     b34:	ebfffffe 	bl	1aa0 <memset>
+    vsnprintf( output, numberOfBytesInOutput, format, vaList );
+     b38:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+     b3c:	e51b2010 	ldr	r2, [fp, #-16]
+     b40:	e51b100c 	ldr	r1, [fp, #-12]
+     b44:	e51b0008 	ldr	r0, [fp, #-8]
+     b48:	ebfffffe 	bl	e5c <vsnprintf>
+}
+     b4c:	e1a00000 	nop			; (mov r0, r0)
+     b50:	e24bd004 	sub	sp, fp, #4
+     b54:	e8bd8800 	pop	{fp, pc}
+
+00000b58 <FormatText>:
+
+//
+//
+//
+void FormatText(char* output, uint32_t numberOfBytesInOutput, char* format, ...)
+{
+     b58:	e92d000c 	push	{r2, r3}
+     b5c:	e92d4800 	push	{fp, lr}
+     b60:	e28db004 	add	fp, sp, #4
+     b64:	e24dd010 	sub	sp, sp, #16
+     b68:	e50b0010 	str	r0, [fp, #-16]
+     b6c:	e50b1014 	str	r1, [fp, #-20]	; 0xffffffec
+    va_list         vaList;
+
+    //
+    // Form the text to store.
+    //
+    va_start(vaList, format);
+     b70:	e28b3008 	add	r3, fp, #8
+     b74:	e50b3008 	str	r3, [fp, #-8]
+    FormatTextFromVaList( output, sizeof(text), format, vaList );
+     b78:	e51b3008 	ldr	r3, [fp, #-8]
+     b7c:	e59b2004 	ldr	r2, [fp, #4]
+     b80:	e3a01c01 	mov	r1, #256	; 0x100
+     b84:	e51b0010 	ldr	r0, [fp, #-16]
+     b88:	ebfffffe 	bl	b0c <FormatTextFromVaList>
+    va_end(vaList);
+}
+     b8c:	e1a00000 	nop			; (mov r0, r0)
+     b90:	e24bd004 	sub	sp, fp, #4
+     b94:	e8bd4800 	pop	{fp, lr}
+     b98:	e28dd008 	add	sp, sp, #8
+     b9c:	e12fff1e 	bx	lr
+
+00000ba0 <snprintf>:
+  va_end(ap);
+  return err;
+}
+#endif
+int snprintf(char *str, size_t len, const char *fmt, ...)
+{
+     ba0:	e92d000c 	push	{r2, r3}
+     ba4:	e92d4800 	push	{fp, lr}
+     ba8:	e28db004 	add	fp, sp, #4
+     bac:	e24dd010 	sub	sp, sp, #16
+     bb0:	e50b0010 	str	r0, [fp, #-16]
+     bb4:	e50b1014 	str	r1, [fp, #-20]	; 0xffffffec
+  int err;
+  va_list ap;
+  va_start(ap, fmt);
+     bb8:	e28b3008 	add	r3, fp, #8
+     bbc:	e50b300c 	str	r3, [fp, #-12]
+  err = vsnprintf(str, len, fmt, ap);
+     bc0:	e51b300c 	ldr	r3, [fp, #-12]
+     bc4:	e59b2004 	ldr	r2, [fp, #4]
+     bc8:	e51b1014 	ldr	r1, [fp, #-20]	; 0xffffffec
+     bcc:	e51b0010 	ldr	r0, [fp, #-16]
+     bd0:	ebfffffe 	bl	e5c <vsnprintf>
+     bd4:	e50b0008 	str	r0, [fp, #-8]
+  va_end(ap);
+  return err;
+     bd8:	e51b3008 	ldr	r3, [fp, #-8]
+}
+     bdc:	e1a00003 	mov	r0, r3
+     be0:	e24bd004 	sub	sp, fp, #4
+     be4:	e8bd4800 	pop	{fp, lr}
+     be8:	e28dd008 	add	sp, sp, #8
+     bec:	e12fff1e 	bx	lr
+
+00000bf0 <longlong_to_string>:
+#define SHOWSIGNFLAG 0x00000080
+#define SIGNEDFLAG   0x00000100
+#define LEFTFORMATFLAG 0x00000200
+#define LEADZEROFLAG 0x00000400
+static char *longlong_to_string(char *buf, unsigned long long n, int len, uint flag)
+{
+     bf0:	e92d4800 	push	{fp, lr}
+     bf4:	e28db004 	add	fp, sp, #4
+     bf8:	e24dd020 	sub	sp, sp, #32
+     bfc:	e50b0018 	str	r0, [fp, #-24]	; 0xffffffe8
+     c00:	e14b22f4 	strd	r2, [fp, #-36]	; 0xffffffdc
+  int pos = len;
+     c04:	e59b3004 	ldr	r3, [fp, #4]
+     c08:	e50b3008 	str	r3, [fp, #-8]
+  int negative = 0;
+     c0c:	e3a03000 	mov	r3, #0
+     c10:	e50b300c 	str	r3, [fp, #-12]
+  if((flag & SIGNEDFLAG) && (long long)n < 0) {
+     c14:	e59b3008 	ldr	r3, [fp, #8]
+     c18:	e2033c01 	and	r3, r3, #256	; 0x100
+     c1c:	e3530000 	cmp	r3, #0
+     c20:	0a000009 	beq	c4c <longlong_to_string+0x5c>
+     c24:	e14b22d4 	ldrd	r2, [fp, #-36]	; 0xffffffdc
+     c28:	e3520000 	cmp	r2, #0
+     c2c:	e2d33000 	sbcs	r3, r3, #0
+     c30:	aa000005 	bge	c4c <longlong_to_string+0x5c>
+    negative = 1;
+     c34:	e3a03001 	mov	r3, #1
+     c38:	e50b300c 	str	r3, [fp, #-12]
+    n = -n;
+     c3c:	e14b22d4 	ldrd	r2, [fp, #-36]	; 0xffffffdc
+     c40:	e2722000 	rsbs	r2, r2, #0
+     c44:	e2e33000 	rsc	r3, r3, #0
+     c48:	e14b22f4 	strd	r2, [fp, #-36]	; 0xffffffdc
+  }
+  buf[--pos] = 0;
+     c4c:	e51b3008 	ldr	r3, [fp, #-8]
+     c50:	e2433001 	sub	r3, r3, #1
+     c54:	e50b3008 	str	r3, [fp, #-8]
+     c58:	e51b3008 	ldr	r3, [fp, #-8]
+     c5c:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     c60:	e0823003 	add	r3, r2, r3
+     c64:	e3a02000 	mov	r2, #0
+     c68:	e5c32000 	strb	r2, [r3]
+  
+  /* only do the math if the number is >= 10 */
+  while(n >= 10) {
+     c6c:	ea000017 	b	cd0 <longlong_to_string+0xe0>
+    int digit = n % 10;
+     c70:	e14b02d4 	ldrd	r0, [fp, #-36]	; 0xffffffdc
+     c74:	e3a0200a 	mov	r2, #10
+     c78:	e3a03000 	mov	r3, #0
+     c7c:	ebfffffe 	bl	1b20 <__aeabi_uldivmod>
+     c80:	e1a03002 	mov	r3, r2
+     c84:	e50b3010 	str	r3, [fp, #-16]
+    n /= 10;
+     c88:	e14b02d4 	ldrd	r0, [fp, #-36]	; 0xffffffdc
+     c8c:	e3a0200a 	mov	r2, #10
+     c90:	e3a03000 	mov	r3, #0
+     c94:	ebfffffe 	bl	1b20 <__aeabi_uldivmod>
+     c98:	e1a02000 	mov	r2, r0
+     c9c:	e1a03001 	mov	r3, r1
+     ca0:	e14b22f4 	strd	r2, [fp, #-36]	; 0xffffffdc
+    buf[--pos] = digit + '0';
+     ca4:	e51b3008 	ldr	r3, [fp, #-8]
+     ca8:	e2433001 	sub	r3, r3, #1
+     cac:	e50b3008 	str	r3, [fp, #-8]
+     cb0:	e51b3008 	ldr	r3, [fp, #-8]
+     cb4:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     cb8:	e0823003 	add	r3, r2, r3
+     cbc:	e51b2010 	ldr	r2, [fp, #-16]
+     cc0:	e6ef2072 	uxtb	r2, r2
+     cc4:	e2822030 	add	r2, r2, #48	; 0x30
+     cc8:	e6ef2072 	uxtb	r2, r2
+     ccc:	e5c32000 	strb	r2, [r3]
+    n = -n;
+  }
+  buf[--pos] = 0;
+  
+  /* only do the math if the number is >= 10 */
+  while(n >= 10) {
+     cd0:	e14b22d4 	ldrd	r2, [fp, #-36]	; 0xffffffdc
+     cd4:	e3530000 	cmp	r3, #0
+     cd8:	03520009 	cmpeq	r2, #9
+     cdc:	8affffe3 	bhi	c70 <longlong_to_string+0x80>
+    int digit = n % 10;
+    n /= 10;
+    buf[--pos] = digit + '0';
+  }
+  buf[--pos] = n + '0';
+     ce0:	e51b3008 	ldr	r3, [fp, #-8]
+     ce4:	e2433001 	sub	r3, r3, #1
+     ce8:	e50b3008 	str	r3, [fp, #-8]
+     cec:	e51b3008 	ldr	r3, [fp, #-8]
+     cf0:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     cf4:	e0823003 	add	r3, r2, r3
+     cf8:	e55b2024 	ldrb	r2, [fp, #-36]	; 0xffffffdc
+     cfc:	e2822030 	add	r2, r2, #48	; 0x30
+     d00:	e6ef2072 	uxtb	r2, r2
+     d04:	e5c32000 	strb	r2, [r3]
+  
+  if(negative)
+     d08:	e51b300c 	ldr	r3, [fp, #-12]
+     d0c:	e3530000 	cmp	r3, #0
+     d10:	0a000008 	beq	d38 <longlong_to_string+0x148>
+    buf[--pos] = '-';
+     d14:	e51b3008 	ldr	r3, [fp, #-8]
+     d18:	e2433001 	sub	r3, r3, #1
+     d1c:	e50b3008 	str	r3, [fp, #-8]
+     d20:	e51b3008 	ldr	r3, [fp, #-8]
+     d24:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     d28:	e0823003 	add	r3, r2, r3
+     d2c:	e3a0202d 	mov	r2, #45	; 0x2d
+     d30:	e5c32000 	strb	r2, [r3]
+     d34:	ea00000b 	b	d68 <longlong_to_string+0x178>
+  else if((flag & SHOWSIGNFLAG))
+     d38:	e59b3008 	ldr	r3, [fp, #8]
+     d3c:	e2033080 	and	r3, r3, #128	; 0x80
+     d40:	e3530000 	cmp	r3, #0
+     d44:	0a000007 	beq	d68 <longlong_to_string+0x178>
+    buf[--pos] = '+';
+     d48:	e51b3008 	ldr	r3, [fp, #-8]
+     d4c:	e2433001 	sub	r3, r3, #1
+     d50:	e50b3008 	str	r3, [fp, #-8]
+     d54:	e51b3008 	ldr	r3, [fp, #-8]
+     d58:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     d5c:	e0823003 	add	r3, r2, r3
+     d60:	e3a0202b 	mov	r2, #43	; 0x2b
+     d64:	e5c32000 	strb	r2, [r3]
+  return &buf[pos];
+     d68:	e51b3008 	ldr	r3, [fp, #-8]
+     d6c:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     d70:	e0823003 	add	r3, r2, r3
+}
+     d74:	e1a00003 	mov	r0, r3
+     d78:	e24bd004 	sub	sp, fp, #4
+     d7c:	e8bd8800 	pop	{fp, pc}
+
+00000d80 <longlong_to_hexstring>:
+
+
+static char *longlong_to_hexstring(char *buf, unsigned long long u, int len, uint flag)
+{
+     d80:	e92d0830 	push	{r4, r5, fp}
+     d84:	e28db008 	add	fp, sp, #8
+     d88:	e24dd024 	sub	sp, sp, #36	; 0x24
+     d8c:	e50b0020 	str	r0, [fp, #-32]	; 0xffffffe0
+     d90:	e14b22fc 	strd	r2, [fp, #-44]	; 0xffffffd4
+  int pos = len;
+     d94:	e59b3004 	ldr	r3, [fp, #4]
+     d98:	e50b3010 	str	r3, [fp, #-16]
+  static const char hextable[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+  static const char hextable_caps[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+  const char *table;
+  if((flag & CAPSFLAG))
+     d9c:	e59b3008 	ldr	r3, [fp, #8]
+     da0:	e2033040 	and	r3, r3, #64	; 0x40
+     da4:	e3530000 	cmp	r3, #0
+     da8:	0a000003 	beq	dbc <longlong_to_hexstring+0x3c>
+    table = hextable_caps;
+     dac:	e3003000 	movw	r3, #0
+     db0:	e3403000 	movt	r3, #0
+     db4:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+     db8:	ea000002 	b	dc8 <longlong_to_hexstring+0x48>
+  else
+    table = hextable;
+     dbc:	e3003000 	movw	r3, #0
+     dc0:	e3403000 	movt	r3, #0
+     dc4:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+  buf[--pos] = 0;
+     dc8:	e51b3010 	ldr	r3, [fp, #-16]
+     dcc:	e2433001 	sub	r3, r3, #1
+     dd0:	e50b3010 	str	r3, [fp, #-16]
+     dd4:	e51b3010 	ldr	r3, [fp, #-16]
+     dd8:	e51b2020 	ldr	r2, [fp, #-32]	; 0xffffffe0
+     ddc:	e0823003 	add	r3, r2, r3
+     de0:	e3a02000 	mov	r2, #0
+     de4:	e5c32000 	strb	r2, [r3]
+  do {
+    unsigned int digit = u % 16;
+     de8:	e51b302c 	ldr	r3, [fp, #-44]	; 0xffffffd4
+     dec:	e203300f 	and	r3, r3, #15
+     df0:	e50b3018 	str	r3, [fp, #-24]	; 0xffffffe8
+    u /= 16;
+     df4:	e14b22dc 	ldrd	r2, [fp, #-44]	; 0xffffffd4
+     df8:	e1a04222 	lsr	r4, r2, #4
+     dfc:	e1844e03 	orr	r4, r4, r3, lsl #28
+     e00:	e1a05223 	lsr	r5, r3, #4
+     e04:	e14b42fc 	strd	r4, [fp, #-44]	; 0xffffffd4
+  
+    buf[--pos] = table[digit];
+     e08:	e51b3010 	ldr	r3, [fp, #-16]
+     e0c:	e2433001 	sub	r3, r3, #1
+     e10:	e50b3010 	str	r3, [fp, #-16]
+     e14:	e51b3010 	ldr	r3, [fp, #-16]
+     e18:	e51b2020 	ldr	r2, [fp, #-32]	; 0xffffffe0
+     e1c:	e0823003 	add	r3, r2, r3
+     e20:	e51b1014 	ldr	r1, [fp, #-20]	; 0xffffffec
+     e24:	e51b2018 	ldr	r2, [fp, #-24]	; 0xffffffe8
+     e28:	e0812002 	add	r2, r1, r2
+     e2c:	e5d22000 	ldrb	r2, [r2]
+     e30:	e5c32000 	strb	r2, [r3]
+  } while(u != 0);
+     e34:	e14b22dc 	ldrd	r2, [fp, #-44]	; 0xffffffd4
+     e38:	e1923003 	orrs	r3, r2, r3
+     e3c:	1affffe9 	bne	de8 <longlong_to_hexstring+0x68>
+  return &buf[pos];
+     e40:	e51b3010 	ldr	r3, [fp, #-16]
+     e44:	e51b2020 	ldr	r2, [fp, #-32]	; 0xffffffe0
+     e48:	e0823003 	add	r3, r2, r3
+}
+     e4c:	e1a00003 	mov	r0, r3
+     e50:	e24bd008 	sub	sp, fp, #8
+     e54:	e8bd0830 	pop	{r4, r5, fp}
+     e58:	e12fff1e 	bx	lr
+
+00000e5c <vsnprintf>:
+  return vsnprintf(str, INT_MAX, fmt, ap);
+}
+#endif
+
+int vsnprintf(char *str, size_t len, const char *fmt, va_list ap)
+{
+     e5c:	e92d4800 	push	{fp, lr}
+     e60:	e28db004 	add	fp, sp, #4
+     e64:	e24dd068 	sub	sp, sp, #104	; 0x68
+     e68:	e50b0058 	str	r0, [fp, #-88]	; 0xffffffa8
+     e6c:	e50b105c 	str	r1, [fp, #-92]	; 0xffffffa4
+     e70:	e50b2060 	str	r2, [fp, #-96]	; 0xffffffa0
+     e74:	e50b3064 	str	r3, [fp, #-100]	; 0xffffff9c
+  const char *s;
+  unsigned long long n;
+  void *ptr;
+  int flags;
+  unsigned int format_num;
+  size_t chars_written = 0;
+     e78:	e3a03000 	mov	r3, #0
+     e7c:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+  char num_buffer[32];
+#define OUTPUT_CHAR(c) do { (*str++ = c); chars_written++; if (chars_written + 1 == len) goto done; } while(0)
+#define OUTPUT_CHAR_NOLENCHECK(c) do { (*str++ = c); chars_written++; } while(0)
+  for(;;) { 
+    /* handle regular chars that aren't format related */
+    while((c = *fmt++) != 0) {
+     e80:	ea00000f 	b	ec4 <vsnprintf+0x68>
+      if(c == '%')
+     e84:	e55b3019 	ldrb	r3, [fp, #-25]	; 0xffffffe7
+     e88:	e3530025 	cmp	r3, #37	; 0x25
+     e8c:	0a000015 	beq	ee8 <vsnprintf+0x8c>
+        break; /* we saw a '%', break and start parsing format */
+      OUTPUT_CHAR(c);
+     e90:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+     e94:	e2832001 	add	r2, r3, #1
+     e98:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+     e9c:	e55b2019 	ldrb	r2, [fp, #-25]	; 0xffffffe7
+     ea0:	e5c32000 	strb	r2, [r3]
+     ea4:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+     ea8:	e2833001 	add	r3, r3, #1
+     eac:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+     eb0:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+     eb4:	e2832001 	add	r2, r3, #1
+     eb8:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+     ebc:	e1520003 	cmp	r2, r3
+     ec0:	0a0002bb 	beq	19b4 <vsnprintf+0xb58>
+  char num_buffer[32];
+#define OUTPUT_CHAR(c) do { (*str++ = c); chars_written++; if (chars_written + 1 == len) goto done; } while(0)
+#define OUTPUT_CHAR_NOLENCHECK(c) do { (*str++ = c); chars_written++; } while(0)
+  for(;;) { 
+    /* handle regular chars that aren't format related */
+    while((c = *fmt++) != 0) {
+     ec4:	e51b3060 	ldr	r3, [fp, #-96]	; 0xffffffa0
+     ec8:	e2832001 	add	r2, r3, #1
+     ecc:	e50b2060 	str	r2, [fp, #-96]	; 0xffffffa0
+     ed0:	e5d33000 	ldrb	r3, [r3]
+     ed4:	e54b3019 	strb	r3, [fp, #-25]	; 0xffffffe7
+     ed8:	e55b3019 	ldrb	r3, [fp, #-25]	; 0xffffffe7
+     edc:	e3530000 	cmp	r3, #0
+     ee0:	1affffe7 	bne	e84 <vsnprintf+0x28>
+     ee4:	ea000000 	b	eec <vsnprintf+0x90>
+      if(c == '%')
+        break; /* we saw a '%', break and start parsing format */
+     ee8:	e1a00000 	nop			; (mov r0, r0)
+      OUTPUT_CHAR(c);
+    }
+    /* make sure we haven't just hit the end of the string */
+    if(c == 0)
+     eec:	e55b3019 	ldrb	r3, [fp, #-25]	; 0xffffffe7
+     ef0:	e3530000 	cmp	r3, #0
+     ef4:	0a0002b0 	beq	19bc <vsnprintf+0xb60>
+      break;
+    /* reset the format state */
+    flags = 0;
+     ef8:	e3a03000 	mov	r3, #0
+     efc:	e50b300c 	str	r3, [fp, #-12]
+    format_num = 0;
+     f00:	e3a03000 	mov	r3, #0
+     f04:	e50b3010 	str	r3, [fp, #-16]
+next_format:
+    /* grab the next format character */
+    c = *fmt++;
+     f08:	e51b3060 	ldr	r3, [fp, #-96]	; 0xffffffa0
+     f0c:	e2832001 	add	r2, r3, #1
+     f10:	e50b2060 	str	r2, [fp, #-96]	; 0xffffffa0
+     f14:	e5d33000 	ldrb	r3, [r3]
+     f18:	e54b3019 	strb	r3, [fp, #-25]	; 0xffffffe7
+    if(c == 0)
+     f1c:	e55b3019 	ldrb	r3, [fp, #-25]	; 0xffffffe7
+     f20:	e3530000 	cmp	r3, #0
+     f24:	0a0002a6 	beq	19c4 <vsnprintf+0xb68>
+      break;
+          
+    switch(c) {
+     f28:	e55b3019 	ldrb	r3, [fp, #-25]	; 0xffffffe7
+     f2c:	e2433023 	sub	r3, r3, #35	; 0x23
+     f30:	e3530057 	cmp	r3, #87	; 0x57
+     f34:	979ff103 	ldrls	pc, [pc, r3, lsl #2]
+     f38:	ea000210 	b	1780 <vsnprintf+0x924>
+     f3c:	000011bc 	.word	0x000011bc
+     f40:	00001780 	.word	0x00001780
+     f44:	000010e8 	.word	0x000010e8
+     f48:	00001780 	.word	0x00001780
+     f4c:	00001780 	.word	0x00001780
+     f50:	00001780 	.word	0x00001780
+     f54:	00001780 	.word	0x00001780
+     f58:	00001780 	.word	0x00001780
+     f5c:	000011ac 	.word	0x000011ac
+     f60:	00001780 	.word	0x00001780
+     f64:	0000119c 	.word	0x0000119c
+     f68:	00000f08 	.word	0x00000f08
+     f6c:	00001780 	.word	0x00001780
+     f70:	0000109c 	.word	0x0000109c
+     f74:	0000109c 	.word	0x0000109c
+     f78:	0000109c 	.word	0x0000109c
+     f7c:	0000109c 	.word	0x0000109c
+     f80:	0000109c 	.word	0x0000109c
+     f84:	0000109c 	.word	0x0000109c
+     f88:	0000109c 	.word	0x0000109c
+     f8c:	0000109c 	.word	0x0000109c
+     f90:	0000109c 	.word	0x0000109c
+     f94:	0000109c 	.word	0x0000109c
+     f98:	00001780 	.word	0x00001780
+     f9c:	00001780 	.word	0x00001780
+     fa0:	00001780 	.word	0x00001780
+     fa4:	00001780 	.word	0x00001780
+     fa8:	00001780 	.word	0x00001780
+     fac:	00001780 	.word	0x00001780
+     fb0:	00001780 	.word	0x00001780
+     fb4:	00001780 	.word	0x00001780
+     fb8:	00001780 	.word	0x00001780
+     fbc:	00001780 	.word	0x00001780
+     fc0:	00001234 	.word	0x00001234
+     fc4:	00001780 	.word	0x00001780
+     fc8:	00001780 	.word	0x00001780
+     fcc:	00001780 	.word	0x00001780
+     fd0:	00001780 	.word	0x00001780
+     fd4:	00001780 	.word	0x00001780
+     fd8:	00001780 	.word	0x00001780
+     fdc:	00001780 	.word	0x00001780
+     fe0:	00001780 	.word	0x00001780
+     fe4:	00001780 	.word	0x00001780
+     fe8:	00001780 	.word	0x00001780
+     fec:	00001780 	.word	0x00001780
+     ff0:	00001780 	.word	0x00001780
+     ff4:	00001780 	.word	0x00001780
+     ff8:	00001780 	.word	0x00001780
+     ffc:	00001780 	.word	0x00001780
+    1000:	00001780 	.word	0x00001780
+    1004:	00001374 	.word	0x00001374
+    1008:	00001780 	.word	0x00001780
+    100c:	00001780 	.word	0x00001780
+    1010:	000014d0 	.word	0x000014d0
+    1014:	00001780 	.word	0x00001780
+    1018:	00001780 	.word	0x00001780
+    101c:	00001780 	.word	0x00001780
+    1020:	00001780 	.word	0x00001780
+    1024:	00001780 	.word	0x00001780
+    1028:	00001780 	.word	0x00001780
+    102c:	00001780 	.word	0x00001780
+    1030:	00001780 	.word	0x00001780
+    1034:	00001780 	.word	0x00001780
+    1038:	00001780 	.word	0x00001780
+    103c:	00001120 	.word	0x00001120
+    1040:	00001240 	.word	0x00001240
+    1044:	00001780 	.word	0x00001780
+    1048:	00001780 	.word	0x00001780
+    104c:	00001780 	.word	0x00001780
+    1050:	000011f8 	.word	0x000011f8
+    1054:	00001240 	.word	0x00001240
+    1058:	00001780 	.word	0x00001780
+    105c:	00001780 	.word	0x00001780
+    1060:	000011cc 	.word	0x000011cc
+    1064:	00001780 	.word	0x00001780
+    1068:	000016ac 	.word	0x000016ac
+    106c:	00001780 	.word	0x00001780
+    1070:	000014c0 	.word	0x000014c0
+    1074:	00001780 	.word	0x00001780
+    1078:	00001780 	.word	0x00001780
+    107c:	0000116c 	.word	0x0000116c
+    1080:	00001780 	.word	0x00001780
+    1084:	00001380 	.word	0x00001380
+    1088:	00001780 	.word	0x00001780
+    108c:	00001780 	.word	0x00001780
+    1090:	000014dc 	.word	0x000014dc
+    1094:	00001780 	.word	0x00001780
+    1098:	00001224 	.word	0x00001224
+      case '0'...'9':
+        if (c == '0' && format_num == 0)
+    109c:	e55b3019 	ldrb	r3, [fp, #-25]	; 0xffffffe7
+    10a0:	e3530030 	cmp	r3, #48	; 0x30
+    10a4:	1a000005 	bne	10c0 <vsnprintf+0x264>
+    10a8:	e51b3010 	ldr	r3, [fp, #-16]
+    10ac:	e3530000 	cmp	r3, #0
+    10b0:	1a000002 	bne	10c0 <vsnprintf+0x264>
+          flags |= LEADZEROFLAG;
+    10b4:	e51b300c 	ldr	r3, [fp, #-12]
+    10b8:	e3833b01 	orr	r3, r3, #1024	; 0x400
+    10bc:	e50b300c 	str	r3, [fp, #-12]
+        format_num *= 10;
+    10c0:	e51b3010 	ldr	r3, [fp, #-16]
+    10c4:	e3a0200a 	mov	r2, #10
+    10c8:	e0030392 	mul	r3, r2, r3
+    10cc:	e50b3010 	str	r3, [fp, #-16]
+        format_num += c - '0';
+    10d0:	e55b2019 	ldrb	r2, [fp, #-25]	; 0xffffffe7
+    10d4:	e51b3010 	ldr	r3, [fp, #-16]
+    10d8:	e0823003 	add	r3, r2, r3
+    10dc:	e2433030 	sub	r3, r3, #48	; 0x30
+    10e0:	e50b3010 	str	r3, [fp, #-16]
+        goto next_format;
+    10e4:	eaffff87 	b	f08 <vsnprintf+0xac>
+      case '.':
+        /* XXX for now eat numeric formatting */
+        goto next_format;
+      case '%':
+        OUTPUT_CHAR('%');
+    10e8:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    10ec:	e2832001 	add	r2, r3, #1
+    10f0:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    10f4:	e3a02025 	mov	r2, #37	; 0x25
+    10f8:	e5c32000 	strb	r2, [r3]
+    10fc:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1100:	e2833001 	add	r3, r3, #1
+    1104:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1108:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    110c:	e2832001 	add	r2, r3, #1
+    1110:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    1114:	e1520003 	cmp	r2, r3
+    1118:	1a0001b3 	bne	17ec <vsnprintf+0x990>
+    111c:	ea000237 	b	1a00 <vsnprintf+0xba4>
+        break;
+      case 'c':
+        uc = va_arg(ap, unsigned int);
+    1120:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1124:	e2832004 	add	r2, r3, #4
+    1128:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    112c:	e5933000 	ldr	r3, [r3]
+    1130:	e54b301a 	strb	r3, [fp, #-26]	; 0xffffffe6
+        OUTPUT_CHAR(uc);
+    1134:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1138:	e2832001 	add	r2, r3, #1
+    113c:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1140:	e55b201a 	ldrb	r2, [fp, #-26]	; 0xffffffe6
+    1144:	e5c32000 	strb	r2, [r3]
+    1148:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    114c:	e2833001 	add	r3, r3, #1
+    1150:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1154:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1158:	e2832001 	add	r2, r3, #1
+    115c:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    1160:	e1520003 	cmp	r2, r3
+    1164:	1a0001a2 	bne	17f4 <vsnprintf+0x998>
+    1168:	ea000224 	b	1a00 <vsnprintf+0xba4>
+        break;
+      case 's':
+        s = va_arg(ap, const char *);
+    116c:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1170:	e2832004 	add	r2, r3, #4
+    1174:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1178:	e5933000 	ldr	r3, [r3]
+    117c:	e50b3008 	str	r3, [fp, #-8]
+        if(s == 0)
+    1180:	e51b3008 	ldr	r3, [fp, #-8]
+    1184:	e3530000 	cmp	r3, #0
+    1188:	1a00019b 	bne	17fc <vsnprintf+0x9a0>
+          s = "<null>";
+    118c:	e3003000 	movw	r3, #0
+    1190:	e3403000 	movt	r3, #0
+    1194:	e50b3008 	str	r3, [fp, #-8]
+        goto _output_string;
+    1198:	ea000197 	b	17fc <vsnprintf+0x9a0>
+      case '-':
+        flags |= LEFTFORMATFLAG;
+    119c:	e51b300c 	ldr	r3, [fp, #-12]
+    11a0:	e3833c02 	orr	r3, r3, #512	; 0x200
+    11a4:	e50b300c 	str	r3, [fp, #-12]
+        goto next_format;
+    11a8:	eaffff56 	b	f08 <vsnprintf+0xac>
+      case '+':
+        flags |= SHOWSIGNFLAG;
+    11ac:	e51b300c 	ldr	r3, [fp, #-12]
+    11b0:	e3833080 	orr	r3, r3, #128	; 0x80
+    11b4:	e50b300c 	str	r3, [fp, #-12]
+        goto next_format;
+    11b8:	eaffff52 	b	f08 <vsnprintf+0xac>
+      case '#':
+        flags |= ALTFLAG;
+    11bc:	e51b300c 	ldr	r3, [fp, #-12]
+    11c0:	e3833020 	orr	r3, r3, #32
+    11c4:	e50b300c 	str	r3, [fp, #-12]
+        goto next_format;
+    11c8:	eaffff4e 	b	f08 <vsnprintf+0xac>
+      case 'l':
+        if(flags & LONGFLAG)
+    11cc:	e51b300c 	ldr	r3, [fp, #-12]
+    11d0:	e2033001 	and	r3, r3, #1
+    11d4:	e3530000 	cmp	r3, #0
+    11d8:	0a000002 	beq	11e8 <vsnprintf+0x38c>
+          flags |= LONGLONGFLAG;
+    11dc:	e51b300c 	ldr	r3, [fp, #-12]
+    11e0:	e3833002 	orr	r3, r3, #2
+    11e4:	e50b300c 	str	r3, [fp, #-12]
+        flags |= LONGFLAG;
+    11e8:	e51b300c 	ldr	r3, [fp, #-12]
+    11ec:	e3833001 	orr	r3, r3, #1
+    11f0:	e50b300c 	str	r3, [fp, #-12]
+        goto next_format;
+    11f4:	eaffff43 	b	f08 <vsnprintf+0xac>
+      case 'h':
+        if(flags & HALFFLAG)
+    11f8:	e51b300c 	ldr	r3, [fp, #-12]
+    11fc:	e2033004 	and	r3, r3, #4
+    1200:	e3530000 	cmp	r3, #0
+    1204:	0a000002 	beq	1214 <vsnprintf+0x3b8>
+          flags |= HALFHALFFLAG;
+    1208:	e51b300c 	ldr	r3, [fp, #-12]
+    120c:	e3833008 	orr	r3, r3, #8
+    1210:	e50b300c 	str	r3, [fp, #-12]
+        flags |= HALFFLAG;
+    1214:	e51b300c 	ldr	r3, [fp, #-12]
+    1218:	e3833004 	orr	r3, r3, #4
+    121c:	e50b300c 	str	r3, [fp, #-12]
+        goto next_format;
+    1220:	eaffff38 	b	f08 <vsnprintf+0xac>
+        case 'z':
+        flags |= SIZETFLAG;
+    1224:	e51b300c 	ldr	r3, [fp, #-12]
+    1228:	e3833010 	orr	r3, r3, #16
+    122c:	e50b300c 	str	r3, [fp, #-12]
+        goto next_format;
+    1230:	eaffff34 	b	f08 <vsnprintf+0xac>
+      case 'D':
+        flags |= LONGFLAG;
+    1234:	e51b300c 	ldr	r3, [fp, #-12]
+    1238:	e3833001 	orr	r3, r3, #1
+    123c:	e50b300c 	str	r3, [fp, #-12]
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    1240:	e51b300c 	ldr	r3, [fp, #-12]
+    1244:	e2033002 	and	r3, r3, #2
+    1248:	e3530000 	cmp	r3, #0
+    124c:	0a000006 	beq	126c <vsnprintf+0x410>
+    1250:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1254:	e2833007 	add	r3, r3, #7
+    1258:	e3c33007 	bic	r3, r3, #7
+    125c:	e2832008 	add	r2, r3, #8
+    1260:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1264:	e1c320d0 	ldrd	r2, [r3]
+    1268:	ea000033 	b	133c <vsnprintf+0x4e0>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+    126c:	e51b300c 	ldr	r3, [fp, #-12]
+    1270:	e2033001 	and	r3, r3, #1
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    1274:	e3530000 	cmp	r3, #0
+    1278:	0a000006 	beq	1298 <vsnprintf+0x43c>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+    127c:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1280:	e2832004 	add	r2, r3, #4
+    1284:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1288:	e5933000 	ldr	r3, [r3]
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    128c:	e1a02003 	mov	r2, r3
+    1290:	e1a03fc2 	asr	r3, r2, #31
+    1294:	ea000028 	b	133c <vsnprintf+0x4e0>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+    1298:	e51b300c 	ldr	r3, [fp, #-12]
+    129c:	e2033008 	and	r3, r3, #8
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    12a0:	e3530000 	cmp	r3, #0
+    12a4:	0a000007 	beq	12c8 <vsnprintf+0x46c>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+    12a8:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    12ac:	e2832004 	add	r2, r3, #4
+    12b0:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    12b4:	e5933000 	ldr	r3, [r3]
+    12b8:	e6ef3073 	uxtb	r3, r3
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    12bc:	e6af2073 	sxtb	r2, r3
+    12c0:	e1a03fc2 	asr	r3, r2, #31
+    12c4:	ea00001c 	b	133c <vsnprintf+0x4e0>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+          (flags & HALFFLAG) ? (short)va_arg(ap, int) :
+    12c8:	e51b300c 	ldr	r3, [fp, #-12]
+    12cc:	e2033004 	and	r3, r3, #4
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    12d0:	e3530000 	cmp	r3, #0
+    12d4:	0a000007 	beq	12f8 <vsnprintf+0x49c>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+          (flags & HALFFLAG) ? (short)va_arg(ap, int) :
+    12d8:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    12dc:	e2832004 	add	r2, r3, #4
+    12e0:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    12e4:	e5933000 	ldr	r3, [r3]
+    12e8:	e6ff3073 	uxth	r3, r3
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    12ec:	e6bf2073 	sxth	r2, r3
+    12f0:	e1a03fc2 	asr	r3, r2, #31
+    12f4:	ea000010 	b	133c <vsnprintf+0x4e0>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+          (flags & HALFFLAG) ? (short)va_arg(ap, int) :
+          (flags & SIZETFLAG) ? va_arg(ap, ssize_t) :
+    12f8:	e51b300c 	ldr	r3, [fp, #-12]
+    12fc:	e2033010 	and	r3, r3, #16
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    1300:	e3530000 	cmp	r3, #0
+    1304:	0a000006 	beq	1324 <vsnprintf+0x4c8>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+          (flags & HALFFLAG) ? (short)va_arg(ap, int) :
+          (flags & SIZETFLAG) ? va_arg(ap, ssize_t) :
+    1308:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    130c:	e2832004 	add	r2, r3, #4
+    1310:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1314:	e5933000 	ldr	r3, [r3]
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    1318:	e1a02003 	mov	r2, r3
+    131c:	e1a03fc2 	asr	r3, r2, #31
+    1320:	ea000005 	b	133c <vsnprintf+0x4e0>
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+          (flags & HALFFLAG) ? (short)va_arg(ap, int) :
+          (flags & SIZETFLAG) ? va_arg(ap, ssize_t) :
+          va_arg(ap, int);
+    1324:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1328:	e2832004 	add	r2, r3, #4
+    132c:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1330:	e5933000 	ldr	r3, [r3]
+      case 'D':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'i':
+      case 'd':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, long long) :
+    1334:	e1a02003 	mov	r2, r3
+    1338:	e1a03fc2 	asr	r3, r2, #31
+    133c:	e14b22fc 	strd	r2, [fp, #-44]	; 0xffffffd4
+          (flags & LONGFLAG) ? va_arg(ap, long) : 
+          (flags & HALFHALFFLAG) ? (signed char)va_arg(ap, int) :
+          (flags & HALFFLAG) ? (short)va_arg(ap, int) :
+          (flags & SIZETFLAG) ? va_arg(ap, ssize_t) :
+          va_arg(ap, int);
+        flags |= SIGNEDFLAG;
+    1340:	e51b300c 	ldr	r3, [fp, #-12]
+    1344:	e3833c01 	orr	r3, r3, #256	; 0x100
+    1348:	e50b300c 	str	r3, [fp, #-12]
+        s = longlong_to_string(num_buffer, n, sizeof(num_buffer), flags);
+    134c:	e51b300c 	ldr	r3, [fp, #-12]
+    1350:	e24b1054 	sub	r1, fp, #84	; 0x54
+    1354:	e58d3004 	str	r3, [sp, #4]
+    1358:	e3a03020 	mov	r3, #32
+    135c:	e58d3000 	str	r3, [sp]
+    1360:	e14b22dc 	ldrd	r2, [fp, #-44]	; 0xffffffd4
+    1364:	e1a00001 	mov	r0, r1
+    1368:	ebfffe20 	bl	bf0 <longlong_to_string>
+    136c:	e50b0008 	str	r0, [fp, #-8]
+        goto _output_string;
+    1370:	ea000124 	b	1808 <vsnprintf+0x9ac>
+      case 'U':
+        flags |= LONGFLAG;
+    1374:	e51b300c 	ldr	r3, [fp, #-12]
+    1378:	e3833001 	orr	r3, r3, #1
+    137c:	e50b300c 	str	r3, [fp, #-12]
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1380:	e51b300c 	ldr	r3, [fp, #-12]
+    1384:	e2033002 	and	r3, r3, #2
+    1388:	e3530000 	cmp	r3, #0
+    138c:	0a000006 	beq	13ac <vsnprintf+0x550>
+    1390:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1394:	e2833007 	add	r3, r3, #7
+    1398:	e3c33007 	bic	r3, r3, #7
+    139c:	e2832008 	add	r2, r3, #8
+    13a0:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    13a4:	e1c320d0 	ldrd	r2, [r3]
+    13a8:	ea000039 	b	1494 <vsnprintf+0x638>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+    13ac:	e51b300c 	ldr	r3, [fp, #-12]
+    13b0:	e2033001 	and	r3, r3, #1
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    13b4:	e3530000 	cmp	r3, #0
+    13b8:	0a000006 	beq	13d8 <vsnprintf+0x57c>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+    13bc:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    13c0:	e2832004 	add	r2, r3, #4
+    13c4:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    13c8:	e5933000 	ldr	r3, [r3]
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    13cc:	e1a02003 	mov	r2, r3
+    13d0:	e3a03000 	mov	r3, #0
+    13d4:	ea00002e 	b	1494 <vsnprintf+0x638>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+    13d8:	e51b300c 	ldr	r3, [fp, #-12]
+    13dc:	e2033008 	and	r3, r3, #8
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    13e0:	e3530000 	cmp	r3, #0
+    13e4:	0a00000a 	beq	1414 <vsnprintf+0x5b8>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+    13e8:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    13ec:	e2832004 	add	r2, r3, #4
+    13f0:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    13f4:	e5933000 	ldr	r3, [r3]
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    13f8:	e1a02003 	mov	r2, r3
+    13fc:	e3a03000 	mov	r3, #0
+    1400:	e3a000ff 	mov	r0, #255	; 0xff
+    1404:	e3a01000 	mov	r1, #0
+    1408:	e0022000 	and	r2, r2, r0
+    140c:	e0033001 	and	r3, r3, r1
+    1410:	ea00001f 	b	1494 <vsnprintf+0x638>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+    1414:	e51b300c 	ldr	r3, [fp, #-12]
+    1418:	e2033004 	and	r3, r3, #4
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    141c:	e3530000 	cmp	r3, #0
+    1420:	0a00000a 	beq	1450 <vsnprintf+0x5f4>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+    1424:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1428:	e2832004 	add	r2, r3, #4
+    142c:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1430:	e5933000 	ldr	r3, [r3]
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1434:	e1a02003 	mov	r2, r3
+    1438:	e3a03000 	mov	r3, #0
+    143c:	e30f0fff 	movw	r0, #65535	; 0xffff
+    1440:	e3a01000 	mov	r1, #0
+    1444:	e0022000 	and	r2, r2, r0
+    1448:	e0033001 	and	r3, r3, r1
+    144c:	ea000010 	b	1494 <vsnprintf+0x638>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+    1450:	e51b300c 	ldr	r3, [fp, #-12]
+    1454:	e2033010 	and	r3, r3, #16
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1458:	e3530000 	cmp	r3, #0
+    145c:	0a000006 	beq	147c <vsnprintf+0x620>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+    1460:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1464:	e2832004 	add	r2, r3, #4
+    1468:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    146c:	e5933000 	ldr	r3, [r3]
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1470:	e1a02003 	mov	r2, r3
+    1474:	e3a03000 	mov	r3, #0
+    1478:	ea000005 	b	1494 <vsnprintf+0x638>
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+          va_arg(ap, unsigned int);
+    147c:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1480:	e2832004 	add	r2, r3, #4
+    1484:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1488:	e5933000 	ldr	r3, [r3]
+        goto _output_string;
+      case 'U':
+        flags |= LONGFLAG;
+        /* fallthrough */
+      case 'u':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    148c:	e1a02003 	mov	r2, r3
+    1490:	e3a03000 	mov	r3, #0
+    1494:	e14b22fc 	strd	r2, [fp, #-44]	; 0xffffffd4
+          (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+          va_arg(ap, unsigned int);
+        s = longlong_to_string(num_buffer, n, sizeof(num_buffer), flags);
+    1498:	e51b300c 	ldr	r3, [fp, #-12]
+    149c:	e24b1054 	sub	r1, fp, #84	; 0x54
+    14a0:	e58d3004 	str	r3, [sp, #4]
+    14a4:	e3a03020 	mov	r3, #32
+    14a8:	e58d3000 	str	r3, [sp]
+    14ac:	e14b22dc 	ldrd	r2, [fp, #-44]	; 0xffffffd4
+    14b0:	e1a00001 	mov	r0, r1
+    14b4:	ebfffdcd 	bl	bf0 <longlong_to_string>
+    14b8:	e50b0008 	str	r0, [fp, #-8]
+        goto _output_string;
+    14bc:	ea0000d1 	b	1808 <vsnprintf+0x9ac>
+      case 'p':
+        flags |= LONGFLAG | ALTFLAG;
+    14c0:	e51b300c 	ldr	r3, [fp, #-12]
+    14c4:	e3833021 	orr	r3, r3, #33	; 0x21
+    14c8:	e50b300c 	str	r3, [fp, #-12]
+        goto hex;
+    14cc:	ea000002 	b	14dc <vsnprintf+0x680>
+      case 'X':
+        flags |= CAPSFLAG;
+    14d0:	e51b300c 	ldr	r3, [fp, #-12]
+    14d4:	e3833040 	orr	r3, r3, #64	; 0x40
+    14d8:	e50b300c 	str	r3, [fp, #-12]
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    14dc:	e51b300c 	ldr	r3, [fp, #-12]
+    14e0:	e2033002 	and	r3, r3, #2
+    14e4:	e3530000 	cmp	r3, #0
+    14e8:	0a000006 	beq	1508 <vsnprintf+0x6ac>
+    14ec:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    14f0:	e2833007 	add	r3, r3, #7
+    14f4:	e3c33007 	bic	r3, r3, #7
+    14f8:	e2832008 	add	r2, r3, #8
+    14fc:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1500:	e1c320d0 	ldrd	r2, [r3]
+    1504:	ea000039 	b	15f0 <vsnprintf+0x794>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+    1508:	e51b300c 	ldr	r3, [fp, #-12]
+    150c:	e2033001 	and	r3, r3, #1
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1510:	e3530000 	cmp	r3, #0
+    1514:	0a000006 	beq	1534 <vsnprintf+0x6d8>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+    1518:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    151c:	e2832004 	add	r2, r3, #4
+    1520:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1524:	e5933000 	ldr	r3, [r3]
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1528:	e1a02003 	mov	r2, r3
+    152c:	e3a03000 	mov	r3, #0
+    1530:	ea00002e 	b	15f0 <vsnprintf+0x794>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+    1534:	e51b300c 	ldr	r3, [fp, #-12]
+    1538:	e2033008 	and	r3, r3, #8
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    153c:	e3530000 	cmp	r3, #0
+    1540:	0a00000a 	beq	1570 <vsnprintf+0x714>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+    1544:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1548:	e2832004 	add	r2, r3, #4
+    154c:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    1550:	e5933000 	ldr	r3, [r3]
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1554:	e1a02003 	mov	r2, r3
+    1558:	e3a03000 	mov	r3, #0
+    155c:	e3a000ff 	mov	r0, #255	; 0xff
+    1560:	e3a01000 	mov	r1, #0
+    1564:	e0022000 	and	r2, r2, r0
+    1568:	e0033001 	and	r3, r3, r1
+    156c:	ea00001f 	b	15f0 <vsnprintf+0x794>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+    1570:	e51b300c 	ldr	r3, [fp, #-12]
+    1574:	e2033004 	and	r3, r3, #4
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1578:	e3530000 	cmp	r3, #0
+    157c:	0a00000a 	beq	15ac <vsnprintf+0x750>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+    1580:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    1584:	e2832004 	add	r2, r3, #4
+    1588:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    158c:	e5933000 	ldr	r3, [r3]
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    1590:	e1a02003 	mov	r2, r3
+    1594:	e3a03000 	mov	r3, #0
+    1598:	e30f0fff 	movw	r0, #65535	; 0xffff
+    159c:	e3a01000 	mov	r1, #0
+    15a0:	e0022000 	and	r2, r2, r0
+    15a4:	e0033001 	and	r3, r3, r1
+    15a8:	ea000010 	b	15f0 <vsnprintf+0x794>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+    15ac:	e51b300c 	ldr	r3, [fp, #-12]
+    15b0:	e2033010 	and	r3, r3, #16
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    15b4:	e3530000 	cmp	r3, #0
+    15b8:	0a000006 	beq	15d8 <vsnprintf+0x77c>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+    15bc:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    15c0:	e2832004 	add	r2, r3, #4
+    15c4:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    15c8:	e5933000 	ldr	r3, [r3]
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    15cc:	e1a02003 	mov	r2, r3
+    15d0:	e3a03000 	mov	r3, #0
+    15d4:	ea000005 	b	15f0 <vsnprintf+0x794>
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+          va_arg(ap, unsigned int);
+    15d8:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    15dc:	e2832004 	add	r2, r3, #4
+    15e0:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    15e4:	e5933000 	ldr	r3, [r3]
+      case 'X':
+        flags |= CAPSFLAG;
+        /* fallthrough */
+hex:
+      case 'x':
+        n = (flags & LONGLONGFLAG) ? va_arg(ap, unsigned long long) :
+    15e8:	e1a02003 	mov	r2, r3
+    15ec:	e3a03000 	mov	r3, #0
+    15f0:	e14b22fc 	strd	r2, [fp, #-44]	; 0xffffffd4
+            (flags & LONGFLAG) ? va_arg(ap, unsigned long) : 
+          (flags & HALFHALFFLAG) ? (unsigned char)va_arg(ap, unsigned int) :
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+          va_arg(ap, unsigned int);
+        s = longlong_to_hexstring(num_buffer, n, sizeof(num_buffer), flags);
+    15f4:	e51b300c 	ldr	r3, [fp, #-12]
+    15f8:	e24b1054 	sub	r1, fp, #84	; 0x54
+    15fc:	e58d3004 	str	r3, [sp, #4]
+    1600:	e3a03020 	mov	r3, #32
+    1604:	e58d3000 	str	r3, [sp]
+    1608:	e14b22dc 	ldrd	r2, [fp, #-44]	; 0xffffffd4
+    160c:	e1a00001 	mov	r0, r1
+    1610:	ebfffdda 	bl	d80 <longlong_to_hexstring>
+    1614:	e50b0008 	str	r0, [fp, #-8]
+        if(flags & ALTFLAG) {
+    1618:	e51b300c 	ldr	r3, [fp, #-12]
+    161c:	e2033020 	and	r3, r3, #32
+    1620:	e3530000 	cmp	r3, #0
+    1624:	0a000076 	beq	1804 <vsnprintf+0x9a8>
+          OUTPUT_CHAR('0');
+    1628:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    162c:	e2832001 	add	r2, r3, #1
+    1630:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1634:	e3a02030 	mov	r2, #48	; 0x30
+    1638:	e5c32000 	strb	r2, [r3]
+    163c:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1640:	e2833001 	add	r3, r3, #1
+    1644:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1648:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    164c:	e2832001 	add	r2, r3, #1
+    1650:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    1654:	e1520003 	cmp	r2, r3
+    1658:	0a0000db 	beq	19cc <vsnprintf+0xb70>
+          OUTPUT_CHAR((flags & CAPSFLAG) ? 'X': 'x');
+    165c:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1660:	e2832001 	add	r2, r3, #1
+    1664:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1668:	e51b200c 	ldr	r2, [fp, #-12]
+    166c:	e2022040 	and	r2, r2, #64	; 0x40
+    1670:	e3520000 	cmp	r2, #0
+    1674:	0a000001 	beq	1680 <vsnprintf+0x824>
+    1678:	e3a02058 	mov	r2, #88	; 0x58
+    167c:	ea000000 	b	1684 <vsnprintf+0x828>
+    1680:	e3a02078 	mov	r2, #120	; 0x78
+    1684:	e5c32000 	strb	r2, [r3]
+    1688:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    168c:	e2833001 	add	r3, r3, #1
+    1690:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1694:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1698:	e2832001 	add	r2, r3, #1
+    169c:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    16a0:	e1520003 	cmp	r2, r3
+    16a4:	1a000056 	bne	1804 <vsnprintf+0x9a8>
+    16a8:	ea0000d4 	b	1a00 <vsnprintf+0xba4>
+        }
+        goto _output_string;
+      case 'n':
+        ptr = va_arg(ap, void *);
+    16ac:	e51b3064 	ldr	r3, [fp, #-100]	; 0xffffff9c
+    16b0:	e2832004 	add	r2, r3, #4
+    16b4:	e50b2064 	str	r2, [fp, #-100]	; 0xffffff9c
+    16b8:	e5933000 	ldr	r3, [r3]
+    16bc:	e50b3020 	str	r3, [fp, #-32]	; 0xffffffe0
+        if(flags & LONGLONGFLAG)
+    16c0:	e51b300c 	ldr	r3, [fp, #-12]
+    16c4:	e2033002 	and	r3, r3, #2
+    16c8:	e3530000 	cmp	r3, #0
+    16cc:	0a000005 	beq	16e8 <vsnprintf+0x88c>
+          *(long long *)ptr = chars_written;
+    16d0:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    16d4:	e1a02003 	mov	r2, r3
+    16d8:	e3a03000 	mov	r3, #0
+    16dc:	e51b1020 	ldr	r1, [fp, #-32]	; 0xffffffe0
+    16e0:	e1c120f0 	strd	r2, [r1]
+          *(short *)ptr = chars_written;
+        else if(flags & SIZETFLAG)
+          *(size_t *)ptr = chars_written;
+        else 
+          *(int *)ptr = chars_written;
+        break;
+    16e4:	ea000043 	b	17f8 <vsnprintf+0x99c>
+        goto _output_string;
+      case 'n':
+        ptr = va_arg(ap, void *);
+        if(flags & LONGLONGFLAG)
+          *(long long *)ptr = chars_written;
+        else if(flags & LONGFLAG)
+    16e8:	e51b300c 	ldr	r3, [fp, #-12]
+    16ec:	e2033001 	and	r3, r3, #1
+    16f0:	e3530000 	cmp	r3, #0
+    16f4:	0a000003 	beq	1708 <vsnprintf+0x8ac>
+          *(long *)ptr = chars_written;
+    16f8:	e51b2014 	ldr	r2, [fp, #-20]	; 0xffffffec
+    16fc:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+    1700:	e5832000 	str	r2, [r3]
+          *(short *)ptr = chars_written;
+        else if(flags & SIZETFLAG)
+          *(size_t *)ptr = chars_written;
+        else 
+          *(int *)ptr = chars_written;
+        break;
+    1704:	ea00003b 	b	17f8 <vsnprintf+0x99c>
+        ptr = va_arg(ap, void *);
+        if(flags & LONGLONGFLAG)
+          *(long long *)ptr = chars_written;
+        else if(flags & LONGFLAG)
+          *(long *)ptr = chars_written;
+        else if(flags & HALFHALFFLAG)
+    1708:	e51b300c 	ldr	r3, [fp, #-12]
+    170c:	e2033008 	and	r3, r3, #8
+    1710:	e3530000 	cmp	r3, #0
+    1714:	0a000004 	beq	172c <vsnprintf+0x8d0>
+          *(signed char *)ptr = chars_written;
+    1718:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    171c:	e6ef2073 	uxtb	r2, r3
+    1720:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+    1724:	e5c32000 	strb	r2, [r3]
+          *(short *)ptr = chars_written;
+        else if(flags & SIZETFLAG)
+          *(size_t *)ptr = chars_written;
+        else 
+          *(int *)ptr = chars_written;
+        break;
+    1728:	ea000032 	b	17f8 <vsnprintf+0x99c>
+          *(long long *)ptr = chars_written;
+        else if(flags & LONGFLAG)
+          *(long *)ptr = chars_written;
+        else if(flags & HALFHALFFLAG)
+          *(signed char *)ptr = chars_written;
+        else if(flags & HALFFLAG)
+    172c:	e51b300c 	ldr	r3, [fp, #-12]
+    1730:	e2033004 	and	r3, r3, #4
+    1734:	e3530000 	cmp	r3, #0
+    1738:	0a000004 	beq	1750 <vsnprintf+0x8f4>
+          *(short *)ptr = chars_written;
+    173c:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1740:	e6ff2073 	uxth	r2, r3
+    1744:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+    1748:	e1c320b0 	strh	r2, [r3]
+        else if(flags & SIZETFLAG)
+          *(size_t *)ptr = chars_written;
+        else 
+          *(int *)ptr = chars_written;
+        break;
+    174c:	ea000029 	b	17f8 <vsnprintf+0x99c>
+          *(long *)ptr = chars_written;
+        else if(flags & HALFHALFFLAG)
+          *(signed char *)ptr = chars_written;
+        else if(flags & HALFFLAG)
+          *(short *)ptr = chars_written;
+        else if(flags & SIZETFLAG)
+    1750:	e51b300c 	ldr	r3, [fp, #-12]
+    1754:	e2033010 	and	r3, r3, #16
+    1758:	e3530000 	cmp	r3, #0
+    175c:	0a000003 	beq	1770 <vsnprintf+0x914>
+          *(size_t *)ptr = chars_written;
+    1760:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+    1764:	e51b2014 	ldr	r2, [fp, #-20]	; 0xffffffec
+    1768:	e5832000 	str	r2, [r3]
+        else 
+          *(int *)ptr = chars_written;
+        break;
+    176c:	ea000021 	b	17f8 <vsnprintf+0x99c>
+        else if(flags & HALFFLAG)
+          *(short *)ptr = chars_written;
+        else if(flags & SIZETFLAG)
+          *(size_t *)ptr = chars_written;
+        else 
+          *(int *)ptr = chars_written;
+    1770:	e51b2014 	ldr	r2, [fp, #-20]	; 0xffffffec
+    1774:	e51b3020 	ldr	r3, [fp, #-32]	; 0xffffffe0
+    1778:	e5832000 	str	r2, [r3]
+        break;
+    177c:	ea00001d 	b	17f8 <vsnprintf+0x99c>
+      default:
+        OUTPUT_CHAR('%');
+    1780:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1784:	e2832001 	add	r2, r3, #1
+    1788:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    178c:	e3a02025 	mov	r2, #37	; 0x25
+    1790:	e5c32000 	strb	r2, [r3]
+    1794:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1798:	e2833001 	add	r3, r3, #1
+    179c:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    17a0:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    17a4:	e2832001 	add	r2, r3, #1
+    17a8:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    17ac:	e1520003 	cmp	r2, r3
+    17b0:	0a000087 	beq	19d4 <vsnprintf+0xb78>
+        OUTPUT_CHAR(c);
+    17b4:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    17b8:	e2832001 	add	r2, r3, #1
+    17bc:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    17c0:	e55b2019 	ldrb	r2, [fp, #-25]	; 0xffffffe7
+    17c4:	e5c32000 	strb	r2, [r3]
+    17c8:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    17cc:	e2833001 	add	r3, r3, #1
+    17d0:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    17d4:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    17d8:	e2832001 	add	r2, r3, #1
+    17dc:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    17e0:	e1520003 	cmp	r2, r3
+    17e4:	0a00007c 	beq	19dc <vsnprintf+0xb80>
+        break;
+    17e8:	ea000002 	b	17f8 <vsnprintf+0x99c>
+      case '.':
+        /* XXX for now eat numeric formatting */
+        goto next_format;
+      case '%':
+        OUTPUT_CHAR('%');
+        break;
+    17ec:	e1a00000 	nop			; (mov r0, r0)
+    17f0:	ea00006e 	b	19b0 <vsnprintf+0xb54>
+      case 'c':
+        uc = va_arg(ap, unsigned int);
+        OUTPUT_CHAR(uc);
+        break;
+    17f4:	e1a00000 	nop			; (mov r0, r0)
+        OUTPUT_CHAR('%');
+        OUTPUT_CHAR(c);
+        break;
+    }
+    /* move on to the next field */
+    continue;
+    17f8:	ea00006c 	b	19b0 <vsnprintf+0xb54>
+        break;
+      case 's':
+        s = va_arg(ap, const char *);
+        if(s == 0)
+          s = "<null>";
+        goto _output_string;
+    17fc:	e1a00000 	nop			; (mov r0, r0)
+    1800:	ea000000 	b	1808 <vsnprintf+0x9ac>
+        s = longlong_to_hexstring(num_buffer, n, sizeof(num_buffer), flags);
+        if(flags & ALTFLAG) {
+          OUTPUT_CHAR('0');
+          OUTPUT_CHAR((flags & CAPSFLAG) ? 'X': 'x');
+        }
+        goto _output_string;
+    1804:	e1a00000 	nop			; (mov r0, r0)
+    }
+    /* move on to the next field */
+    continue;
+    /* shared output code */
+_output_string:
+    if (flags & LEFTFORMATFLAG) {
+    1808:	e51b300c 	ldr	r3, [fp, #-12]
+    180c:	e2033c02 	and	r3, r3, #512	; 0x200
+    1810:	e3530000 	cmp	r3, #0
+    1814:	0a00002f 	beq	18d8 <vsnprintf+0xa7c>
+      /* left justify the text */
+      uint count = 0;
+    1818:	e3a03000 	mov	r3, #0
+    181c:	e50b3018 	str	r3, [fp, #-24]	; 0xffffffe8
+      while(*s != 0) {
+    1820:	ea000012 	b	1870 <vsnprintf+0xa14>
+        OUTPUT_CHAR(*s++);
+    1824:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1828:	e2832001 	add	r2, r3, #1
+    182c:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1830:	e51b2008 	ldr	r2, [fp, #-8]
+    1834:	e2821001 	add	r1, r2, #1
+    1838:	e50b1008 	str	r1, [fp, #-8]
+    183c:	e5d22000 	ldrb	r2, [r2]
+    1840:	e5c32000 	strb	r2, [r3]
+    1844:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1848:	e2833001 	add	r3, r3, #1
+    184c:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1850:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1854:	e2832001 	add	r2, r3, #1
+    1858:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    185c:	e1520003 	cmp	r2, r3
+    1860:	0a00005f 	beq	19e4 <vsnprintf+0xb88>
+        count++;
+    1864:	e51b3018 	ldr	r3, [fp, #-24]	; 0xffffffe8
+    1868:	e2833001 	add	r3, r3, #1
+    186c:	e50b3018 	str	r3, [fp, #-24]	; 0xffffffe8
+    /* shared output code */
+_output_string:
+    if (flags & LEFTFORMATFLAG) {
+      /* left justify the text */
+      uint count = 0;
+      while(*s != 0) {
+    1870:	e51b3008 	ldr	r3, [fp, #-8]
+    1874:	e5d33000 	ldrb	r3, [r3]
+    1878:	e3530000 	cmp	r3, #0
+    187c:	1affffe8 	bne	1824 <vsnprintf+0x9c8>
+        OUTPUT_CHAR(*s++);
+        count++;
+      }
+      /* pad to the right (if necessary) */
+      for (; format_num > count; format_num--)
+    1880:	ea00000f 	b	18c4 <vsnprintf+0xa68>
+        OUTPUT_CHAR(' ');
+    1884:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1888:	e2832001 	add	r2, r3, #1
+    188c:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1890:	e3a02020 	mov	r2, #32
+    1894:	e5c32000 	strb	r2, [r3]
+    1898:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    189c:	e2833001 	add	r3, r3, #1
+    18a0:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    18a4:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    18a8:	e2832001 	add	r2, r3, #1
+    18ac:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    18b0:	e1520003 	cmp	r2, r3
+    18b4:	0a00004c 	beq	19ec <vsnprintf+0xb90>
+      while(*s != 0) {
+        OUTPUT_CHAR(*s++);
+        count++;
+      }
+      /* pad to the right (if necessary) */
+      for (; format_num > count; format_num--)
+    18b8:	e51b3010 	ldr	r3, [fp, #-16]
+    18bc:	e2433001 	sub	r3, r3, #1
+    18c0:	e50b3010 	str	r3, [fp, #-16]
+    18c4:	e51b2010 	ldr	r2, [fp, #-16]
+    18c8:	e51b3018 	ldr	r3, [fp, #-24]	; 0xffffffe8
+    18cc:	e1520003 	cmp	r2, r3
+    18d0:	8affffeb 	bhi	1884 <vsnprintf+0xa28>
+        OUTPUT_CHAR(outchar);
+      /* output the string */
+      while(*s != 0)
+        OUTPUT_CHAR(*s++);
+    }
+    continue;
+    18d4:	ea000034 	b	19ac <vsnprintf+0xb50>
+      /* pad to the right (if necessary) */
+      for (; format_num > count; format_num--)
+        OUTPUT_CHAR(' ');
+    } else {
+      /* right justify the text (digits) */
+      size_t string_len = strlen(s);
+    18d8:	e51b0008 	ldr	r0, [fp, #-8]
+    18dc:	ebfffffe 	bl	1a40 <strlen>
+    18e0:	e50b0030 	str	r0, [fp, #-48]	; 0xffffffd0
+      char outchar = (flags & LEADZEROFLAG) ? '0' : ' ';
+    18e4:	e51b300c 	ldr	r3, [fp, #-12]
+    18e8:	e2033b01 	and	r3, r3, #1024	; 0x400
+    18ec:	e3530000 	cmp	r3, #0
+    18f0:	0a000001 	beq	18fc <vsnprintf+0xaa0>
+    18f4:	e3a03030 	mov	r3, #48	; 0x30
+    18f8:	ea000000 	b	1900 <vsnprintf+0xaa4>
+    18fc:	e3a03020 	mov	r3, #32
+    1900:	e54b3031 	strb	r3, [fp, #-49]	; 0xffffffcf
+      for (; format_num > string_len; format_num--)
+    1904:	ea00000f 	b	1948 <vsnprintf+0xaec>
+        OUTPUT_CHAR(outchar);
+    1908:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    190c:	e2832001 	add	r2, r3, #1
+    1910:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1914:	e55b2031 	ldrb	r2, [fp, #-49]	; 0xffffffcf
+    1918:	e5c32000 	strb	r2, [r3]
+    191c:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1920:	e2833001 	add	r3, r3, #1
+    1924:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1928:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    192c:	e2832001 	add	r2, r3, #1
+    1930:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    1934:	e1520003 	cmp	r2, r3
+    1938:	0a00002d 	beq	19f4 <vsnprintf+0xb98>
+        OUTPUT_CHAR(' ');
+    } else {
+      /* right justify the text (digits) */
+      size_t string_len = strlen(s);
+      char outchar = (flags & LEADZEROFLAG) ? '0' : ' ';
+      for (; format_num > string_len; format_num--)
+    193c:	e51b3010 	ldr	r3, [fp, #-16]
+    1940:	e2433001 	sub	r3, r3, #1
+    1944:	e50b3010 	str	r3, [fp, #-16]
+    1948:	e51b2010 	ldr	r2, [fp, #-16]
+    194c:	e51b3030 	ldr	r3, [fp, #-48]	; 0xffffffd0
+    1950:	e1520003 	cmp	r2, r3
+    1954:	8affffeb 	bhi	1908 <vsnprintf+0xaac>
+        OUTPUT_CHAR(outchar);
+      /* output the string */
+      while(*s != 0)
+    1958:	ea00000f 	b	199c <vsnprintf+0xb40>
+        OUTPUT_CHAR(*s++);
+    195c:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1960:	e2832001 	add	r2, r3, #1
+    1964:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1968:	e51b2008 	ldr	r2, [fp, #-8]
+    196c:	e2821001 	add	r1, r2, #1
+    1970:	e50b1008 	str	r1, [fp, #-8]
+    1974:	e5d22000 	ldrb	r2, [r2]
+    1978:	e5c32000 	strb	r2, [r3]
+    197c:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1980:	e2833001 	add	r3, r3, #1
+    1984:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+    1988:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    198c:	e2832001 	add	r2, r3, #1
+    1990:	e51b305c 	ldr	r3, [fp, #-92]	; 0xffffffa4
+    1994:	e1520003 	cmp	r2, r3
+    1998:	0a000017 	beq	19fc <vsnprintf+0xba0>
+      size_t string_len = strlen(s);
+      char outchar = (flags & LEADZEROFLAG) ? '0' : ' ';
+      for (; format_num > string_len; format_num--)
+        OUTPUT_CHAR(outchar);
+      /* output the string */
+      while(*s != 0)
+    199c:	e51b3008 	ldr	r3, [fp, #-8]
+    19a0:	e5d33000 	ldrb	r3, [r3]
+    19a4:	e3530000 	cmp	r3, #0
+    19a8:	1affffeb 	bne	195c <vsnprintf+0xb00>
+        OUTPUT_CHAR(*s++);
+    }
+    continue;
+    19ac:	e1a00000 	nop			; (mov r0, r0)
+  }
+    19b0:	eafffd32 	b	e80 <vsnprintf+0x24>
+  for(;;) { 
+    /* handle regular chars that aren't format related */
+    while((c = *fmt++) != 0) {
+      if(c == '%')
+        break; /* we saw a '%', break and start parsing format */
+      OUTPUT_CHAR(c);
+    19b4:	e1a00000 	nop			; (mov r0, r0)
+    19b8:	ea000010 	b	1a00 <vsnprintf+0xba4>
+    }
+    /* make sure we haven't just hit the end of the string */
+    if(c == 0)
+      break;
+    19bc:	e1a00000 	nop			; (mov r0, r0)
+    19c0:	ea00000e 	b	1a00 <vsnprintf+0xba4>
+    format_num = 0;
+next_format:
+    /* grab the next format character */
+    c = *fmt++;
+    if(c == 0)
+      break;
+    19c4:	e1a00000 	nop			; (mov r0, r0)
+    19c8:	ea00000c 	b	1a00 <vsnprintf+0xba4>
+          (flags & HALFFLAG) ? (unsigned short)va_arg(ap, unsigned int) :
+          (flags & SIZETFLAG) ? va_arg(ap, size_t) :
+          va_arg(ap, unsigned int);
+        s = longlong_to_hexstring(num_buffer, n, sizeof(num_buffer), flags);
+        if(flags & ALTFLAG) {
+          OUTPUT_CHAR('0');
+    19cc:	e1a00000 	nop			; (mov r0, r0)
+    19d0:	ea00000a 	b	1a00 <vsnprintf+0xba4>
+          *(size_t *)ptr = chars_written;
+        else 
+          *(int *)ptr = chars_written;
+        break;
+      default:
+        OUTPUT_CHAR('%');
+    19d4:	e1a00000 	nop			; (mov r0, r0)
+    19d8:	ea000008 	b	1a00 <vsnprintf+0xba4>
+        OUTPUT_CHAR(c);
+    19dc:	e1a00000 	nop			; (mov r0, r0)
+    19e0:	ea000006 	b	1a00 <vsnprintf+0xba4>
+_output_string:
+    if (flags & LEFTFORMATFLAG) {
+      /* left justify the text */
+      uint count = 0;
+      while(*s != 0) {
+        OUTPUT_CHAR(*s++);
+    19e4:	e1a00000 	nop			; (mov r0, r0)
+    19e8:	ea000004 	b	1a00 <vsnprintf+0xba4>
+        count++;
+      }
+      /* pad to the right (if necessary) */
+      for (; format_num > count; format_num--)
+        OUTPUT_CHAR(' ');
+    19ec:	e1a00000 	nop			; (mov r0, r0)
+    19f0:	ea000002 	b	1a00 <vsnprintf+0xba4>
+    } else {
+      /* right justify the text (digits) */
+      size_t string_len = strlen(s);
+      char outchar = (flags & LEADZEROFLAG) ? '0' : ' ';
+      for (; format_num > string_len; format_num--)
+        OUTPUT_CHAR(outchar);
+    19f4:	e1a00000 	nop			; (mov r0, r0)
+    19f8:	ea000000 	b	1a00 <vsnprintf+0xba4>
+      /* output the string */
+      while(*s != 0)
+        OUTPUT_CHAR(*s++);
+    19fc:	e1a00000 	nop			; (mov r0, r0)
+    }
+    continue;
+  }
+done:
+  /* null terminate */
+  OUTPUT_CHAR_NOLENCHECK('\0');
+    1a00:	e51b3058 	ldr	r3, [fp, #-88]	; 0xffffffa8
+    1a04:	e2832001 	add	r2, r3, #1
+    1a08:	e50b2058 	str	r2, [fp, #-88]	; 0xffffffa8
+    1a0c:	e3a02000 	mov	r2, #0
+    1a10:	e5c32000 	strb	r2, [r3]
+    1a14:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1a18:	e2833001 	add	r3, r3, #1
+    1a1c:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+  chars_written--; /* don't count the null */
+    1a20:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+    1a24:	e2433001 	sub	r3, r3, #1
+    1a28:	e50b3014 	str	r3, [fp, #-20]	; 0xffffffec
+#undef OUTPUT_CHAR
+#undef OUTPUT_CHAR_NOLENCHECK
+  return chars_written;
+    1a2c:	e51b3014 	ldr	r3, [fp, #-20]	; 0xffffffec
+}
+    1a30:	e1a00003 	mov	r0, r3
+    1a34:	e24bd004 	sub	sp, fp, #4
+    1a38:	e8bd8800 	pop	{fp, pc}
+    1a3c:	00000000 	andeq	r0, r0, r0
+
+00001a40 <strlen>:
+    1a40:	e3c01003 	bic	r1, r0, #3
+    1a44:	e4912004 	ldr	r2, [r1], #4
+    1a48:	e2103003 	ands	r3, r0, #3
+    1a4c:	e2630000 	rsb	r0, r3, #0
+    1a50:	0a000004 	beq	1a68 <Laligned>
+    1a54:	e38220ff 	orr	r2, r2, #255	; 0xff
+    1a58:	e2533001 	subs	r3, r3, #1
+    1a5c:	c3822cff 	orrgt	r2, r2, #65280	; 0xff00
+    1a60:	e2533001 	subs	r3, r3, #1
+    1a64:	c38228ff 	orrgt	r2, r2, #16711680	; 0xff0000
+
+00001a68 <Laligned>:
+    1a68:	e31200ff 	tst	r2, #255	; 0xff
+    1a6c:	13120cff 	tstne	r2, #65280	; 0xff00
+    1a70:	131208ff 	tstne	r2, #16711680	; 0xff0000
+    1a74:	131204ff 	tstne	r2, #-16777216	; 0xff000000
+    1a78:	12800004 	addne	r0, r0, #4
+    1a7c:	14912004 	ldrne	r2, [r1], #4
+    1a80:	1afffff8 	bne	1a68 <Laligned>
+
+00001a84 <Llastword>:
+    1a84:	e31200ff 	tst	r2, #255	; 0xff
+    1a88:	12800001 	addne	r0, r0, #1
+    1a8c:	13120cff 	tstne	r2, #65280	; 0xff00
+    1a90:	12800001 	addne	r0, r0, #1
+    1a94:	131208ff 	tstne	r2, #16711680	; 0xff0000
+    1a98:	12800001 	addne	r0, r0, #1
+    1a9c:	e12fff1e 	bx	lr
+
+00001aa0 <memset>:
+    1aa0:	e1a03000 	mov	r3, r0
+    1aa4:	e3520008 	cmp	r2, #8
+    1aa8:	3a000011 	bcc	1af4 <memset+0x54>
+    1aac:	e3130003 	tst	r3, #3
+    1ab0:	14c31001 	strbne	r1, [r3], #1
+    1ab4:	12422001 	subne	r2, r2, #1
+    1ab8:	1afffffb 	bne	1aac <memset+0xc>
+    1abc:	e20110ff 	and	r1, r1, #255	; 0xff
+    1ac0:	e1811401 	orr	r1, r1, r1, lsl #8
+    1ac4:	e1811801 	orr	r1, r1, r1, lsl #16
+    1ac8:	e1a0c001 	mov	ip, r1
+    1acc:	e2522008 	subs	r2, r2, #8
+    1ad0:	28a31002 	stmiacs	r3!, {r1, ip}
+    1ad4:	22522008 	subscs	r2, r2, #8
+    1ad8:	28a31002 	stmiacs	r3!, {r1, ip}
+    1adc:	22522008 	subscs	r2, r2, #8
+    1ae0:	28a31002 	stmiacs	r3!, {r1, ip}
+    1ae4:	22522008 	subscs	r2, r2, #8
+    1ae8:	28a31002 	stmiacs	r3!, {r1, ip}
+    1aec:	2afffff6 	bcs	1acc <memset+0x2c>
+    1af0:	e2022007 	and	r2, r2, #7
+    1af4:	e2522001 	subs	r2, r2, #1
+    1af8:	24c31001 	strbcs	r1, [r3], #1
+    1afc:	22522001 	subscs	r2, r2, #1
+    1b00:	24c31001 	strbcs	r1, [r3], #1
+    1b04:	22522001 	subscs	r2, r2, #1
+    1b08:	24c31001 	strbcs	r1, [r3], #1
+    1b0c:	22522001 	subscs	r2, r2, #1
+    1b10:	24c31001 	strbcs	r1, [r3], #1
+    1b14:	2afffff6 	bcs	1af4 <memset+0x54>
+    1b18:	e12fff1e 	bx	lr
+    1b1c:	e1a00000 	nop			; (mov r0, r0)
+
+00001b20 <__aeabi_uldivmod>:
+    1b20:	e3530000 	cmp	r3, #0
+    1b24:	03520000 	cmpeq	r2, #0
+    1b28:	1a000004 	bne	1b40 <__aeabi_uldivmod+0x20>
+    1b2c:	e3510000 	cmp	r1, #0
+    1b30:	03500000 	cmpeq	r0, #0
+    1b34:	13e01000 	mvnne	r1, #0
+    1b38:	13e00000 	mvnne	r0, #0
+    1b3c:	eafffffe 	b	1b5c <__aeabi_idiv0>
+    1b40:	e24dd008 	sub	sp, sp, #8
+    1b44:	e92d6000 	push	{sp, lr}
+    1b48:	ebfffffe 	bl	1b6c <__udivmoddi4>
+    1b4c:	e59de004 	ldr	lr, [sp, #4]
+    1b50:	e28dd008 	add	sp, sp, #8
+    1b54:	e8bd000c 	pop	{r2, r3}
+    1b58:	e12fff1e 	bx	lr
+
+00001b5c <__aeabi_idiv0>:
+    1b5c:	e92d4002 	push	{r1, lr}
+    1b60:	e3a00008 	mov	r0, #8
+    1b64:	ebfffffe 	bl	0 <raise>
+    1b68:	e8bd8002 	pop	{r1, pc}
+
+00001b6c <__udivmoddi4>:
+    1b6c:	e1510003 	cmp	r1, r3
+    1b70:	e92d43f0 	push	{r4, r5, r6, r7, r8, r9, lr}
+    1b74:	01500002 	cmpeq	r0, r2
+    1b78:	e1a04000 	mov	r4, r0
+    1b7c:	e1a05001 	mov	r5, r1
+    1b80:	e59d901c 	ldr	r9, [sp, #28]
+    1b84:	33a00000 	movcc	r0, #0
+    1b88:	33a01000 	movcc	r1, #0
+    1b8c:	3a00003c 	bcc	1c84 <__udivmoddi4+0x118>
+    1b90:	e3530000 	cmp	r3, #0
+    1b94:	016fcf12 	clzeq	ip, r2
+    1b98:	116fcf13 	clzne	ip, r3
+    1b9c:	028cc020 	addeq	ip, ip, #32
+    1ba0:	e3550000 	cmp	r5, #0
+    1ba4:	016f1f14 	clzeq	r1, r4
+    1ba8:	116f1f15 	clzne	r1, r5
+    1bac:	02811020 	addeq	r1, r1, #32
+    1bb0:	e061c00c 	rsb	ip, r1, ip
+    1bb4:	e24ce020 	sub	lr, ip, #32
+    1bb8:	e1a07c13 	lsl	r7, r3, ip
+    1bbc:	e1877e12 	orr	r7, r7, r2, lsl lr
+    1bc0:	e26c8020 	rsb	r8, ip, #32
+    1bc4:	e1877832 	orr	r7, r7, r2, lsr r8
+    1bc8:	e1550007 	cmp	r5, r7
+    1bcc:	e1a06c12 	lsl	r6, r2, ip
+    1bd0:	01540006 	cmpeq	r4, r6
+    1bd4:	33a00000 	movcc	r0, #0
+    1bd8:	33a01000 	movcc	r1, #0
+    1bdc:	3a000005 	bcc	1bf8 <__udivmoddi4+0x8c>
+    1be0:	e3a03001 	mov	r3, #1
+    1be4:	e0544006 	subs	r4, r4, r6
+    1be8:	e1a01e13 	lsl	r1, r3, lr
+    1bec:	e1811833 	orr	r1, r1, r3, lsr r8
+    1bf0:	e0c55007 	sbc	r5, r5, r7
+    1bf4:	e1a00c13 	lsl	r0, r3, ip
+    1bf8:	e35c0000 	cmp	ip, #0
+    1bfc:	0a000020 	beq	1c84 <__udivmoddi4+0x118>
+    1c00:	e1b030a7 	lsrs	r3, r7, #1
+    1c04:	e1a02066 	rrx	r2, r6
+    1c08:	e1a0600c 	mov	r6, ip
+    1c0c:	ea000007 	b	1c30 <__udivmoddi4+0xc4>
+    1c10:	e0544002 	subs	r4, r4, r2
+    1c14:	e0c55003 	sbc	r5, r5, r3
+    1c18:	e0944004 	adds	r4, r4, r4
+    1c1c:	e0a55005 	adc	r5, r5, r5
+    1c20:	e2944001 	adds	r4, r4, #1
+    1c24:	e2a55000 	adc	r5, r5, #0
+    1c28:	e2566001 	subs	r6, r6, #1
+    1c2c:	0a000006 	beq	1c4c <__udivmoddi4+0xe0>
+    1c30:	e1550003 	cmp	r5, r3
+    1c34:	01540002 	cmpeq	r4, r2
+    1c38:	2afffff4 	bcs	1c10 <__udivmoddi4+0xa4>
+    1c3c:	e0944004 	adds	r4, r4, r4
+    1c40:	e0a55005 	adc	r5, r5, r5
+    1c44:	e2566001 	subs	r6, r6, #1
+    1c48:	1afffff8 	bne	1c30 <__udivmoddi4+0xc4>
+    1c4c:	e1a06c34 	lsr	r6, r4, ip
+    1c50:	e1866815 	orr	r6, r6, r5, lsl r8
+    1c54:	e1866e35 	orr	r6, r6, r5, lsr lr
+    1c58:	e0902004 	adds	r2, r0, r4
+    1c5c:	e1a04006 	mov	r4, r6
+    1c60:	e0a13005 	adc	r3, r1, r5
+    1c64:	e1a01c35 	lsr	r1, r5, ip
+    1c68:	e1a05001 	mov	r5, r1
+    1c6c:	e1a01c11 	lsl	r1, r1, ip
+    1c70:	e1811e16 	orr	r1, r1, r6, lsl lr
+    1c74:	e1a00c16 	lsl	r0, r6, ip
+    1c78:	e1811836 	orr	r1, r1, r6, lsr r8
+    1c7c:	e0520000 	subs	r0, r2, r0
+    1c80:	e0c31001 	sbc	r1, r3, r1
+    1c84:	e3590000 	cmp	r9, #0
+    1c88:	08bd83f0 	popeq	{r4, r5, r6, r7, r8, r9, pc}
+    1c8c:	e8890030 	stm	r9, {r4, r5}
+    1c90:	e8bd83f0 	pop	{r4, r5, r6, r7, r8, r9, pc}

@@ -35,7 +35,7 @@ ECHO_GREEN		= echo -e "\033[0;32m"
 #
 # Build flags.
 #
-CFLAGS 			= -O2 -g --std=c99 -Wno-unused-result
+CFLAGS 			= -O2 -g --std=c99 -Wno-unused-result -D_GNU_SOURCE
 LDFLAGS			= -g
 
 
@@ -46,7 +46,7 @@ include $(PROJECT_BASE)/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
-#include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UARTReceiver/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Debugger/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk

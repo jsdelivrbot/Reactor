@@ -1,0 +1,401 @@
+Archive member included to satisfy reference by file (symbol)
+
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o)
+                              vsnprintf.o (__aeabi_uldivmod)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o)
+                              /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o) (__aeabi_ldiv0)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+                              /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o) (__udivmoddi4)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o)
+                              /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o) (raise)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(strlen.o)
+                              vsnprintf.o (strlen)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(memset.o)
+                              TextFormatter.o (memset)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+                              /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o) (__libc_errno)
+/usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(aeabi_read_tp.o)
+                              /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o) (__aeabi_read_tp)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD Main.o
+LOAD ErrorHandling.o
+LOAD DebugText.o
+LOAD TextFormatter.o
+LOAD vsnprintf.o
+LOAD BoardSupport.o
+LOAD Channel.o
+LOAD ThreadLocalStorage.o
+LOAD BitStreamCompressor.o
+LOAD BitArray.o
+LOAD DigitalInputProcessor.o
+LOAD DigitalOutputProcessor.o
+LOAD HighResolutionTimestamp.o
+LOAD /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a
+LOAD /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a
+
+.text           0x0000000000000000     0x2390
+ *(.text)
+ .text          0x0000000000000000      0x790 Main.o
+                0x0000000000000000                IsThereMailFromCore
+                0x0000000000000070                NextMessage
+                0x00000000000000a4                ReleaseMessage
+                0x00000000000000d4                ClearMailboxFromCore
+                0x0000000000000120                EnableMailboxFromCore
+                0x0000000000000178                ProcessMessage
+                0x00000000000001c4                IRQHandler
+                0x00000000000003e0                Core1Main
+                0x00000000000004fc                Core2Main
+                0x0000000000000618                Core3Main
+                0x000000000000072c                CoreMain
+ .text          0x0000000000000790        0xc ErrorHandling.o
+                0x0000000000000790                PANIC
+ .text          0x000000000000079c       0xc4 DebugText.o
+                0x000000000000079c                DebugTextOutput
+                0x0000000000000834                DebugPrintf
+ .text          0x0000000000000860       0x94 TextFormatter.o
+                0x0000000000000860                FormatTextFromVaList
+                0x00000000000008ac                FormatText
+ .text          0x00000000000008f4      0xe9c vsnprintf.o
+                0x00000000000008f4                snprintf
+                0x0000000000000bb0                vsnprintf
+ *fill*         0x0000000000001790       0x70 
+ .text          0x0000000000001800      0x280 BoardSupport.o
+                0x0000000000001800                CWRR
+                0x0000000000001820                EnableInterrupts
+                0x000000000000183c                FlushCache
+                0x0000000000001858                TriggerMailboxInterrupt
+                0x00000000000018a8                SetVectorTableAddress
+                0x00000000000018cc                Handler
+                0x00000000000018e8                MPIDR
+                0x000000000000191c                CoreNumber
+                0x0000000000001934                EntryPoint
+                0x0000000000001a00                VectorTable
+                0x0000000000001a4c                BoardSupportInitialise
+ .text          0x0000000000001a80        0x0 Channel.o
+ .text          0x0000000000001a80       0x38 ThreadLocalStorage.o
+                0x0000000000001a80                Globals
+ .text          0x0000000000001ab8      0x24c BitStreamCompressor.o
+                0x0000000000001ab8                CompressedBitStreamInitialise
+                0x0000000000001b3c                CompressedBitStreamAddEdge
+ .text          0x0000000000001d04      0x1d4 BitArray.o
+                0x0000000000001d04                BitArraySet
+                0x0000000000001df4                BitArrayGet
+ .text          0x0000000000001ed8      0x194 DigitalInputProcessor.o
+                0x0000000000001ed8                DigitalInputQueuePut
+                0x0000000000001f58                DigitalInputQueueGet
+                0x0000000000002000                ProcessDigitalInputs
+ .text          0x000000000000206c       0x18 DigitalOutputProcessor.o
+                0x000000000000206c                ProcessDigitalOutputs
+ .text          0x0000000000002084       0x1c HighResolutionTimestamp.o
+                0x0000000000002084                GetHighResolutionTimestamp
+ .text          0x00000000000020a0       0x3c /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o)
+                0x00000000000020a0                __aeabi_uldivmod
+ .text          0x00000000000020dc       0x10 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o)
+                0x00000000000020dc                __aeabi_ldiv0
+                0x00000000000020dc                __aeabi_idiv0
+ .text          0x00000000000020ec      0x128 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+                0x00000000000020ec                __udivmoddi4
+ .text          0x0000000000002214       0x8c /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o)
+                0x0000000000002214                gsignal
+                0x0000000000002214                raise
+ .text          0x00000000000022a0       0x60 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(strlen.o)
+                0x00000000000022a0                strlen
+ .text          0x0000000000002300       0x80 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(memset.o)
+                0x0000000000002300                memset
+ .text          0x0000000000002380        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+ .text          0x0000000000002380       0x10 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(aeabi_read_tp.o)
+                0x0000000000002380                __aeabi_read_tp
+ *(.text.*)
+
+.rodata         0x0000000000002390       0x54
+ *(.rodata)
+ .rodata        0x0000000000002390       0x2c Main.o
+ .rodata        0x00000000000023bc       0x28 vsnprintf.o
+ *(.rodata1)
+ *(.rodata.*)
+
+.ARM.extab      0x0000000000000000        0x0
+ .ARM.extab     0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+
+.ARM.exidx      0x0000000000000000        0x8
+ .ARM.exidx     0x0000000000000000        0x8 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+
+.data           0x0000000000000008        0x4
+ *(.data)
+ .data          0x0000000000000008        0x0 Main.o
+ .data          0x0000000000000008        0x0 ErrorHandling.o
+ .data          0x0000000000000008        0x0 DebugText.o
+ .data          0x0000000000000008        0x0 TextFormatter.o
+ .data          0x0000000000000008        0x0 vsnprintf.o
+ .data          0x0000000000000008        0x4 BoardSupport.o
+                0x0000000000000008                bridge
+ .data          0x000000000000000c        0x0 Channel.o
+ .data          0x000000000000000c        0x0 ThreadLocalStorage.o
+ .data          0x000000000000000c        0x0 BitStreamCompressor.o
+ .data          0x000000000000000c        0x0 BitArray.o
+ .data          0x000000000000000c        0x0 DigitalInputProcessor.o
+ .data          0x000000000000000c        0x0 DigitalOutputProcessor.o
+ .data          0x000000000000000c        0x0 HighResolutionTimestamp.o
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(strlen.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(memset.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+ .data          0x000000000000000c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(aeabi_read_tp.o)
+ *(.data1)
+ *(.data.*)
+
+.tbss           0x0000000000000000        0x4
+ .tbss          0x0000000000000000        0x4 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+                0x0000000000000000                errno
+                0x0000000000000000                __libc_errno
+
+.bss            0x0000000000000004    0x22238
+ *(.bss)
+ .bss           0x0000000000000004        0x0 Main.o
+ .bss           0x0000000000000004        0x0 ErrorHandling.o
+ .bss           0x0000000000000004      0x100 DebugText.o
+ .bss           0x0000000000000104      0x100 TextFormatter.o
+ .bss           0x0000000000000204        0x0 vsnprintf.o
+ .bss           0x0000000000000204     0x2030 BoardSupport.o
+                0x0000000000000204                usrStack
+                0x0000000000001204                irqStack
+                0x0000000000002204                globals
+ .bss           0x0000000000002234        0x0 Channel.o
+ .bss           0x0000000000002234        0x0 ThreadLocalStorage.o
+ .bss           0x0000000000002234        0x0 BitStreamCompressor.o
+ .bss           0x0000000000002234        0x0 BitArray.o
+ .bss           0x0000000000002234    0x20008 DigitalInputProcessor.o
+                0x0000000000002234                DigitalInputQueueData
+                0x0000000000022234                DigitalInputQueueHead
+                0x0000000000022235                DigitalInputQueueTail
+ .bss           0x000000000002223c        0x0 DigitalOutputProcessor.o
+ .bss           0x000000000002223c        0x0 HighResolutionTimestamp.o
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(strlen.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(memset.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+ .bss           0x000000000002223c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(aeabi_read_tp.o)
+ *(.bss.*)
+ *(.sbss)
+ *(.sbss.*)
+ *(COMMON)
+OUTPUT(Main.elf elf32-littlearm)
+
+.debug_info     0x0000000000000000     0x1735
+ .debug_info    0x0000000000000000      0x3d4 Main.o
+ .debug_info    0x00000000000003d4       0x84 ErrorHandling.o
+ .debug_info    0x0000000000000458      0x1f8 DebugText.o
+ .debug_info    0x0000000000000650      0x16d TextFormatter.o
+ .debug_info    0x00000000000007bd      0x3b8 vsnprintf.o
+ .debug_info    0x0000000000000b75      0x33c BoardSupport.o
+ .debug_info    0x0000000000000eb1      0x126 ThreadLocalStorage.o
+ .debug_info    0x0000000000000fd7      0x2cd BitStreamCompressor.o
+ .debug_info    0x00000000000012a4      0x20d BitArray.o
+ .debug_info    0x00000000000014b1      0x1ba DigitalInputProcessor.o
+ .debug_info    0x000000000000166b       0x37 DigitalOutputProcessor.o
+ .debug_info    0x00000000000016a2       0x93 HighResolutionTimestamp.o
+
+.debug_abbrev   0x0000000000000000      0x9f5
+ .debug_abbrev  0x0000000000000000      0x178 Main.o
+ .debug_abbrev  0x0000000000000178       0x40 ErrorHandling.o
+ .debug_abbrev  0x00000000000001b8       0xca DebugText.o
+ .debug_abbrev  0x0000000000000282       0xb0 TextFormatter.o
+ .debug_abbrev  0x0000000000000332      0x176 vsnprintf.o
+ .debug_abbrev  0x00000000000004a8      0x17c BoardSupport.o
+ .debug_abbrev  0x0000000000000624       0xa8 ThreadLocalStorage.o
+ .debug_abbrev  0x00000000000006cc      0x126 BitStreamCompressor.o
+ .debug_abbrev  0x00000000000007f2       0x90 BitArray.o
+ .debug_abbrev  0x0000000000000882       0xfa DigitalInputProcessor.o
+ .debug_abbrev  0x000000000000097c       0x2a DigitalOutputProcessor.o
+ .debug_abbrev  0x00000000000009a6       0x4f HighResolutionTimestamp.o
+
+.debug_aranges  0x0000000000000000      0x180
+ .debug_aranges
+                0x0000000000000000       0x20 Main.o
+ .debug_aranges
+                0x0000000000000020       0x20 ErrorHandling.o
+ .debug_aranges
+                0x0000000000000040       0x20 DebugText.o
+ .debug_aranges
+                0x0000000000000060       0x20 TextFormatter.o
+ .debug_aranges
+                0x0000000000000080       0x20 vsnprintf.o
+ .debug_aranges
+                0x00000000000000a0       0x20 BoardSupport.o
+ .debug_aranges
+                0x00000000000000c0       0x20 ThreadLocalStorage.o
+ .debug_aranges
+                0x00000000000000e0       0x20 BitStreamCompressor.o
+ .debug_aranges
+                0x0000000000000100       0x20 BitArray.o
+ .debug_aranges
+                0x0000000000000120       0x20 DigitalInputProcessor.o
+ .debug_aranges
+                0x0000000000000140       0x20 DigitalOutputProcessor.o
+ .debug_aranges
+                0x0000000000000160       0x20 HighResolutionTimestamp.o
+
+.debug_line     0x0000000000000000      0xe3f
+ .debug_line    0x0000000000000000      0x12b Main.o
+ .debug_line    0x000000000000012b       0x84 ErrorHandling.o
+ .debug_line    0x00000000000001af       0xee DebugText.o
+ .debug_line    0x000000000000029d       0xfa TextFormatter.o
+ .debug_line    0x0000000000000397      0x383 vsnprintf.o
+ .debug_line    0x000000000000071a      0x188 BoardSupport.o
+ .debug_line    0x00000000000008a2        0x0 Channel.o
+ .debug_line    0x00000000000008a2      0x147 ThreadLocalStorage.o
+ .debug_line    0x00000000000009e9      0x158 BitStreamCompressor.o
+ .debug_line    0x0000000000000b41       0xb7 BitArray.o
+ .debug_line    0x0000000000000bf8       0xeb DigitalInputProcessor.o
+ .debug_line    0x0000000000000ce3       0x97 DigitalOutputProcessor.o
+ .debug_line    0x0000000000000d7a       0xc5 HighResolutionTimestamp.o
+
+.debug_str      0x0000000000000000     0x1c74
+ .debug_str     0x0000000000000000      0x2c4 Main.o
+ .debug_str     0x00000000000002c4      0x18d ErrorHandling.o
+ .debug_str     0x0000000000000451      0x246 DebugText.o
+ .debug_str     0x0000000000000697      0x206 TextFormatter.o
+ .debug_str     0x000000000000089d      0x294 vsnprintf.o
+ .debug_str     0x0000000000000b31      0x32d BoardSupport.o
+ .debug_str     0x0000000000000e5e       0xfd Channel.o
+ .debug_str     0x0000000000000f5b      0x202 ThreadLocalStorage.o
+ .debug_str     0x000000000000115d      0x384 BitStreamCompressor.o
+ .debug_str     0x00000000000014e1      0x217 BitArray.o
+ .debug_str     0x00000000000016f8      0x287 DigitalInputProcessor.o
+ .debug_str     0x000000000000197f      0x131 DigitalOutputProcessor.o
+ .debug_str     0x0000000000001ab0      0x1c4 HighResolutionTimestamp.o
+
+.comment        0x0000000000000000      0x256
+ .comment       0x0000000000000000       0x2e Main.o
+ .comment       0x000000000000002e       0x2e ErrorHandling.o
+ .comment       0x000000000000005c       0x2e DebugText.o
+ .comment       0x000000000000008a       0x2e TextFormatter.o
+ .comment       0x00000000000000b8       0x2e vsnprintf.o
+ .comment       0x00000000000000e6       0x2e BoardSupport.o
+ .comment       0x0000000000000114       0x2e Channel.o
+ .comment       0x0000000000000142       0x2e ThreadLocalStorage.o
+ .comment       0x0000000000000170       0x2e BitStreamCompressor.o
+ .comment       0x000000000000019e       0x2e BitArray.o
+ .comment       0x00000000000001cc       0x2e DigitalInputProcessor.o
+ .comment       0x00000000000001fa       0x2e DigitalOutputProcessor.o
+ .comment       0x0000000000000228       0x2e HighResolutionTimestamp.o
+
+.note.GNU-stack
+                0x0000000000000000        0x0
+ .note.GNU-stack
+                0x0000000000000000        0x0 Main.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 ErrorHandling.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 DebugText.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 TextFormatter.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 vsnprintf.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 BoardSupport.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 Channel.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 ThreadLocalStorage.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 BitStreamCompressor.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 BitArray.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 DigitalInputProcessor.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 DigitalOutputProcessor.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 HighResolutionTimestamp.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(strlen.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(memset.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(aeabi_read_tp.o)
+
+.ARM.attributes
+                0x0000000000000000       0x31
+ .ARM.attributes
+                0x0000000000000000       0x2f Main.o
+ .ARM.attributes
+                0x000000000000002f       0x2f ErrorHandling.o
+ .ARM.attributes
+                0x000000000000005e       0x2f DebugText.o
+ .ARM.attributes
+                0x000000000000008d       0x2f TextFormatter.o
+ .ARM.attributes
+                0x00000000000000bc       0x2f vsnprintf.o
+ .ARM.attributes
+                0x00000000000000eb       0x2f BoardSupport.o
+ .ARM.attributes
+                0x000000000000011a       0x2f Channel.o
+ .ARM.attributes
+                0x0000000000000149       0x2f ThreadLocalStorage.o
+ .ARM.attributes
+                0x0000000000000178       0x2f BitStreamCompressor.o
+ .ARM.attributes
+                0x00000000000001a7       0x2f BitArray.o
+ .ARM.attributes
+                0x00000000000001d6       0x2f DigitalInputProcessor.o
+ .ARM.attributes
+                0x0000000000000205       0x2f DigitalOutputProcessor.o
+ .ARM.attributes
+                0x0000000000000234       0x2f HighResolutionTimestamp.o
+ .ARM.attributes
+                0x0000000000000263       0x1c /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_aeabi_uldivmod.o)
+ .ARM.attributes
+                0x000000000000027f       0x1c /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_dvmd_lnx.o)
+ .ARM.attributes
+                0x000000000000029b       0x2a /usr/lib/gcc-cross/arm-linux-gnueabi/5/libgcc.a(_udivmoddi4.o)
+ .ARM.attributes
+                0x00000000000002c5       0x2c /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(raise.o)
+ .ARM.attributes
+                0x00000000000002f1       0x1e /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(strlen.o)
+ .ARM.attributes
+                0x000000000000030f       0x1e /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(memset.o)
+ .ARM.attributes
+                0x000000000000032d       0x2c /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(errno.o)
+ .ARM.attributes
+                0x0000000000000359       0x1e /usr/lib/gcc-cross/arm-linux-gnueabi/5/../../../../arm-linux-gnueabi/lib/../lib/libc.a(aeabi_read_tp.o)
+
+.debug_frame    0x0000000000000000      0x600
+ .debug_frame   0x0000000000000000      0x16c Main.o
+ .debug_frame   0x000000000000016c       0x28 ErrorHandling.o
+ .debug_frame   0x0000000000000194       0x68 DebugText.o
+ .debug_frame   0x00000000000001fc       0x60 TextFormatter.o
+ .debug_frame   0x000000000000025c       0xac vsnprintf.o
+ .debug_frame   0x0000000000000308      0x158 BoardSupport.o
+ .debug_frame   0x0000000000000460       0x30 ThreadLocalStorage.o
+ .debug_frame   0x0000000000000490       0x50 BitStreamCompressor.o
+ .debug_frame   0x00000000000004e0       0x50 BitArray.o
+ .debug_frame   0x0000000000000530       0x70 DigitalInputProcessor.o
+ .debug_frame   0x00000000000005a0       0x30 DigitalOutputProcessor.o
+ .debug_frame   0x00000000000005d0       0x30 HighResolutionTimestamp.o
+
+.debug_ranges   0x0000000000000000       0x30
+ .debug_ranges  0x0000000000000000       0x30 vsnprintf.o
