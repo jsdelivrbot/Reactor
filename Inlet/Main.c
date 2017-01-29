@@ -317,8 +317,10 @@ int main()
     //
     //
     //
-    uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
-    strcpy( sharedMemory, "Hello World." );
+    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
+    strcpy( (char*)sharedMemory, "Hello World." );
+
+    printf("<%s>\n", sharedMemory );
 
     //
     //

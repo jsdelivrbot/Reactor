@@ -179,6 +179,18 @@ int main()
     DebugPrintf("\nReactorOutlet.\n");
 
 
+    //
+    //
+    //
+    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
+
+    while( sharedMemory[100] == 0 )
+    {       
+    }
+
+    printf("[%s]\n", &sharedMemory[100] );
+
+
 	uint32_t 	start;
 	uint32_t	end;
 	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();

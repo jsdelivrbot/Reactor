@@ -47,7 +47,7 @@ include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UARTTransmitter/Build.mk
-#include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/UARTReceiver/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/Debugger/Build.mk
 #include $(SOURCE_LIBRARY)/Implementations/EventQueue/Build.mk
@@ -75,7 +75,7 @@ include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #
 #
 #
-LIBS		+= -lc -lgcc
+LIBS		+= -lc -lgcc -lrt
 
 
 #########################################################################################################

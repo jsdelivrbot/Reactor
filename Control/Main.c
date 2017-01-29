@@ -42,13 +42,15 @@ int main()
     //
     //
     //
-    uint8_t*   sharedMemory    = (uint8_t*)SharedMemoryMasterInitialise(0x00000001);
+    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemoryMasterInitialise(0x00000001);
     sharedMemory[0]   = 0;
+    sharedMemory[100] = 0;
     while( sharedMemory[0] == 0 )
     {       
     }
 
     printf("[%s]\n", sharedMemory);
+    strcpy( (char*)&sharedMemory[100], "Hello Mars!" );
 
     //
     //
