@@ -66,7 +66,7 @@ UART1_RX = 10 = PG7 = LED4
 #include "Timestamp.h"
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
-
+#include "ErrorHandling.h"
 
 //
 //
@@ -196,8 +196,12 @@ int main()
     // ControlToOutlet = 2000->3000;
     //
     CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
-	CircularBufferInitialise( controlToOutlet, sizeof(uint32_t), (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+	CircularBufferInitialiseAsReader( 	controlToOutlet, 
+										sizeof(uint32_t), 
+										(void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
+										(2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
+    uint32_t 	checkValue 	= 0;
 	while(true)
 	{
         //
@@ -205,6 +209,12 @@ int main()
         //
         uint32_t  outData  = 0;
         CircularBufferGet( controlToOutlet, &outData );
+		if(outData != checkValue)
+		{
+			DebugPrintf("%d != %d\n", outData, checkValue);
+			PANIC("mismatch!");
+		}
+		checkValue++;
 		
 		printf("[%d]\n", outData );
 	}

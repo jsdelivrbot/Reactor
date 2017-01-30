@@ -44,10 +44,16 @@ int main()
     // ControlToOutlet = 2000->3000;
     //
     CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
-    CircularBufferInitialise( inletToControl, sizeof(uint32_t), (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+    CircularBufferInitialiseAsReader( inletToControl, 
+                                      sizeof(uint32_t), 
+                                      (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
+                                      (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
     CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
-    CircularBufferInitialise( controlToOutlet, sizeof(uint32_t), (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+    CircularBufferInitialiseAsWriter( controlToOutlet, 
+                                      sizeof(uint32_t), 
+                                      (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
+                                      (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
     //
     //
@@ -69,9 +75,10 @@ int main()
         //
         //
         //
-        uint32_t  outData   = 0;
+        uint32_t  outData   = inData;
         CircularBufferPut( controlToOutlet, &outData );
-        outData++;
+
+        fprintf(stderr, "[%d]",outData);
     }
 
 }

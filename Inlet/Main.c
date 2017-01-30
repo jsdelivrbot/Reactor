@@ -328,16 +328,17 @@ int main()
     // ControlToOutlet = 2000->3000;
     //
     CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
-    CircularBufferInitialise( inletToControl, sizeof(uint32_t), (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
-
-    CircularBufferShow( inletToControl );
+    CircularBufferInitialiseAsWriter(   inletToControl, 
+                                        sizeof(uint32_t), 
+                                        (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
+                                        (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
     while(true)
     {
         //
         //
         //
-        uint32_t  inData   = 0;
+        static uint32_t  inData   = 0;
         CircularBufferPut( inletToControl, &inData );
         inData++;
         
