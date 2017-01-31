@@ -55,6 +55,7 @@ int main()
                                       (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
                                       (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
+    
     //
     //
     //
@@ -65,7 +66,9 @@ int main()
         //
         //
         uint32_t  inData  = 0;
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferGet( inletToControl, &inData );
+        SharedMemoryFlush( sharedMemory );
 
         //
         // Get the current timestamp.
@@ -76,9 +79,11 @@ int main()
         //
         //
         uint32_t  outData   = inData;
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferPut( controlToOutlet, &outData );
+        SharedMemoryFlush( sharedMemory );
 
-        fprintf(stderr, "[%d]",outData);
+        //fprintf(stderr, "[%d]",outData);
     }
 
 }

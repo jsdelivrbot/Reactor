@@ -202,13 +202,18 @@ int main()
 										(2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
     uint32_t 	checkValue 	= 0;
+	CircularBufferGet( controlToOutlet, &checkValue );
+	checkValue++;
+
 	while(true)
 	{
         //
         //
         //
         uint32_t  outData  = 0;
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferGet( controlToOutlet, &outData );
+        SharedMemoryFlush( sharedMemory );
 		if(outData != checkValue)
 		{
 			DebugPrintf("%d != %d\n", outData, checkValue);
@@ -216,7 +221,10 @@ int main()
 		}
 		checkValue++;
 		
-		printf("[%d]\n", outData );
+		if( (checkValue % 1000000) == 0)
+		{
+			printf("[%d]\n", outData );
+		}
 	}
 
 

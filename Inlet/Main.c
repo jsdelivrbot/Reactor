@@ -333,13 +333,18 @@ int main()
                                         (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
                                         (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
+
+    sleep(5);
+
     while(true)
     {
         //
         //
         //
         static uint32_t  inData   = 0;
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferPut( inletToControl, &inData );
+        SharedMemoryFlush( sharedMemory );
         inData++;
         
     }
