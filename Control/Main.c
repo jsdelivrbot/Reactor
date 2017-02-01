@@ -83,7 +83,7 @@ int main()
     CircularBufferInitialiseAsWriter( controlToOutlet, 
                                       sizeof(DataToOutlet), 
                                       (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
-                                      (2000-sizeof(CircularBuffer))/sizeof(DataToOutlet) );
+                                      (1000-sizeof(CircularBuffer))/sizeof(DataToOutlet) );
 
     //
     // Wait until we are fully connected.
@@ -119,7 +119,8 @@ int main()
         {
           ProcessValue( outData.data[i] );
         }	
-        //CircularBufferPut( controlToOutlet, &outData );
+        //CircularBufferShow( controlToOutlet );
+        CircularBufferPut( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 
         //fprintf(stderr, "[%d]",outData);

@@ -331,7 +331,7 @@ int main()
     CircularBufferInitialiseAsWriter(   inletToControl, 
                                         sizeof(DataFromInlet), 
                                         (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
-                                        (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+                                        (1000-sizeof(CircularBuffer))/sizeof(DataFromInlet) );
 
 
     //

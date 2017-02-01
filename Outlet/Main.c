@@ -182,7 +182,7 @@ bool 			started 	= false;
 
 void ProcessValue( uint32_t value )
 {
-	fprintf(stderr, "[%d]",value);
+	//fprintf(stderr, "[%d]",value);
 
 	if(started == true)
 	{
@@ -199,7 +199,7 @@ void ProcessValue( uint32_t value )
 		started 	= true;
 	}
 	
-	if( (checkValue % 100) == 0)
+	if( (checkValue % 1000000) == 0)
 	{
 		printf("[%d]\n", value );
 	}
@@ -229,7 +229,7 @@ int main()
 	CircularBufferInitialiseAsReader( 	controlToOutlet, 
 										sizeof(DataToOutlet), 
 										(void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
-										(2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+										(2000-sizeof(CircularBuffer))/sizeof(DataToOutlet) );
 
     //
     // Wait until we are fully connected.
