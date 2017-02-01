@@ -17,6 +17,43 @@
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
 #include "Reactor.h"
+#include "ErrorHandling.h"
+#include "Utilities.h"
+
+
+
+
+
+
+uint32_t 		checkValue 	= 0;
+bool 			started 	= false;
+
+void ProcessValue( uint32_t value )
+{
+	//fprintf(stderr, "[%d]",value);
+
+	if(started == true)
+	{
+		if(value != checkValue)
+		{
+			DebugPrintf("%d != %d\n", checkValue, value);
+			PANIC("mismatch!");
+		}
+		checkValue++;
+	}
+	else
+	{
+		checkValue 	= value+1;
+		started 	= true;
+	}
+	
+	if( (checkValue % 10000000) == 0)
+	{
+		printf("[%d]\n", value );
+	}
+	
+}
+
 
 
 
@@ -78,7 +115,11 @@ int main()
         //
         DataToOutlet  outData;
         memcpy( &outData, &inData, sizeof(outData) );
-        CircularBufferPut( controlToOutlet, &outData );
+        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
+        {
+          ProcessValue( outData.data[i] );
+        }	
+        //CircularBufferPut( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 
         //fprintf(stderr, "[%d]",outData);

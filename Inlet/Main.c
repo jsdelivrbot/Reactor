@@ -26,6 +26,7 @@
 #include <time.h>
 #include "CircularBuffer.h"
 #include "Reactor.h"
+#include "Utilities.h"
 
 
 
@@ -328,7 +329,7 @@ int main()
     //
     CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
     CircularBufferInitialiseAsWriter(   inletToControl, 
-                                        sizeof(uint32_t), 
+                                        sizeof(DataFromInlet), 
                                         (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
                                         (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
@@ -348,12 +349,12 @@ int main()
         //
         static DataFromInlet    inData;
         static uint32_t         value   = 0;
-        for(uint32_t i=0; i<16; i++)
+        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
         {
             inData.data[i]  = value;
             value++;
         }
-        CircularBufferShow( inletToControl );
+        //CircularBufferShow( inletToControl );
         CircularBufferPut( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
         

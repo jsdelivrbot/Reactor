@@ -68,6 +68,7 @@ UART1_RX = 10 = PG7 = LED4
 #include "CircularBuffer.h"
 #include "ErrorHandling.h"
 #include "Reactor.h"
+#include "Utilities.h"
 
 //
 //
@@ -226,7 +227,7 @@ int main()
     //
     CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
 	CircularBufferInitialiseAsReader( 	controlToOutlet, 
-										sizeof(uint32_t), 
+										sizeof(DataToOutlet), 
 										(void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
 										(2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
@@ -246,7 +247,7 @@ int main()
         CircularBufferGet( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 
-		for(uint32_t i=0; i<16; i++)
+		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
 		{
 			ProcessValue( outData.data[i] );
 		}	

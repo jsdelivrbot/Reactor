@@ -4,7 +4,9 @@ Main.o: ../../Control/Main.c \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/SharedMemory/SharedMemory.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/CircularBuffer/CircularBuffer.h \
- ../../Control/../Common/Reactor.h
+ ../../Control/../Common/Reactor.h \
+ /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/ErrorHandling/ErrorHandling.h \
+ /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Utilities/Utilities.h
 
 /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Timestamp/Timestamp.h:
 
@@ -17,3 +19,7 @@ Main.o: ../../Control/Main.c \
 /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/CircularBuffer/CircularBuffer.h:
 
 ../../Control/../Common/Reactor.h:
+
+/home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/ErrorHandling/ErrorHandling.h:
+
+/home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Utilities/Utilities.h:
