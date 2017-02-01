@@ -181,6 +181,8 @@ bool 			started 	= false;
 
 void ProcessValue( uint32_t value )
 {
+	fprintf(stderr, "[%d]",value);
+
 	if(started == true)
 	{
 		if(value != checkValue)
