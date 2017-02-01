@@ -25,6 +25,7 @@
 #include "SharedMemory.h"
 #include <time.h>
 #include "CircularBuffer.h"
+#include "Reactor.h"
 
 
 
@@ -321,8 +322,6 @@ int main()
     volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
     strcpy( (char*)sharedMemory, "Hello World." );
 
-    printf("<%s>\n", sharedMemory );
-
     //
     // InletToControl = 1000->2000;
     // ControlToOutlet = 2000->3000;
@@ -334,18 +333,29 @@ int main()
                                         (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
 
-    sleep(5);
+    //
+    // Wait until we are fully connected.
+    //
+    printf("Waiting for connections.\n");
+    while( inletToControl->numberOfReaders == 0 );
+    printf("Connected.\n");
+
 
     while(true)
     {
         //
         //
         //
-        static uint32_t  inData   = 0;
-        //SharedMemoryFlush( sharedMemory );
+        static DataFromInlet    inData;
+        static uint32_t         value   = 0;
+        for(uint32_t i=0; i<16; i++)
+        {
+            inData.data[i]  = value;
+            value++;
+        }
+        CircularBufferShow( inletToControl );
         CircularBufferPut( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
-        inData++;
         
     }
 

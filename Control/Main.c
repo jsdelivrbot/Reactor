@@ -16,6 +16,7 @@
 #include "DebugText.h"
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
+#include "Reactor.h"
 
 
 
@@ -30,14 +31,6 @@ int main()
     //
     //
     volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemoryMasterInitialise(0x00000001);
-    sharedMemory[0]   = 0;
-    sharedMemory[100] = 0;
-    while( sharedMemory[0] == 0 )
-    {       
-    }
-
-    printf("[%s]\n", sharedMemory);
-    strcpy( (char*)&sharedMemory[100], "Hello Mars!" );
 
     //
     // InletToControl = 1000->2000;
@@ -45,17 +38,23 @@ int main()
     //
     CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
     CircularBufferInitialiseAsReader( inletToControl, 
-                                      sizeof(uint32_t), 
+                                      sizeof(DataFromInlet), 
                                       (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
-                                      (1000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+                                      (1000-sizeof(CircularBuffer))/sizeof(DataFromInlet) );
 
     CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
     CircularBufferInitialiseAsWriter( controlToOutlet, 
-                                      sizeof(uint32_t), 
+                                      sizeof(DataToOutlet), 
                                       (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
-                                      (2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
+                                      (2000-sizeof(CircularBuffer))/sizeof(DataToOutlet) );
 
-    
+    //
+    // Wait until we are fully connected.
+    //
+    printf("Waiting for connections.\n");
+    while( (inletToControl->numberOfWriters == 0) || (controlToOutlet->numberOfReaders == 0) );
+    printf("Connected.\n");
+
     //
     //
     //
@@ -65,8 +64,7 @@ int main()
         //
         //
         //
-        uint32_t  inData  = 0;
-        //SharedMemoryFlush( sharedMemory );
+        DataFromInlet  inData;
         CircularBufferGet( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
 
@@ -78,8 +76,8 @@ int main()
         //
         //
         //
-        uint32_t  outData   = inData;
-        //SharedMemoryFlush( sharedMemory );
+        DataToOutlet  outData;
+        memcpy( &outData, &inData, sizeof(outData) );
         CircularBufferPut( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 

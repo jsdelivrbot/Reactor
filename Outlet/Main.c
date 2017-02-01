@@ -67,6 +67,7 @@ UART1_RX = 10 = PG7 = LED4
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
 #include "ErrorHandling.h"
+#include "Reactor.h"
 
 //
 //
@@ -172,6 +173,38 @@ void SetLineState(bool d0, bool d1, bool d2, bool d3, bool d4, bool d5, bool d6,
 #define O 		false
 #define I 		true
 
+
+
+
+uint32_t 		checkValue 	= 0;
+bool 			started 	= false;
+
+void ProcessValue( uint32_t value )
+{
+	if(started == true)
+	{
+		if(value != checkValue)
+		{
+			DebugPrintf("%d != %d\n", checkValue, value);
+			PANIC("mismatch!");
+		}
+		checkValue++;
+	}
+	else
+	{
+		checkValue 	= value+1;
+		started 	= true;
+	}
+	
+	if( (checkValue % 100) == 0)
+	{
+		printf("[%d]\n", value );
+	}
+	
+}
+
+
+
 //
 //
 //
@@ -185,12 +218,6 @@ int main()
     //
     volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
 
-    while( sharedMemory[100] == 0 )
-    {       
-    }
-
-    printf("[%s]\n", &sharedMemory[100] );
-
     //
     // InletToControl = 1000->2000;
     // ControlToOutlet = 2000->3000;
@@ -201,30 +228,27 @@ int main()
 										(void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
 										(2000-sizeof(CircularBuffer))/sizeof(uint32_t) );
 
-    uint32_t 	checkValue 	= 0;
-	CircularBufferGet( controlToOutlet, &checkValue );
-	checkValue++;
+    //
+    // Wait until we are fully connected.
+    //
+    printf("Waiting for connections.\n");
+    while( controlToOutlet->numberOfWriters == 0 );
+    printf("Connected.\n");
 
 	while(true)
 	{
         //
         //
         //
-        uint32_t  outData  = 0;
-        //SharedMemoryFlush( sharedMemory );
+        DataToOutlet  outData;
         CircularBufferGet( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
-		if(outData != checkValue)
+
+		for(uint32_t i=0; i<16; i++)
 		{
-			DebugPrintf("%d != %d\n", outData, checkValue);
-			PANIC("mismatch!");
-		}
-		checkValue++;
-		
-		if( (checkValue % 1000000) == 0)
-		{
-			printf("[%d]\n", outData );
-		}
+			ProcessValue( outData.data[i] );
+		}	
+
 	}
 
 
