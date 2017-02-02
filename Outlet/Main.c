@@ -180,7 +180,7 @@ void SetLineState(bool d0, bool d1, bool d2, bool d3, bool d4, bool d5, bool d6,
 uint32_t 		checkValue 	= 0;
 bool 			started 	= false;
 
-void ProcessValue( uint32_t value )
+void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 {
 	//fprintf(stderr, "[%d]",value);
 
@@ -189,6 +189,7 @@ void ProcessValue( uint32_t value )
 		if(value != checkValue)
 		{
 			DebugPrintf("%d != %d\n", checkValue, value);
+			CircularBufferShow( circularBuffer );
 			PANIC("mismatch!");
 		}
 		checkValue++;
@@ -244,12 +245,13 @@ int main()
         //
         //
         DataToOutlet  outData;
+        SharedMemoryFlush( sharedMemory );
         CircularBufferGet( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 
 		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
 		{
-			ProcessValue( outData.data[i] );
+			ProcessValue( controlToOutlet, outData.data[i] );
 		}	
 
 	}

@@ -27,8 +27,7 @@
 
 uint32_t 		checkValue 	= 0;
 bool 			started 	= false;
-
-void ProcessValue( uint32_t value )
+void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 {
 	//fprintf(stderr, "[%d]",value);
 
@@ -37,6 +36,7 @@ void ProcessValue( uint32_t value )
 		if(value != checkValue)
 		{
 			DebugPrintf("%d != %d\n", checkValue, value);
+			CircularBufferShow( circularBuffer );
 			PANIC("mismatch!");
 		}
 		checkValue++;
@@ -47,12 +47,13 @@ void ProcessValue( uint32_t value )
 		started 	= true;
 	}
 	
-	if( (checkValue % 10000000) == 0)
+	if( (checkValue % 1000000) == 0)
 	{
 		printf("[%d]\n", value );
 	}
 	
 }
+
 
 
 
@@ -102,6 +103,7 @@ int main()
         //
         //
         DataFromInlet  inData;
+        SharedMemoryFlush( sharedMemory );
         CircularBufferGet( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
 
@@ -117,9 +119,10 @@ int main()
         memcpy( &outData, &inData, sizeof(outData) );
         for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
         {
-          ProcessValue( outData.data[i] );
+          ProcessValue( inletToControl, outData.data[i] );
         }	
         //CircularBufferShow( controlToOutlet );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferPut( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 

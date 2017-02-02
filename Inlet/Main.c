@@ -355,6 +355,7 @@ int main()
             value++;
         }
         //CircularBufferShow( inletToControl );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferPut( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
         
