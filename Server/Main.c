@@ -73,12 +73,12 @@ int main()
     //
     // InletToControl = 1000->2000;
     // ControlToOutlet = 2000->3000;
-    // ControlToServer = 3000->13000;
+    // ControlToServer = 4000->14000;
     //
-    CircularBuffer*  controlToServer  = (CircularBuffer*)&sharedMemory[3000];
+    CircularBuffer*  controlToServer  = (CircularBuffer*)&sharedMemory[4000];
     CircularBufferInitialiseAsReader( controlToServer, 
                                       sizeof(DataToServer), 
-                                      (void*)&sharedMemory[3000+sizeof(CircularBuffer)] , 
+                                      (void*)&sharedMemory[4000+sizeof(CircularBuffer)] , 
                                       (10000-sizeof(CircularBuffer))/sizeof(DataToServer) );
 
     //
@@ -98,7 +98,7 @@ int main()
         //
         //
         DataToServer  inData;
-        SharedMemoryFlush( sharedMemory );
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferGet( controlToServer, &inData );
         SharedMemoryFlush( sharedMemory );
 
@@ -110,12 +110,17 @@ int main()
         //
         //
         //
-        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
-        {
-          ProcessValue( controlToServer, inData.data[i] );
-        }	
+        //for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
+        //{
+        //  ProcessValue( controlToServer, inData.data[i] );
+        //}	
 
-        //fprintf(stderr, "[%d]",outData);
+        static uint32_t count   = 0;
+        count++;
+        if((count%100000) == 0)
+        {
+            fprintf(stderr, "[%d] ",inData.data[0]);
+        }
     }
 
 }

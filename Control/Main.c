@@ -73,7 +73,7 @@ int main()
     //
     // InletToControl = 1000->2000;
     // ControlToOutlet = 2000->3000;
-    // ControlToServer = 3000->13000;
+    // ControlToServer = 4000->14000;
     //
     CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
     CircularBufferInitialiseAsReader( inletToControl, 
@@ -87,18 +87,20 @@ int main()
                                       (void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
                                       (1000-sizeof(CircularBuffer))/sizeof(DataToOutlet) );
 
-    CircularBuffer*  controlToServer  = (CircularBuffer*)&sharedMemory[3000];
+    CircularBuffer*  controlToServer  = (CircularBuffer*)&sharedMemory[4000];
     CircularBufferInitialiseAsWriter( controlToServer, 
                                       sizeof(DataToServer), 
-                                      (void*)&sharedMemory[3000+sizeof(CircularBuffer)] , 
+                                      (void*)&sharedMemory[4000+sizeof(CircularBuffer)] , 
                                       (10000-sizeof(CircularBuffer))/sizeof(DataToServer) );
 
     //
     // Wait until we are fully connected.
     //
     printf("Waiting for connections.\n");
-    while( (inletToControl->numberOfWriters == 0) || (controlToOutlet->numberOfReaders == 0) );
+    while( (inletToControl->numberOfWriters == 0) || (controlToOutlet->numberOfReaders == 0) || (controlToServer->numberOfReaders == 0) );
     printf("Connected.\n");
+
+    CircularBufferShow(controlToServer);
 
     //
     //
@@ -131,6 +133,14 @@ int main()
         //CircularBufferShow( controlToOutlet );
         //SharedMemoryFlush( sharedMemory );
         CircularBufferPut( controlToOutlet, &outData );
+        SharedMemoryFlush( sharedMemory );
+
+        //
+        //
+        //
+        DataToServer  serverData;
+        memcpy( &serverData, &inData, sizeof(serverData) );
+        CircularBufferLossyPut( controlToServer, &serverData );
         SharedMemoryFlush( sharedMemory );
 
         //fprintf(stderr, "[%d]",outData);
