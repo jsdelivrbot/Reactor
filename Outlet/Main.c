@@ -245,7 +245,7 @@ int main()
         //
         //
         DataToOutlet  outData;
-        SharedMemoryFlush( sharedMemory );
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferGet( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 

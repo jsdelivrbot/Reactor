@@ -326,6 +326,7 @@ int main()
     //
     // InletToControl = 1000->2000;
     // ControlToOutlet = 2000->3000;
+    // ControlToServer = 3000->13000;
     //
     CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
     CircularBufferInitialiseAsWriter(   inletToControl, 
@@ -355,7 +356,7 @@ int main()
             value++;
         }
         //CircularBufferShow( inletToControl );
-        SharedMemoryFlush( sharedMemory );
+        //SharedMemoryFlush( sharedMemory );
         CircularBufferPut( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
         
