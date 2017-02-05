@@ -102,8 +102,6 @@ int main()
     while( (inletToControl->numberOfWriters == 0) || (controlToOutlet->numberOfReaders == 0) || (controlToServer->numberOfReaders == 0) );
     DebugPrintf("Connected.\n");
 
-    CircularBufferShow(controlToServer);
-
     //
     //
     //
@@ -132,13 +130,21 @@ int main()
         //
         //
         //
+        static uint32_t     count   = 0;
+        static uint8_t      state   = 0;
+		count++;
+
+		if( (count%1000) == 0 )
+		{
+            state++;
+		}
+        
         DataToOutlet  outData;
         memcpy( &outData, &inData, sizeof(outData) );
         for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
         {
-          //ProcessValue( inletToControl, outData.data[i] );
+            outData.data[i]   = state;
         }	
-        //CircularBufferShow( controlToOutlet );
         SharedMemoryFlush( sharedMemory );
         CircularBufferPut( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );

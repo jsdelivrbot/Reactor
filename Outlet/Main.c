@@ -135,7 +135,7 @@ uint32_t* SetupGPIO()
 
 
 #define SET_OR_CLEAR_BIT(value,bitNumber, state)\
-	if(state == true) 							\
+	if(state != false) 							\
 	{											\
 		value 	= value | (1<<bitNumber);		\
 	}											\
@@ -210,6 +210,34 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 }
 
 
+//
+//
+//
+void SetOutputState( uint8_t state )
+{
+	uint32_t 	portValue 	= portA->DAT;
+	bool 		d0 			= state & 0x01;
+	bool 		d1 			= state & 0x02;
+	bool 		d2 			= state & 0x04;
+	bool 		d3 			= state & 0x08;
+	bool 		d4 			= state & 0x10;
+	bool 		d5 			= state & 0x20;
+	bool 		d6 			= state & 0x40;
+	bool 		d7 			= state & 0x80;
+
+	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
+	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
+	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
+	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
+	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
+	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
+	SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
+	SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
+	
+	portA->DAT 	= portValue;
+
+}
+
 
 //
 //
@@ -241,24 +269,6 @@ int main()
     while( controlToOutlet->numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
-	while(true)
-	{
-        //
-        //
-        //
-        DataToOutlet  outData;
-        SharedMemoryFlush( sharedMemory );
-        CircularBufferGet( controlToOutlet, &outData );
-        SharedMemoryFlush( sharedMemory );
-
-		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
-		{
-			//ProcessValue( controlToOutlet, outData.data[i] );
-		}	
-
-	}
-
-
 	uint32_t 	start;
 	uint32_t	end;
 	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();
@@ -277,51 +287,25 @@ int main()
 
 	while(true)
 	{
-#if 1		
-		SetLineState( I,I,I,I, I,I,I,I );		// 0x00
-		sleep(1);
-		SetLineState( I,O,I,O, I,O,I,O );		// 0x00
-		sleep(1);
-		SetLineState( O,I,O,I, O,I,O,I );		// 0x00
-		sleep(1);
-#endif		
-#if 0
-		portA->DAT 	= 0xffffffff;
-		sleep(5);
-		portA->DAT 	= 0x00000000;
-		sleep(5);
-		portA->DAT 	= 0xaaaaaaaa;
-		sleep(5);
-		portA->DAT 	= 0x55555555;
-		sleep(5);
-#endif
-#if 1
-		//            0 1 2 3  4 5 6 7
-		SetLineState( O,O,O,O, O,O,O,O );		// 0x00
-		sleep(1);
-		SetLineState( I,O,O,O, O,O,O,O ); 				// 0x01
-		sleep(1);
-		SetLineState( O,I,O,O, O,O,O,O ); 				// 0x02
-		sleep(1);
-		SetLineState( O,O,I,O, O,O,O,O ); 					// 0x04
-		sleep(1);
-		SetLineState( O,O,O,I, O,O,O,O ); 			// 0x08
-		sleep(1);
-		SetLineState( O,O,O,O, I,O,O,O ); 				// 0x10
-		sleep(1);
-		SetLineState( O,O,O,O, O,I,O,O ); 			// 0x20
-		sleep(1);
-		SetLineState( O,O,O,O, O,O,I,O ); 			// 0x40
-		sleep(1);
-		SetLineState( O,O,O,O, O,O,O,I ); 		// 0x80
-		sleep(1);
-
-		//printf("off\n");
-		//portA->DAT 	= 0x00000000;
-		//sleep(5);
-		//printf("on\n");
-#endif
+		//
+		//
+		//
 		Timestamp 	timestamp 	= GetTimestamp();
+
+        //
+        //
+        //
+        DataToOutlet  outData;
+        SharedMemoryFlush( sharedMemory );
+        CircularBufferGet( controlToOutlet, &outData );
+        SharedMemoryFlush( sharedMemory );
+
+		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
+		{
+			SetOutputState( outData.data[i] );
+		}	
+
+		
 	}
 
 }
