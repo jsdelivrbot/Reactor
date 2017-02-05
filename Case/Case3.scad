@@ -1,7 +1,12 @@
 
-$fn=150;
+$fn=200;
 
+
+//
+//
+//
 innerRadius     = 40;
+weightRadius    = 30;
 
 
 //
@@ -95,8 +100,13 @@ module Body()
 //
 module Board()
 {
-    rotate([0,0,90]) color([.8,0,0.8]) translate([-106,-159,-5]) 
-        import("../Board/ReactorBoardEdgeCutsWithMountingHoles2.dxf");
+    union()
+    {
+        rotate([0,0,90]) color([.8,0,0.8]) translate([-106,-159,-5]) 
+            import("../Board/ReactorBoardEdgeCutsWithMountingHoles2.dxf");
+
+        color([0,0.5,0.7]) translate([0,10,-11]) cube(size=[46,48,1], center=true);
+    }
 }
 
 //
@@ -135,21 +145,34 @@ module Bottom()
                 translate([0,0,2]) cylinder(h=2, r1=innerRadius, r2=innerRadius, center=true);
                 translate([0,0,2]) cylinder(h=3, r1=innerRadius-5, r2=innerRadius-5, center=true);
             }
+            
         }
         
         //
         // Internal lid cutout for circular diffusion sheet.
         //
-        translate([0,0,1]) cylinder(h=3, r1=20, r2=20, center=true);
+        translate([0,0,1]) cylinder(h=3, r1=weightRadius, r2=weightRadius, center=true);
+        
+        //
+        // Bottom logo
+        //
+        translate([0,0,-2.5])
+        {
+            rotate([0,180,0])
+            {
+                linear_extrude(height = 2, center = true, convexity = 10, twist = 0)
+                scale([0.8,0.8,1]) translate([-113,-157,0]) import("../../Media/BlockWorksLogo.dxf");
+            }
+        }
     }
 }
 
 
 module ClosedCase()
 {
-    Body();
-    translate([0,0,7]) CaseTopWithLogo();
-    translate([0,0,3]) Board();
+    //Body();
+    //translate([0,0,7]) CaseTopWithLogo();
+    //translate([0,0,3]) Board();
     translate([0,0,-5]) Bottom();
 }
 
@@ -165,7 +188,4 @@ module OpenCase()
 ClosedCase();
 //OpenCase();
 
-
-linear_extrude(height = 10, center = true, convexity = 10, twist = 0)
-scale([8,8,0]) translate([0,0,10]) import("../../Media/BlockWorksLogo.dxf");
 
