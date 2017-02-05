@@ -338,9 +338,9 @@ int main()
     //
     // Wait until we are fully connected.
     //
-    printf("Waiting for connections.\n");
+    DebugPrintf("Waiting for connections.\n");
     while( inletToControl->numberOfReaders == 0 );
-    printf("Connected.\n");
+    DebugPrintf("Connected.\n");
 
 
     while(true)
@@ -356,7 +356,7 @@ int main()
             value++;
         }
         //CircularBufferShow( inletToControl );
-        //SharedMemoryFlush( sharedMemory );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferPut( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
         

@@ -38,6 +38,7 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 			DebugPrintf("%d != %d\n", checkValue, value);
 			CircularBufferShow( circularBuffer );
 			PANIC("mismatch!");
+            fflush(stdout);
 		}
 		checkValue++;
 	}
@@ -49,7 +50,8 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 	
 	if( (checkValue % 10000000) == 0)
 	{
-		printf("[%d]\n", value );
+		DebugPrintf("[%d]\n", value );
+        fflush(stdout);
 	}
 	
 }
@@ -96,9 +98,9 @@ int main()
     //
     // Wait until we are fully connected.
     //
-    printf("Waiting for connections.\n");
+    DebugPrintf("Waiting for connections.\n");
     while( (inletToControl->numberOfWriters == 0) || (controlToOutlet->numberOfReaders == 0) || (controlToServer->numberOfReaders == 0) );
-    printf("Connected.\n");
+    DebugPrintf("Connected.\n");
 
     CircularBufferShow(controlToServer);
 
@@ -112,7 +114,7 @@ int main()
         //
         //
         DataFromInlet  inData;
-        //SharedMemoryFlush( sharedMemory );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferGet( inletToControl, &inData );
         SharedMemoryFlush( sharedMemory );
 
@@ -131,7 +133,7 @@ int main()
           ProcessValue( inletToControl, outData.data[i] );
         }	
         //CircularBufferShow( controlToOutlet );
-        //SharedMemoryFlush( sharedMemory );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferPut( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 
@@ -140,6 +142,7 @@ int main()
         //
         DataToServer  serverData;
         memcpy( &serverData, &inData, sizeof(serverData) );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferLossyPut( controlToServer, &serverData );
         SharedMemoryFlush( sharedMemory );
 

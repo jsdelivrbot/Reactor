@@ -191,6 +191,7 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 			DebugPrintf("%d != %d\n", checkValue, value);
 			CircularBufferShow( circularBuffer );
 			PANIC("mismatch!");
+			fflush(stdout);
 		}
 		checkValue++;
 	}
@@ -202,7 +203,8 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 	
 	if( (checkValue % 1000000) == 0)
 	{
-		printf("[%d]\n", value );
+		DebugPrintf("[%d]\n", value );
+        fflush(stdout);
 	}
 	
 }
@@ -235,9 +237,9 @@ int main()
     //
     // Wait until we are fully connected.
     //
-    printf("Waiting for connections.\n");
+    DebugPrintf("Waiting for connections.\n");
     while( controlToOutlet->numberOfWriters == 0 );
-    printf("Connected.\n");
+    DebugPrintf("Connected.\n");
 
 	while(true)
 	{
@@ -245,7 +247,7 @@ int main()
         //
         //
         DataToOutlet  outData;
-        //SharedMemoryFlush( sharedMemory );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferGet( controlToOutlet, &outData );
         SharedMemoryFlush( sharedMemory );
 

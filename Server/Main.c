@@ -84,9 +84,9 @@ int main()
     //
     // Wait until we are fully connected.
     //
-    printf("Waiting for connection.\n");
+    DebugPrintf("Waiting for connection.\n");
     while( controlToServer->numberOfWriters == 0 )
-    printf("Connected.\n");
+    DebugPrintf("Connected.\n");
 
     //
     //
@@ -98,7 +98,7 @@ int main()
         //
         //
         DataToServer  inData;
-        //SharedMemoryFlush( sharedMemory );
+        SharedMemoryFlush( sharedMemory );
         CircularBufferGet( controlToServer, &inData );
         SharedMemoryFlush( sharedMemory );
 
@@ -117,9 +117,10 @@ int main()
 
         static uint32_t count   = 0;
         count++;
-        if((count%100000) == 0)
+        if((count%10000) == 0)
         {
-            fprintf(stderr, "[%d] ",inData.data[0]);
+            DebugPrintf("[%d] ",inData.data[0]);
+            fflush(stdout);
         }
     }
 

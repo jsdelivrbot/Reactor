@@ -1,6 +1,8 @@
 
 $fn=150;
 
+innerRadius     = 40;
+
 
 //
 // pstoedit -dt -f dxf:-polyaslines -mm ../../Media/Reactor.eps ../../Media/Reactor.dxf
@@ -23,8 +25,8 @@ module CaseTopWithLogo()
         {
             union()
             {
-                rotate_extrude(convexity = 5) translate([38, 0, 0]) circle(r = 2);
-                cylinder(h=4, r1=38, r2=38, center=true);
+                rotate_extrude(convexity = 5) translate([innerRadius, 0, 0]) circle(r = 2);
+                cylinder(h=4, r1=innerRadius, r2=innerRadius, center=true);
             }
             
             translate([0,0,0]) Logo();
@@ -44,6 +46,7 @@ module CaseTopWithLogo()
 //
 module Body()
 {
+    //color([0,1,0])
     union()
     {
         difference()
@@ -54,24 +57,28 @@ module Body()
                 // External body
                 //
                 translate([0,0,-3.3])
-                  cylinder(h=20.5, r1=40, r2=40, center=true);
+                  cylinder(h=20.5, r1=innerRadius+2, r2=innerRadius+2, center=true);
                 
                 //
                 // Internal cutout.
                 //
                 translate([0,0,-3.3])
-                  cylinder(h=21, r1=38, r2=38, center=true);
+                  cylinder(h=21, r1=innerRadius, r2=innerRadius, center=true);
             };
             
             //
             // Rear port cutout.
             //
-            translate([0,40,0]) rotate([90,0,90]) cylinder(h=55, r1=5, r2=5, center=true);
+            //translate([0,40,0]) rotate([90,0,90]) cylinder(h=55, r1=5, r2=5, center=true);
+            color([1,0,0])
+            translate([0,40,-7]) rotate([90,0,90]) cube(size=[20,15,38], center=true);
 
             //
             // Fornt port cutout.
             //
-            translate([0,-40,0]) rotate([90,0,90]) cylinder(h=55, r1=5, r2=5, center=true);
+            //translate([0,-40,0]) rotate([90,0,90]) cylinder(h=55, r1=5, r2=5, center=true);
+            color([1,0,0])
+            translate([0,-40,-5]) rotate([90,0,90]) cube(size=[20,10,28], center=true);
         }
 
         //
@@ -88,7 +95,7 @@ module Body()
 //
 module Board()
 {
-    rotate([0,0,90]) color([.8,0,0.8]) translate([-107,-159,-5]) 
+    rotate([0,0,90]) color([.8,0,0.8]) translate([-106,-159,-5]) 
         import("../Board/ReactorBoardEdgeCutsWithMountingHoles2.dxf");
 }
 
@@ -110,13 +117,24 @@ module Bottom()
     {
         union()
         {
-            rotate_extrude(convexity = 5) translate([38, 0, 0]) circle(r = 2);
-            cylinder(h=4, r1=38, r2=38, center=true);
+            rotate_extrude(convexity = 5) translate([innerRadius, 0, 0]) circle(r = 2);
+            cylinder(h=4, r1=innerRadius, r2=innerRadius, center=true);
 
-            translate([-27.5,-20.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
-            translate([ 27.5,-20.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
-            translate([-27.5, 18.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
-            translate([ 27.5, 18.5,5]) cylinder(h=6, r1=3, r2=3, center=true);
+            //color([1,0,0]) 
+            {
+            translate([-27.5,-19.8,5]) cylinder(h=13, r1=3, r2=3, center=true);
+            translate([ 27.8,-19.8,5]) cylinder(h=13, r1=3, r2=3, center=true);
+            translate([-27.5, 19.8,5]) cylinder(h=13, r1=3, r2=3, center=true);
+            translate([ 27.8, 19.8,5]) cylinder(h=13, r1=3, r2=3, center=true);
+            }
+
+            translate([0,0,1]) cylinder(h=2, r1=innerRadius+2, r2=innerRadius+2, center=true);
+
+            difference()
+            {
+                translate([0,0,2]) cylinder(h=2, r1=innerRadius, r2=innerRadius, center=true);
+                translate([0,0,2]) cylinder(h=3, r1=innerRadius-5, r2=innerRadius-5, center=true);
+            }
         }
         
         //
@@ -127,24 +145,27 @@ module Bottom()
 }
 
 
-Body();
-translate([0,0,7]) CaseTopWithLogo();
-translate([0,0,-20]) Board();
-translate([0,0,-25]) Bottom();
-
-//translate([0,0,10]) Logo();
-
-
-
-//translate([0,37,0]) rotate([90,0,90]) cylinder(h=55, r1=5, r2=5, center=true);
-
-
-/*
-translate([0,0,-7]) 
-union()
+module ClosedCase()
 {
-    rotate_extrude(convexity = 10) translate([38, 0, 0]) circle(r = 2);
-    cylinder(h=4, r1=38, r2=35, center=true);
+    Body();
+    translate([0,0,7]) CaseTopWithLogo();
+    translate([0,0,3]) Board();
+    translate([0,0,-5]) Bottom();
 }
-*/
+
+module OpenCase()
+{
+    Body();
+    translate([0,0,7]) CaseTopWithLogo();
+    translate([0,0,-13]) Board();
+    translate([0,0,-20]) Bottom();
+}
+
+
+ClosedCase();
+//OpenCase();
+
+
+linear_extrude(height = 10, center = true, convexity = 10, twist = 0)
+scale([8,8,0]) translate([0,0,10]) import("../../Media/BlockWorksLogo.dxf");
 
