@@ -253,7 +253,7 @@ int main()
 
 		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
 		{
-			ProcessValue( controlToOutlet, outData.data[i] );
+			//ProcessValue( controlToOutlet, outData.data[i] );
 		}	
 
 	}

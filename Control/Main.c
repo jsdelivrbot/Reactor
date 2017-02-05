@@ -119,6 +119,12 @@ int main()
         SharedMemoryFlush( sharedMemory );
 
         //
+        //
+        //
+        DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
+
+
+        //
         // Get the current timestamp.
         //
         Timestamp    timestamp 	= GetTimestamp();
@@ -130,7 +136,7 @@ int main()
         memcpy( &outData, &inData, sizeof(outData) );
         for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
         {
-          ProcessValue( inletToControl, outData.data[i] );
+          //ProcessValue( inletToControl, outData.data[i] );
         }	
         //CircularBufferShow( controlToOutlet );
         SharedMemoryFlush( sharedMemory );

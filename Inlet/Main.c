@@ -310,74 +310,8 @@ volatile GPIOPort*	portL	= 0;
 //
 //
 //
-int main()
+void SetupSPIController( volatile SPIPort* spiX )
 {
-    uint32_t 			start;
-    uint32_t			end;
-
-    DebugPrintf("\nReactorInlet.\n");
-
-    //
-    //
-    //
-    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
-    strcpy( (char*)sharedMemory, "Hello World." );
-
-    //
-    // InletToControl = 1000->2000;
-    // ControlToOutlet = 2000->3000;
-    // ControlToServer = 3000->13000;
-    //
-    CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
-    CircularBufferInitialiseAsWriter(   inletToControl, 
-                                        sizeof(DataFromInlet), 
-                                        (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
-                                        (1000-sizeof(CircularBuffer))/sizeof(DataFromInlet) );
-
-
-    //
-    // Wait until we are fully connected.
-    //
-    DebugPrintf("Waiting for connections.\n");
-    while( inletToControl->numberOfReaders == 0 );
-    DebugPrintf("Connected.\n");
-
-
-    while(true)
-    {
-        //
-        //
-        //
-        static DataFromInlet    inData;
-        static uint32_t         value   = 0;
-        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
-        {
-            inData.data[i]  = value;
-            value++;
-        }
-        //CircularBufferShow( inletToControl );
-        SharedMemoryFlush( sharedMemory );
-        CircularBufferPut( inletToControl, &inData );
-        SharedMemoryFlush( sharedMemory );
-        
-    }
-
-    //
-    //
-    //
-    gpio 	= (GPIOPort*)SetupGPIO();
-    portA	= &gpio[0];
-    portC	= &gpio[1];
-    portD	= &gpio[2];
-    portE	= &gpio[3];
-    portF	= &gpio[4];
-    portG	= &gpio[5];
-    portL	= &gpio[6];
-
-    spi 	= (SPIPort*)SetupSPI();
-    spi0    = &spi[0];
-    spi1    = &spi[1];
-
     //
     // CCU:BUS_CLK_GATING_REG0:SPI1     = PASS.
     //
@@ -418,7 +352,6 @@ int main()
     //
     // spiX port setup.
     //
-    volatile SPIPort* spiX    = spi1;
     spiX->CTL 	= 0x00000083;
     spiX->INTCTL = 0x000001c4;
     spiX->IER 	= 0x00000000;
@@ -497,79 +430,164 @@ int main()
     // = 0
     //
 
+}
+
+
+
+
+//
+//
+//
+uint8_t GetByteFromShiftRegister( volatile SPIPort* spiX )
+{
+    //printf("FSR=%08x\n", spiX->FSR);
+    //printf("INT_STA=%08x\n", spiX->INT_STA);
+
+    //portA->DAT      = 0xffffffff;
+
+    //
+    // clear down all status flags.
+    //
+    spiX->INT_STA   = 0xffffffff;
+
+    //
+    // reset the FIFOs and write the data into the FIFO.
+    //
+    spiX->FCR       = 0x80008000;
+    //uint32_t*       txFIFO  = (uint32_t*)&spiX->TXD;
+    spiX->TXD 	= 0xff;
+    //spiX->TXD 	= 0x2;
+    //spiX->TXD 	= 0xee;
+    //spiX->TXD 	= 0x4;
+    //spiX->TXD 	= 0x01234567;
+
+    //
+    //
+    //
+    spiX->BC 	    = 0x00000001;
+    spiX->CTL 	    = 0x00000003;
+
+    //
+    // Set XCHG and wait for it to complete.
+    // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
+    //
+    spiX->INTCTL = 0x80000002;
+    while( (spiX->INT_STA&0x00001000) == 0)
+    {
+        //printf("  FSR=%08x\n", spiX->FSR);
+        //printf("  CTL=%08x\n", spiX->CTL);
+        //printf("2  INT_STA=%08x\n", spiX->INT_STA);
+        //sleep(1);        
+    }
+    //portA->DAT      = 0x00000000;
+
+    //
+    // Read from the Rx FIFO while it isn't empty.
+    //
+    
+    //while( (spiX->FSR&0x0000000f) >= 0 )
+
+    volatile uint32_t    rxValue;
+    do
+    {
+        //printf("3  INT_STA=%08x\n", spiX->INT_STA);
+        rxValue     = spiX->RXD;
+        //printf("FSR=%08x\n", spiX->FSR);
+        //printf("RXD=%02x\n", (uint8_t)rxValue );
+    } while( (spiX->INT_STA&0x00000002) == 0 );
+
+    //printf("[%02x]", (uint8_t)(rxValue&0xff) );
+
+    return (uint8_t)(rxValue&0xff);
+}
+
+//
+//
+//
+int main()
+{
+    uint32_t 			start;
+    uint32_t			end;
+
+    DebugPrintf("\nReactorInlet.\n");
+
+    //
+    //
+    //
+    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
+    strcpy( (char*)sharedMemory, "Hello World." );
+
+    //
+    // InletToControl = 1000->2000;
+    // ControlToOutlet = 2000->3000;
+    // ControlToServer = 3000->13000;
+    //
+    CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
+    CircularBufferInitialiseAsWriter(   inletToControl, 
+                                        sizeof(DataFromInlet), 
+                                        (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
+                                        (1000-sizeof(CircularBuffer))/sizeof(DataFromInlet) );
+
+
+    //
+    // Wait until we are fully connected.
+    //
+    DebugPrintf("Waiting for connections.\n");
+    while( inletToControl->numberOfReaders == 0 );
+    DebugPrintf("Connected.\n");
+
+
+    //
+    //
+    //
+    gpio 	= (GPIOPort*)SetupGPIO();
+    portA	= &gpio[0];
+    portC	= &gpio[1];
+    portD	= &gpio[2];
+    portE	= &gpio[3];
+    portF	= &gpio[4];
+    portG	= &gpio[5];
+    portL	= &gpio[6];
+
+    spi 	= (SPIPort*)SetupSPI();
+    spi0    = &spi[0];
+    spi1    = &spi[1];
+    volatile SPIPort* spiX    = spi1;
+
+    //
+    //
+    //
+    SetupSPIController( spiX );
+
     uint32_t 	i 	= 0;
     while(true)
     {
-        //printf("FSR=%08x\n", spiX->FSR);
-        //printf("INT_STA=%08x\n", spiX->INT_STA);
+        static DataFromInlet    inData;
 
-        //portA->DAT      = 0xffffffff;
-
-        //
-        // clear down all status flags.
-        //
-        spiX->INT_STA   = 0xffffffff;
-
-        //
-        // reset the FIFOs and write the data into the FIFO.
-        //
-        spiX->FCR       = 0x80008000;
-        //uint32_t*       txFIFO  = (uint32_t*)&spiX->TXD;
-        spiX->TXD 	= 0xff;
-        //spiX->TXD 	= 0x2;
-        //spiX->TXD 	= 0xee;
-        //spiX->TXD 	= 0x4;
-        //spiX->TXD 	= 0x01234567;
-
-        //
-        //
-        //
-        spiX->BC 	    = 0x00000001;
-        spiX->CTL 	    = 0x00000003;
-
-        //
-        // Set XCHG and wait for it to complete.
-        // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
-        //
-        spiX->INTCTL = 0x80000002;
-        while( (spiX->INT_STA&0x00001000) == 0)
-        {
-            //printf("  FSR=%08x\n", spiX->FSR);
-            //printf("  CTL=%08x\n", spiX->CTL);
-            //printf("2  INT_STA=%08x\n", spiX->INT_STA);
-            //sleep(1);        
-        }
-        //portA->DAT      = 0x00000000;
-
-        //
-        // Read from the Rx FIFO while it isn't empty.
-        //
-        
-        //while( (spiX->FSR&0x0000000f) >= 0 )
-
-        do
-        {
-            //printf("3  INT_STA=%08x\n", spiX->INT_STA);
-            volatile uint32_t    rxValue     = spiX->RXD;
-            //printf("FSR=%08x\n", spiX->FSR);
-            printf("RXD=%02x\n", (uint8_t)rxValue );
-        } while( (spiX->INT_STA&0x00000002) == 0 );
-
-
-        //i++;
-        //sleep(1);
-#if 0
-        {
-            struct timespec tim, tim2;
-            tim.tv_sec      = 0;
-            tim.tv_nsec     = 500000000L;
-            nanosleep(&tim , &tim2);
-        }
-#endif
         //
         // Get the current timestamp.
         //
         Timestamp    timestamp 	= GetTimestamp();
+        inData.timestamp    = timestamp;
+
+        //
+        // Transmit the data to the other cores.
+        //
+        static uint32_t         value   = 0;
+        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
+        {
+            //
+            // Get the line state(s) from the shift register.
+            //
+            uint8_t     byteFromShiftRegister   = GetByteFromShiftRegister( spiX );
+
+            inData.data[i]  = byteFromShiftRegister;
+        }
+        //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
+        SharedMemoryFlush( sharedMemory );
+        CircularBufferPut( inletToControl, &inData );
+        SharedMemoryFlush( sharedMemory );
+
     }
 
 }

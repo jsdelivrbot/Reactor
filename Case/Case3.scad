@@ -6,7 +6,7 @@ $fn=200;
 //
 //
 innerRadius     = 40;
-weightRadius    = 30;
+weightRadius    = 29;
 
 
 //
@@ -170,22 +170,22 @@ module Bottom()
 
 module ClosedCase()
 {
-    //Body();
-    //translate([0,0,7]) CaseTopWithLogo();
-    //translate([0,0,3]) Board();
+    Body();
+    translate([0,0,7]) CaseTopWithLogo();
+    translate([0,0,3]) Board();
     translate([0,0,-5]) Bottom();
 }
 
 module OpenCase()
 {
-    Body();
-    translate([0,0,7]) CaseTopWithLogo();
-    translate([0,0,-13]) Board();
+    //Body();
+    //translate([0,0,7]) CaseTopWithLogo();
+    //translate([0,0,-13]) Board();
     translate([0,0,-20]) Bottom();
 }
 
 
-ClosedCase();
-//OpenCase();
+//  ClosedCase();
+OpenCase();
 
 
