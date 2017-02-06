@@ -108,6 +108,8 @@ int main()
     uint32_t 	i 	= 0;
     while(true)
     {
+        static uint8_t      state   = 0;
+
         //
         //
         //
@@ -119,7 +121,25 @@ int main()
         //
         //
         //
-        DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
+        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
+        {
+            static uint32_t     oldState    = 0;
+            uint32_t            newState    = inData.data[i];
+            if(oldState != newState )
+            {
+                //
+                // CHange of data.
+                //
+                DebugPrintf("%08x: [%02x]<%02x>\n",inData.timestamp, inData.data[i], state);
+
+                if( newState != state )
+                {
+                    PANIC();
+                }
+                oldState    = newState;
+            }
+        }	
+
 
 
         //
@@ -131,7 +151,6 @@ int main()
         //
         //
         static uint32_t     count   = 0;
-        static uint8_t      state   = 0;
 		count++;
 
 		if( (count%1000) == 0 )
