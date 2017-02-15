@@ -277,7 +277,7 @@ int main()
 
 	portA->CFG0 	= 0x11111111;
 	portA->CFG1 	= 0x11111111;
-	portA->CFG2 	= 0x11111111;
+	portA->CFG2 	= 0x11111110;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
 	portA->DRV0 	= 0x22222222;
@@ -302,7 +302,9 @@ int main()
 
 		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
 		{
-			SetOutputState( outData.data[i] );
+			//SetOutputState( outData.data[i] );
+				//portA->DAT 	= 0xffffffff;
+				//portA->DAT 	= 0x00000000;
 		}	
 
 		

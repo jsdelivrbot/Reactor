@@ -134,7 +134,8 @@ int main()
 
                 if( newState != state )
                 {
-                    PANIC();
+                    DebugPrintf("<Mismatch!>\n");
+                    //PANIC();
                 }
                 oldState    = newState;
             }

@@ -1,5 +1,5 @@
 
-$fn=200;
+$fn=50;
 
 
 //
@@ -178,14 +178,14 @@ module ClosedCase()
 
 module OpenCase()
 {
-    //Body();
-    //translate([0,0,7]) CaseTopWithLogo();
-    //translate([0,0,-13]) Board();
+    Body();
+    translate([0,0,7]) CaseTopWithLogo();
+    translate([0,0,-13]) Board();
     translate([0,0,-20]) Bottom();
 }
 
 
-//  ClosedCase();
+//ClosedCase();
 OpenCase();
 
 
