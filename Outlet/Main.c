@@ -276,60 +276,64 @@ void Loop()
 		}
 	}
 
+	uint32_t 	temp;
+	uint32_t 	output;
+
     while(true)
     {
-        *portA_DAT  = Abuffer[aIndex];                      // CLR_CS
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // SET_CS
+        output      = Abuffer[aIndex];
         aIndex++;
 
-        C           = (*portA_DAT & MISO)>>9;   // 7
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        
+        *portA_DAT  = output;                   // CLR_CS
+        *portA_DAT  = output | CS;              // SET_CS
 
-        C           |= (*portA_DAT & MISO)>>10; // 6
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
 
-        C           |= (*portA_DAT & MISO)>>11; // 5
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        temp        = *portA_DAT;
+        C           = (temp & MISO)>>9;         // 7
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
 
-        C           |= (*portA_DAT & MISO)>>12; // 4
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>10;       // 6
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
 
-        C           |= (*portA_DAT & MISO)>>13; // 3
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>11;       // 5
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
 
-        C           |= (*portA_DAT & MISO)>>14; // 2
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>12;       // 4
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
 
-        C           |= (*portA_DAT & MISO)>>15; // 1
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>13;       // 3
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
 
-        C           |= (*portA_DAT & MISO)>>16; // 0
-        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
-        aIndex++;
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>14;       // 2
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
+
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>15;       // 1
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
+
+        temp        = *portA_DAT;
+        C           |= (temp & MISO)>>16;       // 0
+        *portA_DAT  = output|CLK_CS;            // SET_CLK
+        *portA_DAT  = output|CS;                // CLR_CLK
+
+        //
+        //
+        //
+        Cbuffer[cIndex]     = C;
+        cIndex++;
 
         //
         //
