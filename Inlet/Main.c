@@ -599,8 +599,8 @@ int main()
             //
             // Get the line state(s) from the shift register.
             //
-            uint8_t     byteFromShiftRegister   = GetByteFromShiftRegister();
-
+            //uint8_t     byteFromShiftRegister   = GetByteFromShiftRegister();
+#if 0
             if( (i&1) == 0)
             {
                 portA->DAT |= (1<<6);
@@ -609,9 +609,9 @@ int main()
             {
                 portA->DAT &= ~(1<<6);
             }
-
-            inData.data[i]  = byteFromShiftRegister;
-            DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
+#endif
+            //inData.data[i]  = byteFromShiftRegister;
+            //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
         }
         //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
         SharedMemoryFlush( sharedMemory );

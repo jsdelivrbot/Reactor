@@ -239,6 +239,108 @@ void SetOutputState( uint8_t state )
 }
 
 
+
+volatile uint32_t    Abuffer[0xffff];   // aligned on 64KB boundary so 16 bit index wraps.
+volatile uint8_t     Cbuffer[0xffff];
+
+#define CS           (1<<13)
+#define CLK          (1<<14)
+#define CLK_CS       (CLK|CS)
+#define MISO         (1<<16)
+    
+
+//
+//    31       23       15     8 7      0 
+// A: 00000000 00000000 10000100 11001111
+// B: 00000000 00000001 01100000 00000000
+//
+void Loop()
+{
+	uint8_t             C;
+    uint16_t    aIndex  = 0;
+    uint16_t    cIndex  = 0;
+	volatile uint32_t*  portA_DAT   = &portA->DAT;
+
+	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer); i+=8)
+	{
+		Abuffer[i+0] 	= 1<<6;
+		Abuffer[i+1] 	= 1<<7;
+		Abuffer[i+2] 	= 1<<15;
+		Abuffer[i+3] 	= 1<<0;
+		Abuffer[i+4] 	= 1<<10;
+		Abuffer[i+5] 	= 1<<2;
+		Abuffer[i+6] 	= 1<<3;
+		Abuffer[i+7] 	= 1<<1;
+	}
+
+    while(true)
+    {
+        *portA_DAT  = Abuffer[aIndex];                      // CLR_CS
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // SET_CS
+        aIndex++;
+
+        C           = (*portA_DAT & MISO)>>9;   // 7
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>10; // 6
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>11; // 5
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>12; // 4
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>13; // 3
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>14; // 2
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>15; // 1
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        C           |= (*portA_DAT & MISO)>>16; // 0
+        *portA_DAT  = Abuffer[aIndex] | CLK_CS;             // SET_CLK
+        aIndex++;
+        *portA_DAT  = Abuffer[aIndex] | CS;                 // CLR_CLK
+        aIndex++;
+
+        //
+        //
+        //
+        Cbuffer[cIndex]     = C;
+        cIndex++;
+
+		DebugPrintf("[%02x]\n",C);
+    }
+
+}
+
+    
+
 //
 //
 //
@@ -285,6 +387,9 @@ int main()
 	portA->PUL0 	= 0x22222222;
 	portA->PUL1 	= 0x22222222;
 
+
+	Loop();
+
 	while(true)
 	{
 		//
@@ -303,8 +408,8 @@ int main()
 		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
 		{
 			//SetOutputState( outData.data[i] );
-				//portA->DAT 	= 0xffffffff;
-				//portA->DAT 	= 0x00000000;
+				portA->DAT 	= 0xffffffff;
+				portA->DAT 	= 0x00000000;
 		}	
 
 		
