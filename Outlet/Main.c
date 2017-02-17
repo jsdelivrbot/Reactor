@@ -261,16 +261,19 @@ void Loop()
     uint16_t    cIndex  = 0;
 	volatile uint32_t*  portA_DAT   = &portA->DAT;
 
-	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer); i+=8)
+	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer)/128; i+=128)
 	{
-		Abuffer[i+0] 	= 1<<6;
-		Abuffer[i+1] 	= 1<<7;
-		Abuffer[i+2] 	= 1<<15;
-		Abuffer[i+3] 	= 1<<0;
-		Abuffer[i+4] 	= 1<<10;
-		Abuffer[i+5] 	= 1<<2;
-		Abuffer[i+6] 	= 1<<3;
-		Abuffer[i+7] 	= 1<<1;
+		for(uint32_t j=0; j<128; j+=8)
+		{
+			Abuffer[i+j+0] 	= 1<<6;
+			Abuffer[i+j+1] 	= 1<<7;
+			Abuffer[i+j+2] 	= 1<<15;
+			Abuffer[i+j+3] 	= 1<<0;
+			Abuffer[i+j+4] 	= 1<<10;
+			Abuffer[i+j+5] 	= 1<<2;
+			Abuffer[i+j+6] 	= 1<<3;
+			Abuffer[i+j+7] 	= 1<<1;
+		}
 	}
 
     while(true)
@@ -334,7 +337,7 @@ void Loop()
         Cbuffer[cIndex]     = C;
         cIndex++;
 
-		DebugPrintf("[%02x]\n",C);
+		//DebugPrintf("[%02x]\n",C);
     }
 
 }
