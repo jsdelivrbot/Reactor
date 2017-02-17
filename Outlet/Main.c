@@ -240,6 +240,8 @@ void SetOutputState( uint8_t state )
 
 
 
+
+
 volatile uint32_t    Abuffer[0xffff];   // aligned on 64KB boundary so 16 bit index wraps.
 volatile uint8_t     Cbuffer[0xffff];
 
@@ -281,51 +283,53 @@ void Loop()
 
     while(true)
     {
-        output      = Abuffer[aIndex];
-        aIndex++;
+        //output      = Abuffer[aIndex];
+        //aIndex++;
 
         
-        *portA_DAT  = output;                   // CLR_CS
+        *portA_DAT  = 0xffffffff;                   // CLR_CS
+        *portA_DAT  = 0;                   // CLR_CS
+#if 0		
         *portA_DAT  = output | CS;              // SET_CS
 
 
-        temp        = *portA_DAT;
-        C           = (temp & MISO)>>9;         // 7
+        //temp        = *portA_DAT;
+        //C           = (temp & MISO)>>9;         // 7
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>10;       // 6
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>10;       // 6
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>11;       // 5
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>11;       // 5
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>12;       // 4
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>12;       // 4
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>13;       // 3
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>13;       // 3
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>14;       // 2
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>14;       // 2
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>15;       // 1
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>15;       // 1
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
-        temp        = *portA_DAT;
-        C           |= (temp & MISO)>>16;       // 0
+        //temp        = *portA_DAT;
+        //C           |= (temp & MISO)>>16;       // 0
         *portA_DAT  = output|CLK_CS;            // SET_CLK
         *portA_DAT  = output|CS;                // CLR_CLK
 
@@ -334,13 +338,7 @@ void Loop()
         //
         Cbuffer[cIndex]     = C;
         cIndex++;
-
-        //
-        //
-        //
-        Cbuffer[cIndex]     = C;
-        cIndex++;
-
+#endif
 		//DebugPrintf("[%02x]\n",C);
     }
 
@@ -384,16 +382,16 @@ int main()
 	portA	= &gpio[0];
 
 
+
 	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x11111111;
-	portA->CFG2 	= 0x11111110;
+	portA->CFG1 	= 0x12211111;
+	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x22222222;
-	portA->DRV1 	= 0x22222222;
-	portA->PUL0 	= 0x22222222;
-	portA->PUL1 	= 0x22222222;
-
+	portA->DRV0 	= 0x33333333;
+	portA->DRV1 	= 0x33333333;
+	portA->PUL0 	= 0x00000000;
+	portA->PUL1 	= 0x00000000;
 
 	Loop();
 

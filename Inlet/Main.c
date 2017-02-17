@@ -343,27 +343,6 @@ void SetupSPIController( volatile SPIPort* spiX )
     printf("SPI1_CLK_REG = %08x\n", readl(0x01C20000+0x00A4));
     
     //
-    // Pin setup.
-    //
-	printf("CFG1=%08x\n",portL->CFG1);
-	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x11111111;
-	portA->CFG2 	= 0x11111110;
-	portA->CFG3 	= 0x11111111;
-	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x33333333;
-	portA->DRV1 	= 0x33333333;
-	portA->PUL0 	= 0x00000000;
-	portA->PUL1 	= 0x00000000;
-	printf("CFG1=%08x\n",portL->CFG1);
-
-    portA->CFG1 	&= ~0x0ff00000;     // SPI1_CLK=PA14, SPI1_CS=PA13
-    portA->CFG1 	|=  0x01100000;     // Set to GPIO output.
-
-    portA->CFG2 	&= ~0x0000000f;     // SPI1_MISO=PA16
-    portA->CFG2 	|=  0x00000000;     // Set to GPIO input.
-
-    //
     // spiX port setup.
     //
     spiX->CTL 	= 0x00000083;
@@ -449,65 +428,76 @@ void SetupSPIController( volatile SPIPort* spiX )
 
 
 
+
+
+
+
 //
 //
 //
-uint8_t GetByteFromShiftRegister()
+uint8_t GetByteFromShiftRegister( volatile SPIPort* spiX )
 {
-    uint8_t     rxValue     = 0;
+    //printf("FSR=%08x\n", spiX->FSR);
+    //printf("INT_STA=%08x\n", spiX->INT_STA);
+
+    //portA->DAT      = 0xffffffff;
 
     //
-    // Load the current values into the shift reg.
+    // clear down all status flags.
     //
-    SET_CS();
-    CLR_CS();
-    SET_CS();
+    spiX->INT_STA   = 0xffffffff;
 
     //
-    // Clock out the values from the shift reg into MISO and capture them.
+    // reset the FIFOs and write the data into the FIFO.
     //
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
+    spiX->FCR       = 0x80008000;
+    //uint32_t*       txFIFO  = (uint32_t*)&spiX->TXD;
+    spiX->TXD 	= 0xff;
+    //spiX->TXD 	= 0x2;
+    //spiX->TXD 	= 0xee;
+    //spiX->TXD 	= 0x4;
+    //spiX->TXD 	= 0x01234567;
 
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
+    //
+    //
+    //
+    spiX->BC 	    = 0x00000001;
+    spiX->CTL 	    = 0x00000003;
 
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
+    //
+    // Set XCHG and wait for it to complete.
+    // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
+    //
+    spiX->INTCTL = 0x80000002;
+    while( (spiX->INT_STA&0x00001000) == 0)
+    {
+        //printf("  FSR=%08x\n", spiX->FSR);
+        //printf("  CTL=%08x\n", spiX->CTL);
+        //printf("2  INT_STA=%08x\n", spiX->INT_STA);
+        //sleep(1);        
+    }
+    //portA->DAT      = 0x00000000;
 
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
+    //
+    // Read from the Rx FIFO while it isn't empty.
+    //
+    
+    //while( (spiX->FSR&0x0000000f) >= 0 )
 
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
+    volatile uint32_t    rxValue;
+    do
+    {
+        //printf("3  INT_STA=%08x\n", spiX->INT_STA);
+        rxValue     = spiX->RXD;
+        //printf("FSR=%08x\n", spiX->FSR);
+        //printf("RXD=%02x\n", (uint8_t)rxValue );
+    } while( (spiX->INT_STA&0x00000002) == 0 );
 
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
+    //printf("[%02x]", (uint8_t)(rxValue&0xff) );
 
-    rxValue     |= GET_MISO();
-    rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
-
-    rxValue     |= GET_MISO();
-    //rxValue     <<= 1;
-    SET_CLK();
-    CLR_CLK();
-
-    return (uint8_t)(rxValue);
+    return (uint8_t)(rxValue&0xff);
 }
+
 
 //
 //
@@ -559,25 +549,49 @@ int main()
 
 
 	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x11111111;
-	portA->CFG2 	= 0x11111110;
+	portA->CFG1 	= 0x12211111;
+	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x22222222;
-	portA->DRV1 	= 0x22222222;
-	portA->PUL0 	= 0x22222222;
-	portA->PUL1 	= 0x22222222;
+	portA->DRV0 	= 0x33333333;
+	portA->DRV1 	= 0x33333333;
+	portA->PUL0 	= 0x00000000;
+	portA->PUL1 	= 0x00000000;
 
-/*
     spi 	= (SPIPort*)SetupSPI();
     spi0    = &spi[0];
     spi1    = &spi[1];
     volatile SPIPort* spiX    = spi1;
-*/
+
     //
     //
     //
-    //SetupSPIController( spiX );
+    SetupSPIController( spiX );
+
+
+    //
+    // CCU:BUS_CLK_GATING_REG0:SPI1     = PASS.
+    //
+    uint32_t    clkGating     = readl(0x01C20000+0x0060); 
+    writel( 0x01C20000+0x0060, clkGating | (1<<21) ); 
+    printf("BUS_CLK_GATING_REG0:SPI1 = %08x\n", readl(0x01C20000+0x0060));
+
+    //
+    // CCU:SPI1_CLK_REG clock setup
+    //
+    writel( 0x01C20000+0x00A4, 0x80000000 );    // 2.4MHz, OSC24M
+    //writel( 0x01C20000+0x00A4, 0x81000000 );    // 12MHz, PLL_PERIPH0
+    //writel( 0x01C20000+0x00A4, 0x82000000 );    // 12MHz, PLL_PERIPH1
+    //writel( 0x01C20000+0x00A4, 0x82030003 );    // 2MHz, PLL_PERIPH1
+    printf("SPI1_CLK_REG = %08x\n", readl(0x01C20000+0x00A4));
+    
+
+
+
+    while(true)
+    {
+        GetByteFromShiftRegister(spiX);
+    }
 
     uint32_t 	i 	= 0;
     while(true)
