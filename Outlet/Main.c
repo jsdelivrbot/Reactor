@@ -115,7 +115,7 @@ uint32_t* SetupGPIO()
 
   	regAddrMap = mmap(
       		NULL,          
-      		8192,       	
+      		0xffff,       	
 			PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
 			MAP_SHARED,       //Shared with other processes
       		mem_fd,           
@@ -286,6 +286,7 @@ void SetLEDState(bool ledA, bool ledB, bool ledC, bool ledD)
 		portG->DAT 	&= ~(1<<7);
 	}
 
+	portA->DAT 	= ledMask;
 
 }
 
@@ -403,6 +404,45 @@ int main()
 {
     DebugPrintf("\nReactorOutlet.\n");
 
+	uint32_t 	start;
+	uint32_t	end;
+	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();
+	portA	= &gpio[0];
+	portG 	= &gpio[6];
+
+
+
+	portA->CFG0 	= 0x11111111;
+	portA->CFG1 	= 0x12211111;
+	portA->CFG2 	= 0x11111112;
+	portA->CFG3 	= 0x11111111;
+	portA->DAT  	= 0xffffffff;
+	portA->DRV0 	= 0x33333333;
+	portA->DRV1 	= 0x33333333;
+	portA->PUL0 	= 0x00000000;
+	portA->PUL1 	= 0x00000000;
+
+
+	portG->DAT  	= 0xffffffff;
+	portG->DRV0 	= 0x33333333;
+	portG->DRV1 	= 0x33333333;
+	portG->PUL0 	= 0x00000000;
+	portG->PUL1 	= 0x00000000;
+
+	portG->CFG0 	&= ~0xff000000;
+	portG->CFG0 	|=  0x11000000;
+
+	while(true)
+	{
+		SetLEDState(true, false, false, false);
+		for(volatile uint32_t i=0; i<20000000; i++);
+		SetLEDState(false, true, false, false);
+		for(volatile uint32_t i=0; i<20000000; i++);
+		SetLEDState(false, false, true, false);
+		for(volatile uint32_t i=0; i<20000000; i++);
+		SetLEDState(false, false, false, true);
+		for(volatile uint32_t i=0; i<20000000; i++);
+	}
 
     //
     //
@@ -426,42 +466,6 @@ int main()
     while( controlToOutlet->numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
-	uint32_t 	start;
-	uint32_t	end;
-	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();
-	portA	= &gpio[0];
-	portG 	= &gpio[5];
-
-
-
-	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x12211111;
-	portA->CFG2 	= 0x11111112;
-	portA->CFG3 	= 0x11111111;
-	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x33333333;
-	portA->DRV1 	= 0x33333333;
-	portA->PUL0 	= 0x00000000;
-	portA->PUL1 	= 0x00000000;
-
-	portG->CFG1 	&= ~0xf0000000;
-	portG->CFG1 	|=  0x10000000;
-
-	portG->CFG2 	&= ~0x0000000f;
-	portG->CFG2 	|=  0x00000001;
-
-
-	while(true)
-	{
-		SetLEDState(true, true, true, true);
-		sleep(1);
-		SetLEDState(true, true, true, false);
-		sleep(1);
-		SetLEDState(true, true, false, true);
-		sleep(1);
-		SetLEDState(true, true, false, false);
-		sleep(1);
-	}
 
 	Loop();
 
