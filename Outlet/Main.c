@@ -91,6 +91,7 @@ typedef struct
 
 
 volatile GPIOPort*	portA 	= (GPIOPort*)0;
+volatile GPIOPort*	portG 	= (GPIOPort*)0;
 
 
 //
@@ -240,6 +241,55 @@ void SetOutputState( uint8_t state )
 
 
 
+/*
+TWI0-SDA = 3 = PA12 = LED1
+TWI0-SCK = 5 = PA11 = LED2
+UART1_TX = 8 = PG6 = LED3
+UART1_RX = 10 = PG7 = LED4
+*/
+uint32_t 	ledMask 	= 0;
+void SetLEDState(bool ledA, bool ledB, bool ledC, bool ledD)
+{
+	if(ledA == true)
+	{
+		ledMask 	|= 1<<12;
+	}
+	else
+	{
+		ledMask 	&= ~(1<<12);
+	}
+
+	if(ledB == true)
+	{
+		ledMask 	|= 1<<11;
+	}
+	else
+	{
+		ledMask 	&= ~(1<<11);
+	}
+
+	if(ledC == true)
+	{
+		portG->DAT 	|= 1<<6;
+	}
+	else
+	{
+		portG->DAT 	&= ~(1<<6);
+	}
+
+	if(ledD == true)
+	{
+		portG->DAT 	|= 1<<7;
+	}
+	else
+	{
+		portG->DAT 	&= ~(1<<7);
+	}
+
+
+}
+
+
 
 
 volatile uint32_t    Abuffer[0xffff];   // aligned on 64KB boundary so 16 bit index wraps.
@@ -380,6 +430,7 @@ int main()
 	uint32_t	end;
 	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();
 	portA	= &gpio[0];
+	portG 	= &gpio[5];
 
 
 
@@ -392,6 +443,25 @@ int main()
 	portA->DRV1 	= 0x33333333;
 	portA->PUL0 	= 0x00000000;
 	portA->PUL1 	= 0x00000000;
+
+	portG->CFG1 	&= ~0xf0000000;
+	portG->CFG1 	|=  0x10000000;
+
+	portG->CFG2 	&= ~0x0000000f;
+	portG->CFG2 	|=  0x00000001;
+
+
+	while(true)
+	{
+		SetLEDState(true, true, true, true);
+		sleep(1);
+		SetLEDState(true, true, true, false);
+		sleep(1);
+		SetLEDState(true, true, false, true);
+		sleep(1);
+		SetLEDState(true, true, false, false);
+		sleep(1);
+	}
 
 	Loop();
 

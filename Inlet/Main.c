@@ -346,7 +346,8 @@ void SetupSPIController( volatile SPIPort* spiX )
     // spiX port setup.
     //
     spiX->CTL 	= 0x00000083;
-    spiX->INTCTL = 0x000001c4;
+    //spiX->INTCTL = 0x000001c4;    // h/w control of SS.
+    spiX->INTCTL = 0x00000184;      // s/w control of SS.
     spiX->IER 	= 0x00000000;
     spiX->INT_STA= 0x00000642;
     spiX->FCR 	= 0x00100010;
@@ -356,6 +357,7 @@ void SetupSPIController( volatile SPIPort* spiX )
     spiX->BC 	= 0x00000004;
     spiX->TC 	= 0x00000000;
     spiX->BCC 	= 0x00000000;
+
 
     //
     // Reset and wait for reset to complete.
@@ -379,7 +381,7 @@ void SetupSPIController( volatile SPIPort* spiX )
     // Setup burst mode.
     //
     spiX->BC 	    = 0x00000001;
-    spiX->BCC 	    = 0x00000001;
+    spiX->BCC 	    = 0x00000000;
 
     printf("\n\n");
     printf("CTL=%08x\n", spiX->CTL);
@@ -435,67 +437,69 @@ void SetupSPIController( volatile SPIPort* spiX )
 //
 //
 //
-uint8_t GetByteFromShiftRegister( volatile SPIPort* spiX )
+void GetByteFromShiftRegister( volatile SPIPort* spiX )
 {
-    //printf("FSR=%08x\n", spiX->FSR);
-    //printf("INT_STA=%08x\n", spiX->INT_STA);
+    volatile uint32_t*   pINTCTL     = &spiX->INTCTL;
+    volatile uint32_t*   pINT_STA    = &spiX->INT_STA;
+    volatile uint32_t*   pFCR        = &spiX->FCR;
+    volatile uint32_t*   pTXD        = &spiX->TXD;
+    volatile uint32_t*   pBC         = &spiX->BC;
+    volatile uint32_t*   pCTL        = &spiX->CTL;
+    volatile uint32_t*   pRXD        = &spiX->RXD;
+    volatile uint32_t*   pIER        = &spiX->IER;
+    uint32_t            temp;
 
-    //portA->DAT      = 0xffffffff;
-
-    //
-    // clear down all status flags.
-    //
-    spiX->INT_STA   = 0xffffffff;
-
-    //
-    // reset the FIFOs and write the data into the FIFO.
-    //
-    spiX->FCR       = 0x80008000;
-    //uint32_t*       txFIFO  = (uint32_t*)&spiX->TXD;
-    spiX->TXD 	= 0xff;
-    //spiX->TXD 	= 0x2;
-    //spiX->TXD 	= 0xee;
-    //spiX->TXD 	= 0x4;
-    //spiX->TXD 	= 0x01234567;
-
-    //
-    //
-    //
-    spiX->BC 	    = 0x00000001;
-    spiX->CTL 	    = 0x00000003;
-
-    //
-    // Set XCHG and wait for it to complete.
-    // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
-    //
-    spiX->INTCTL = 0x80000002;
-    while( (spiX->INT_STA&0x00001000) == 0)
+    while(true)
     {
-        //printf("  FSR=%08x\n", spiX->FSR);
-        //printf("  CTL=%08x\n", spiX->CTL);
-        //printf("2  INT_STA=%08x\n", spiX->INT_STA);
-        //sleep(1);        
+
+        //
+        // clear down all status flags.
+        //
+        *pINT_STA   = 0xffffffff;
+        *pIER       = 0;
+
+        //
+        // reset the FIFOs and write the data into the FIFO.
+        //
+        *pFCR       = 0x80008000;
+        *pTXD 	    = 0xff;
+        *pTXD 	    = 0xff;
+        *pTXD 	    = 0xff;
+        *pTXD 	    = 0xff;
+
+        //
+        //
+        //
+        *pBC 	    = 0x00000004;
+        *pCTL 	    = 0x00000003;
+
+
+
+        //
+        // Set XCHG and wait for it to complete.
+        // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
+        //
+        *pINTCTL = 0x800000c2;
+        while( (*pINT_STA&0x00001000) == 0);
+
+        //while( (spiX->INTCTL&0x80000000) != 0);
+
+        //
+        // Read from the Rx FIFO while it isn't empty.
+        //
+        
+        //while( (spiX->FSR&0x0000000f) >= 0 )
+
+        //
+        // Pulse SS for parallel-load.
+        //
+        *pINTCTL = 0x00000042;
+        *pINTCTL = 0x000000c2;
+
+        volatile uint32_t    rxValue;
+        rxValue     = *pRXD;
+        //while( (spiX->INT_STA&0x00000002) == 0 );
     }
-    //portA->DAT      = 0x00000000;
-
-    //
-    // Read from the Rx FIFO while it isn't empty.
-    //
-    
-    //while( (spiX->FSR&0x0000000f) >= 0 )
-
-    volatile uint32_t    rxValue;
-    do
-    {
-        //printf("3  INT_STA=%08x\n", spiX->INT_STA);
-        rxValue     = spiX->RXD;
-        //printf("FSR=%08x\n", spiX->FSR);
-        //printf("RXD=%02x\n", (uint8_t)rxValue );
-    } while( (spiX->INT_STA&0x00000002) == 0 );
-
-    //printf("[%02x]", (uint8_t)(rxValue&0xff) );
-
-    return (uint8_t)(rxValue&0xff);
 }
 
 
@@ -508,6 +512,33 @@ int main()
     uint32_t			end;
 
     DebugPrintf("\nReactorInlet.\n");
+
+    spi 	= (SPIPort*)SetupSPI();
+    spi0    = &spi[0];
+    spi1    = &spi[1];
+    volatile SPIPort* spiX    = spi1;
+
+
+    //
+    //
+    //
+    // CCU:BUS_CLK_GATING_REG0:SPI1     = PASS.
+    //    
+    DebugPrintf("BUS_CLK_GATING_REG0 : %08x\n", readl(0x01C20000+0x0060) );
+    DebugPrintf("AHB1_APB1_CFG_REG : %08x\n", readl(0x01C20000+0x0054) );
+    DebugPrintf("SPI1_CLK_REG : %08x\n", readl(0x01C20000+0x00A4) );
+    DebugPrintf("CTL=%08x\n", spiX->CTL);
+    DebugPrintf("INTCTL=%08x\n", spiX->INTCTL);
+    DebugPrintf("IER=%08x\n", spiX->IER);
+    DebugPrintf("INT_STA=%08x\n", spiX->INT_STA);
+    DebugPrintf("FCR=%08x\n", spiX->FCR);
+    DebugPrintf("FSR=%08x\n", spiX->FSR);
+    DebugPrintf("WAIT=%08x\n", spiX->WAIT);
+    DebugPrintf("CCTL=%08x\n", spiX->CCTL);
+    DebugPrintf("BC=%08x\n", spiX->BC);
+    DebugPrintf("TC=%08x\n", spiX->TC);
+    DebugPrintf("BCC=%08x\n", spiX->BCC);
+
 
     //
     //
@@ -558,10 +589,12 @@ int main()
 	portA->PUL0 	= 0x00000000;
 	portA->PUL1 	= 0x00000000;
 
-    spi 	= (SPIPort*)SetupSPI();
-    spi0    = &spi[0];
-    spi1    = &spi[1];
-    volatile SPIPort* spiX    = spi1;
+/*
+    for(uint32_t i=0; i<sizeof(SPIPort)/sizeof(uint32_t); i++)
+    {
+        DebugPrintf("%08x : %08x\n",i,((uint32_t*)spiX)[i] );
+    }
+*/
 
     //
     //
@@ -574,17 +607,14 @@ int main()
     //
     uint32_t    clkGating     = readl(0x01C20000+0x0060); 
     writel( 0x01C20000+0x0060, clkGating | (1<<21) ); 
-    printf("BUS_CLK_GATING_REG0:SPI1 = %08x\n", readl(0x01C20000+0x0060));
 
     //
     // CCU:SPI1_CLK_REG clock setup
     //
     writel( 0x01C20000+0x00A4, 0x80000000 );    // 2.4MHz, OSC24M
-    //writel( 0x01C20000+0x00A4, 0x81000000 );    // 12MHz, PLL_PERIPH0
-    //writel( 0x01C20000+0x00A4, 0x82000000 );    // 12MHz, PLL_PERIPH1
-    //writel( 0x01C20000+0x00A4, 0x82030003 );    // 2MHz, PLL_PERIPH1
-    printf("SPI1_CLK_REG = %08x\n", readl(0x01C20000+0x00A4));
-    
+    //writel( 0x01C20000+0x00A4, 0x81000000 );        // CLK_DIV_RATIO_M=5, CLK_DIV_RATIO_N=/1, CLK_SRC_SEL=PLL_PERIPH0, SCLK_GATING:ON Clock Source/Divider N/Divider M
+    spiX->CCTL 	= 0x00001000;
+    spiX->IER   = 0;    
 
 
 
