@@ -248,6 +248,7 @@ UART1_TX = 8 = PG6 = LED3
 UART1_RX = 10 = PG7 = LED4
 */
 uint32_t 	ledMask 	= 0;
+uint32_t 	ledClearMask	= ~((1<<12)|(1<<11));
 void SetLEDState(bool ledA, bool ledB, bool ledC, bool ledD)
 {
 	if(ledA == true)
@@ -286,11 +287,33 @@ void SetLEDState(bool ledA, bool ledB, bool ledC, bool ledD)
 		portG->DAT 	&= ~(1<<7);
 	}
 
-	portA->DAT 	= ledMask;
-
 }
 
 
+
+void ChangeLEDState()
+{
+	static uint32_t 	i=0;
+
+	i++;
+	if(i>=2000000)
+	{
+		static uint32_t 	j=0;
+		uint32_t 			k 	= j % 4;
+
+		switch(k)
+		{
+			case 0: SetLEDState(true, false, false, false); break;
+			case 1: SetLEDState(false, true, false, false); break;
+			case 2: SetLEDState(false, false, true, false); break;
+			case 3: SetLEDState(false, false, false, true); break;
+			default: break;
+		}
+
+		j++;
+		i 	= 0;
+	}
+}
 
 
 volatile uint32_t    Abuffer[0xffff];   // aligned on 64KB boundary so 16 bit index wraps.
@@ -334,12 +357,13 @@ void Loop()
 
     while(true)
     {
-        //output      = Abuffer[aIndex];
-        //aIndex++;
+		ChangeLEDState();
+
+        output      = (Abuffer[aIndex] & ledClearMask) | ledMask;
+        aIndex++;
 
         
-        *portA_DAT  = 0xffffffff;                   // CLR_CS
-        *portA_DAT  = 0;                   // CLR_CS
+        *portA_DAT  = output;                   // CLR_CS
 #if 0		
         *portA_DAT  = output | CS;              // SET_CS
 
@@ -431,19 +455,19 @@ int main()
 
 	portG->CFG0 	&= ~0xff000000;
 	portG->CFG0 	|=  0x11000000;
-
+#if 0
 	while(true)
 	{
 		SetLEDState(true, false, false, false);
-		for(volatile uint32_t i=0; i<20000000; i++);
+		for(volatile uint32_t i=0; i<12000000; i++);
 		SetLEDState(false, true, false, false);
-		for(volatile uint32_t i=0; i<20000000; i++);
+		for(volatile uint32_t i=0; i<12000000; i++);
 		SetLEDState(false, false, true, false);
-		for(volatile uint32_t i=0; i<20000000; i++);
+		for(volatile uint32_t i=0; i<12000000; i++);
 		SetLEDState(false, false, false, true);
-		for(volatile uint32_t i=0; i<20000000; i++);
+		for(volatile uint32_t i=0; i<12000000; i++);
 	}
-
+#endif
     //
     //
     //
