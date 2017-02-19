@@ -447,8 +447,13 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
     volatile uint32_t*   pCTL        = &spiX->CTL;
     volatile uint32_t*   pRXD        = &spiX->RXD;
     volatile uint32_t*   pIER        = &spiX->IER;
+    volatile uint32_t*   pTC         = &spiX->TC;
+    volatile uint32_t*   pFSR        = &spiX->FSR;
     uint32_t            temp;
 
+    *pCTL 	    = 0x00000003;
+    *pIER       = 0;
+    
     while(true)
     {
 
@@ -456,22 +461,18 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
         // clear down all status flags.
         //
         *pINT_STA   = 0xffffffff;
-        *pIER       = 0;
 
         //
         // reset the FIFOs and write the data into the FIFO.
         //
-        *pFCR       = 0x80008000;
-        *pTXD 	    = 0xff;
-        *pTXD 	    = 0xff;
-        *pTXD 	    = 0xff;
-        *pTXD 	    = 0xff;
+        //*pFCR       = 0x80008000;
+        //*pTXD 	    = 0xff;
 
         //
         //
         //
-        *pBC 	    = 0x00000004;
-        *pCTL 	    = 0x00000003;
+        *pBC 	    = 0x00000040;
+        //*pTC        = 0;
 
 
 
@@ -480,8 +481,15 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
         // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
         //
         *pINTCTL = 0x800000c2;
+        //for(volatile uint32_t i=0; i<10; i++);
+        //temp    = *pINT_STA;
         while( (*pINT_STA&0x00001000) == 0);
-
+/*
+        while( ((*pINT_STA)&0x02) != 0 )
+        {
+            *pTXD   = 0xff;
+        }
+*/
         //while( (spiX->INTCTL&0x80000000) != 0);
 
         //
@@ -493,11 +501,11 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
         //
         // Pulse SS for parallel-load.
         //
-        *pINTCTL = 0x00000042;
-        *pINTCTL = 0x000000c2;
+        //*pINTCTL = 0x00000042;
+        //*pINTCTL = 0x000000c2;
 
-        volatile uint32_t    rxValue;
-        rxValue     = *pRXD;
+        //volatile uint32_t    rxValue;
+        //rxValue     = *pRXD;
         //while( (spiX->INT_STA&0x00000002) == 0 );
     }
 }
