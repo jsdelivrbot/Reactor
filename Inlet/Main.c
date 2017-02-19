@@ -588,7 +588,7 @@ int main()
 
 
 	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x12211111;
+	portA->CFG1 	= 0x12111111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
@@ -619,8 +619,8 @@ int main()
     //
     // CCU:SPI1_CLK_REG clock setup
     //
-    writel( 0x01C20000+0x00A4, 0x80000000 );    // 2.4MHz, OSC24M
-    //writel( 0x01C20000+0x00A4, 0x81000000 );        // CLK_DIV_RATIO_M=5, CLK_DIV_RATIO_N=/1, CLK_SRC_SEL=PLL_PERIPH0, SCLK_GATING:ON Clock Source/Divider N/Divider M
+    //writel( 0x01C20000+0x00A4, 0x80000000 );    // 2.4MHz, OSC24M
+    writel( 0x01C20000+0x00A4, 0x81000000 );        // CLK_DIV_RATIO_M=5, CLK_DIV_RATIO_N=/1, CLK_SRC_SEL=PLL_PERIPH0, SCLK_GATING:ON Clock Source/Divider N/Divider M
     spiX->CCTL 	= 0x00001000;
     spiX->IER   = 0;    
 

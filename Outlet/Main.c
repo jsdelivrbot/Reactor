@@ -296,7 +296,7 @@ void ChangeLEDState()
 	static uint32_t 	i=0;
 
 	i++;
-	if(i>=2000000)
+	if(i>=200000)
 	{
 		static uint32_t 	j=0;
 		uint32_t 			k 	= j % 4;
@@ -360,10 +360,16 @@ void Loop()
 		ChangeLEDState();
 
         output      = (Abuffer[aIndex] & ledClearMask) | ledMask;
-        aIndex++;
-
-        
+        aIndex++;        
         *portA_DAT  = output;                   // CLR_CS
+
+        output      = (Abuffer[aIndex] & ledClearMask) | ledMask;
+        aIndex++;        
+        *portA_DAT  = output;                   // CLR_CS
+
+		*portA_DAT 	|= CS;
+		*portA_DAT 	&= ~CS;
+		
 #if 0		
         *portA_DAT  = output | CS;              // SET_CS
 
@@ -437,7 +443,7 @@ int main()
 
 
 	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x12211111;
+	portA->CFG1 	= 0x12111111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
