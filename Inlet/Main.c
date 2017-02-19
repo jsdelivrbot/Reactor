@@ -504,8 +504,9 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
         //*pINTCTL = 0x00000042;
         //*pINTCTL = 0x000000c2;
 
-        //volatile uint32_t    rxValue;
-        //rxValue     = *pRXD;
+        uint32_t    rxValue;
+        rxValue     = *pRXD;
+        //DebugPrintf("[%02x]\n", rxValue);
         //while( (spiX->INT_STA&0x00000002) == 0 );
     }
 }
@@ -621,7 +622,8 @@ int main()
     //
     //writel( 0x01C20000+0x00A4, 0x80000000 );    // 2.4MHz, OSC24M
     writel( 0x01C20000+0x00A4, 0x81000000 );        // CLK_DIV_RATIO_M=5, CLK_DIV_RATIO_N=/1, CLK_SRC_SEL=PLL_PERIPH0, SCLK_GATING:ON Clock Source/Divider N/Divider M
-    spiX->CCTL 	= 0x00001000;
+    spiX->CCTL 	= 0x0000100b;       // 25 MHz SPI clock.
+    //spiX->CCTL 	= 0x00001010;           // 16.7 MHz SPI clk.
     spiX->IER   = 0;    
 
 

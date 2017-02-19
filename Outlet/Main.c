@@ -336,7 +336,7 @@ void Loop()
     uint16_t    aIndex  = 0;
     uint16_t    cIndex  = 0;
 	volatile uint32_t*  portA_DAT   = &portA->DAT;
-
+#if 0
 	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer)/128; i+=128)
 	{
 		for(uint32_t j=0; j<128; j+=8)
@@ -351,6 +351,8 @@ void Loop()
 			Abuffer[i+j+7] 	= 1<<1;
 		}
 	}
+#endif
+	memset(&Abuffer[0], 0x20, sizeof(Abuffer));
 
 	uint32_t 	temp;
 	uint32_t 	output;
