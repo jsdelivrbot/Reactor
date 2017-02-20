@@ -352,7 +352,7 @@ void Loop()
 		}
 	}
 #endif
-	memset(&Abuffer[0], 0x20, sizeof(Abuffer));
+	memset( (void*)&Abuffer[0], 0x20, sizeof(Abuffer));
 
 	uint32_t 	temp;
 	uint32_t 	output;
@@ -371,7 +371,8 @@ void Loop()
 
 		*portA_DAT 	|= CS;
 		*portA_DAT 	&= ~CS;
-		
+
+
 #if 0		
         *portA_DAT  = output | CS;              // SET_CS
 
@@ -444,7 +445,7 @@ int main()
 
 
 
-	portA->CFG0 	= 0x11111111;
+	portA->CFG0 	= 0x13111111;
 	portA->CFG1 	= 0x12111111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;

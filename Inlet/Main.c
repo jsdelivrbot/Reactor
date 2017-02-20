@@ -169,6 +169,66 @@ uint32_t readl(uint32_t offset)
 
 
 
+
+
+
+
+//
+//
+//
+typedef struct
+{
+    volatile uint32_t	CH_CTL;
+    volatile uint32_t	CH0_PERIOD;
+    volatile uint32_t	CH1_PERIOD;
+
+
+} PWMPort;
+
+
+//
+//
+//
+PWMPort* SetupPWM()
+{
+    const uint32_t	    BASE 					= 0x01C21400;	// SPI0
+    const uint32_t  	PAGE_SIZE 				= 4096;
+    const uint32_t		BASEPage 				= BASE & ~(PAGE_SIZE-1);
+    uint32_t 			BASEOffsetIntoPage		= BASE - BASEPage;
+    int					mem_fd					= 0;
+    void*				regAddrMap 				= MAP_FAILED;
+
+
+    if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
+    {
+        perror("can't open /dev/mem");
+        exit (1);
+    }
+
+      regAddrMap = mmap(
+                        NULL,          
+                        BASEOffsetIntoPage+(PAGE_SIZE*2),       	
+                        PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
+                        MAP_SHARED,       //Shared with other processes
+                        mem_fd,           
+                        BASEPage);
+
+        if (regAddrMap == MAP_FAILED) 
+        {
+              perror("mmap error");
+              close(mem_fd);
+              exit (1);
+        }
+
+    uint32_t*   pvalue = (uint32_t*)(regAddrMap + BASEOffsetIntoPage);
+
+    return (PWMPort*)pvalue;
+}
+
+
+
+
+
 //
 //
 //
@@ -588,7 +648,7 @@ int main()
     portL	= &gpio[6];
 
 
-	portA->CFG0 	= 0x11111111;
+	portA->CFG0 	= 0x11311111;
 	portA->CFG1 	= 0x12111111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
@@ -626,10 +686,22 @@ int main()
     //spiX->CCTL 	= 0x00001010;           // 16.7 MHz SPI clk.
     spiX->IER   = 0;    
 
+    //
+    //
+    //
+    PWMPort* pwmPort    = SetupPWM();
+    pwmPort->CH_CTL     = 0;
+    pwmPort->CH0_PERIOD = (5<<16)|10;
+    sleep(1);
+    pwmPort->CH_CTL     = 0xf;
+    pwmPort->CH_CTL     |= (1<<9)|(1<<6)|(1<<4)|(1<<20)|(1<<23);
+
 
 
     while(true)
     {
+        //portA->DAT  |= 1<<6;
+        //portA->DAT  &= ~(1<<6);
         GetByteFromShiftRegister(spiX);
     }
 
