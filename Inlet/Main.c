@@ -405,8 +405,7 @@ void SetupSPIController( volatile SPIPort* spiX )
     //
     // spiX port setup.
     //
-    spiX->CTL 	= 0x00000083;
-    //spiX->INTCTL = 0x000001c4;    // h/w control of SS.
+    spiX->CTL 	= 0x00000001;       // slave mode.
     spiX->INTCTL = 0x00000184;      // s/w control of SS.
     spiX->IER 	= 0x00000000;
     spiX->INT_STA= 0x00000642;
@@ -494,10 +493,52 @@ void SetupSPIController( volatile SPIPort* spiX )
 
 
 
+
+#define SET_OR_CLEAR_BIT(value,bitNumber, state)\
+	if(state != false) 							\
+	{											\
+		value 	= value | (1<<bitNumber);		\
+	}											\
+	else										\
+	{											\
+		value 	= value & ~(1<<bitNumber);		\
+	}
+
 //
 //
 //
-void GetByteFromShiftRegister( volatile SPIPort* spiX )
+void SetOutputState( uint8_t state )
+{
+	uint32_t 	portValue 	= portA->DAT;
+	bool 		d0 			= state & 0x01;
+	bool 		d1 			= state & 0x02;
+	bool 		d2 			= state & 0x04;
+	bool 		d3 			= state & 0x08;
+	bool 		d4 			= state & 0x10;
+	bool 		d5 			= state & 0x20;
+	bool 		d6 			= state & 0x40;
+	bool 		d7 			= state & 0x80;
+
+	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
+	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
+	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
+	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
+	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
+	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
+	SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
+	SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
+	
+	portA->DAT 	= portValue;
+
+}
+
+
+
+
+//
+//
+//
+void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 {
     volatile uint32_t*   pINTCTL     = &spiX->INTCTL;
     volatile uint32_t*   pINT_STA    = &spiX->INT_STA;
@@ -510,12 +551,16 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
     volatile uint32_t*   pTC         = &spiX->TC;
     volatile uint32_t*   pFSR        = &spiX->FSR;
     uint32_t            temp;
+    static uint32_t     wordCount   = 0;
 
-    *pCTL 	    = 0x00000003;
+    *pCTL 	    = 0x00000001;
     *pIER       = 0;
     
+
+
     while(true)
     {
+        SetOutputState(0xff);
 
         //
         // clear down all status flags.
@@ -531,19 +576,24 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
         //
         //
         //
-        *pBC 	    = 0x00000040;
+        //*pBC 	    = 0x00000040;
         //*pTC        = 0;
 
+
+        //DebugPrintf("[%08x] %d\n", *pINT_STA, wordCount);
+        //DebugPrintf("[%08x]\n", *pFSR);
+        //while( (*pINT_STA) == 0);
 
 
         //
         // Set XCHG and wait for it to complete.
         // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
         //
-        *pINTCTL = 0x800000c2;
+        //*pINTCTL = 0x800000c2;
+        *pINTCTL = 0x80000002;
         //for(volatile uint32_t i=0; i<10; i++);
         //temp    = *pINT_STA;
-        while( (*pINT_STA&0x00001000) == 0);
+        //while( (*pINT_STA&0x00001000) == 0);
 /*
         while( ((*pINT_STA)&0x02) != 0 )
         {
@@ -563,10 +613,30 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX )
         //
         //*pINTCTL = 0x00000042;
         //*pINTCTL = 0x000000c2;
+        portA->DAT  &= ~(1<<4);
+        portA->DAT  |= (1<<4);
 
-        uint32_t    rxValue;
-        rxValue     = *pRXD;
-        //DebugPrintf("[%02x]\n", rxValue);
+        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+        pwmPort->CH0_PERIOD = (0x4<<16)|0x4;
+
+        while( ((*pFSR)&0xff) == 0 );
+
+        uint8_t     value;
+        //uint32_t    i=0;
+        while( ((*pFSR)&0xff) > 0 )
+        {
+            value = *((uint8_t*)pRXD);
+            pwmPort->CH_CTL     = 0;
+            //DebugPrintf("[%02x, %d, %08x]\n", value,i, *pFSR);
+            //i++;
+        }
+        //DebugPrintf("[%02x]\n", value);
+        wordCount++;
+
+        //uint32_t    rxValue;
+        //rxValue     = *pRXD;
+        //for(volatile uint32_t i=0; i<100000; i++);
+        DebugPrintf("%d [%02x]\n", wordCount,value);
         //while( (spiX->INT_STA&0x00000002) == 0 );
     }
 }
@@ -648,8 +718,8 @@ int main()
     portL	= &gpio[6];
 
 
-	portA->CFG0 	= 0x11311111;
-	portA->CFG1 	= 0x12111111;
+	portA->CFG0 	= 0x10311111;
+	portA->CFG1 	= 0x12211111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
@@ -657,6 +727,7 @@ int main()
 	portA->DRV1 	= 0x33333333;
 	portA->PUL0 	= 0x00000000;
 	portA->PUL1 	= 0x00000000;
+
 
 /*
     for(uint32_t i=0; i<sizeof(SPIPort)/sizeof(uint32_t); i++)
@@ -691,10 +762,11 @@ int main()
     //
     PWMPort* pwmPort    = SetupPWM();
     pwmPort->CH_CTL     = 0;
-    pwmPort->CH0_PERIOD = (5<<16)|10;
+    pwmPort->CH0_PERIOD = (4096<<16)|4096;
     sleep(1);
-    pwmPort->CH_CTL     = 0xf;
-    pwmPort->CH_CTL     |= (1<<9)|(1<<6)|(1<<4)|(1<<20)|(1<<23);
+    //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4)|(1<<20)|(1<<23) | 0xf;
+    pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0x6;
+    pwmPort->CH0_PERIOD = (0xffff<<16)|0xffff;
 
 
 
@@ -702,7 +774,7 @@ int main()
     {
         //portA->DAT  |= 1<<6;
         //portA->DAT  &= ~(1<<6);
-        GetByteFromShiftRegister(spiX);
+        GetByteFromShiftRegister(spiX, pwmPort);
     }
 
     uint32_t 	i 	= 0;

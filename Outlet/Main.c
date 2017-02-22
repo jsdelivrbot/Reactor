@@ -360,7 +360,8 @@ void Loop()
     while(true)
     {
 		ChangeLEDState();
-
+		SetOutputState(0xff);
+#if 0
         output      = (Abuffer[aIndex] & ledClearMask) | ledMask;
         aIndex++;        
         *portA_DAT  = output;                   // CLR_CS
@@ -371,7 +372,7 @@ void Loop()
 
 		*portA_DAT 	|= CS;
 		*portA_DAT 	&= ~CS;
-
+#endif
 
 #if 0		
         *portA_DAT  = output | CS;              // SET_CS
@@ -445,8 +446,8 @@ int main()
 
 
 
-	portA->CFG0 	= 0x13111111;
-	portA->CFG1 	= 0x12111111;
+	portA->CFG0 	= 0x10311111;
+	portA->CFG1 	= 0x12211111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
