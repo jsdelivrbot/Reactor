@@ -447,7 +447,7 @@ int main()
 
 
 	portA->CFG0 	= 0x10311111;
-	portA->CFG1 	= 0x12211111;
+	portA->CFG1 	= 0x22211111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;

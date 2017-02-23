@@ -556,16 +556,35 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
     *pCTL 	    = 0x00000001;
     *pIER       = 0;
     
+    uint8_t x = 0;
 
+
+
+    portA->DAT  = 0;            
+
+
+    pwmPort->CH0_PERIOD = (20<<16)|10;
 
     while(true)
     {
-        SetOutputState(0xff);
+        uint32_t    currentValue    = portA->DAT;
 
+        //SetOutputState(x);
+#if 0        
+        x++;
+        if( (x&1) == 0)
+        {
+            portA->DAT  |= 1<<2;
+        }
+        else
+        {
+            portA->DAT  &= ~(1<<2);            
+        }
+#endif
         //
         // clear down all status flags.
         //
-        *pINT_STA   = 0xffffffff;
+        //*pINT_STA   = 0xffffffff;
 
         //
         // reset the FIFOs and write the data into the FIFO.
@@ -613,15 +632,15 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         //
         //*pINTCTL = 0x00000042;
         //*pINTCTL = 0x000000c2;
-        portA->DAT  &= ~(1<<4);
-        portA->DAT  |= (1<<4);
+        portA->DAT  = currentValue & ~(1<<4);
+        for(volatile uint32_t i=0; i<1000; i++);
+        portA->DAT  = currentValue | (1<<4);
 
         pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-        pwmPort->CH0_PERIOD = (0x4<<16)|0x4;
+        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
 
         while( ((*pFSR)&0xff) == 0 );
-
-        uint8_t     value;
+        volatile uint8_t     value;
         //uint32_t    i=0;
         while( ((*pFSR)&0xff) > 0 )
         {
@@ -631,12 +650,15 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
             //i++;
         }
         //DebugPrintf("[%02x]\n", value);
-        wordCount++;
+
+        //wordCount++;
 
         //uint32_t    rxValue;
         //rxValue     = *pRXD;
         //for(volatile uint32_t i=0; i<100000; i++);
-        DebugPrintf("%d [%02x]\n", wordCount,value);
+        //DebugPrintf("%d [%02x]\n", wordCount,value);
+        //DebugPrintf("%d [%d]\n", wordCount, value);
+        //sleep(1);
         //while( (spiX->INT_STA&0x00000002) == 0 );
     }
 }
@@ -720,7 +742,7 @@ int main()
 
 	portA->CFG0 	= 0x10311111;
 	portA->CFG1 	= 0x12211111;
-	portA->CFG2 	= 0x11111112;
+	portA->CFG2 	= 0x11111111;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
 	portA->DRV0 	= 0x33333333;
