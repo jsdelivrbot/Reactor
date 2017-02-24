@@ -570,15 +570,15 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         uint32_t    currentValue    = portA->DAT;
 
         //SetOutputState(x);
-#if 0        
+#if 1 
         x++;
         if( (x&1) == 0)
         {
-            portA->DAT  |= 1<<2;
+            currentValue  |= 1<<2;
         }
         else
         {
-            portA->DAT  &= ~(1<<2);            
+            currentValue  &= ~(1<<2);            
         }
 #endif
         //
@@ -633,7 +633,7 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         //*pINTCTL = 0x00000042;
         //*pINTCTL = 0x000000c2;
         portA->DAT  = currentValue & ~(1<<4);
-        for(volatile uint32_t i=0; i<1000; i++);
+        for(volatile uint32_t i=0; i<100; i++);
         portA->DAT  = currentValue | (1<<4);
 
         pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
@@ -742,7 +742,7 @@ int main()
 
 	portA->CFG0 	= 0x10311111;
 	portA->CFG1 	= 0x12211111;
-	portA->CFG2 	= 0x11111111;
+	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
 	portA->DRV0 	= 0x33333333;
