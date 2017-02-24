@@ -569,7 +569,7 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
     portA->DAT  = 0;            
 
 
-    pwmPort->CH0_PERIOD = (2<<16)|1;
+    pwmPort->CH0_PERIOD = (1<<16)|1;
 
     uint8_t value = 0;
     volatile uint32_t*   portA_DAT   = &portA->DAT;
@@ -681,37 +681,7 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
 
 
-        C           = (*portA_DAT & MISO)>>9;   // 7
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>10; // 6
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>11; // 5
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>12; // 4
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>13; // 3
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>14; // 2
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>15; // 1
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
-
-        C           |= (*portA_DAT & MISO)>>16; // 0
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        *portA_DAT  = value | CS;                 // CLR_CLK
+        for(volatile uint32_t i=0; i<100; i++);
 
 
         pwmPort->CH_CTL     = 0;
