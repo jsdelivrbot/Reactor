@@ -661,7 +661,6 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         }
         //DebugPrintf("[%02x]\n", value);
 
-        //wordCount++;
 
         //uint32_t    rxValue;
         //rxValue     = *pRXD;
@@ -709,6 +708,8 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         *portA_DAT  = value | CLK_CS;             // SET_CLK
         *portA_DAT  = value | CS;                 // CLR_CLK
 
+        DebugPrintf("%d [%d]\n", wordCount, C);
+        wordCount++;
         
     }
 }
