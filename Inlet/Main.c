@@ -674,8 +674,10 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         value   = ~value;
 
 
-        *portA_DAT  = value;                      // CLR_CS
-        *portA_DAT  = value | CS;                 // SET_CS
+        //*portA_DAT  = value;                      // CLR_CS
+        //*portA_DAT  = value | CS;                 // SET_CS
+        *portA_DAT  = value & ~(1<<4);                      // CLR_CS
+        *portA_DAT  = value | (1<<4);                 // SET_CS
 
 
         pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
@@ -771,7 +773,7 @@ int main()
 
 
 	portA->CFG0 	= 0x11311111;
-	portA->CFG1 	= 0x12111111;
+	portA->CFG1 	= 0x12211111;
 	portA->CFG2 	= 0x11111112;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
