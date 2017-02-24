@@ -740,15 +740,16 @@ int main()
     portL	= &gpio[6];
 
 
-	portA->CFG0 	= 0x10311111;
-	portA->CFG1 	= 0x12211111;
-	portA->CFG2 	= 0x11111112;
+
+	portA->CFG0 	= 0x11111111;
+	portA->CFG1 	= 0x11111111;
+	portA->CFG2 	= 0x11111110;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x33333333;
-	portA->DRV1 	= 0x33333333;
-	portA->PUL0 	= 0x00000000;
-	portA->PUL1 	= 0x00000000;
+	portA->DRV0 	= 0x22222222;
+	portA->DRV1 	= 0x22222222;
+	portA->PUL0 	= 0x22222222;
+	portA->PUL1 	= 0x22222222;
 
 
 /*
@@ -796,7 +797,7 @@ int main()
     {
         //portA->DAT  |= 1<<6;
         //portA->DAT  &= ~(1<<6);
-        GetByteFromShiftRegister(spiX, pwmPort);
+        //GetByteFromShiftRegister(spiX, pwmPort);
     }
 
     uint32_t 	i 	= 0;
