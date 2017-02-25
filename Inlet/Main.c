@@ -566,6 +566,7 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
     pwmPort->CH0_PERIOD = (4<<16)|2;
 
     uint32_t    value = 0;
+    
 
     while(true)
     {
@@ -579,18 +580,16 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         portA->DAT  = value | (1<<4);
         value   = portA->DAT;
 
-#if 1
+        *pINTCTL = 0x00000000;      // CS polarity bit.
         pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+#if 0
         for(volatile uint32_t i=0; i<1000; i++);
-        pwmPort->CH_CTL     = 0;
 #else 
-        *pINTCTL = 0x00000002;
-        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
         while( ((*pFSR)&0xff) == 0 );
+#endif        
         pwmPort->CH_CTL     = 0;
         volatile uint8_t     rxValue;
         rxValue = *((uint8_t*)pRXD);
-#endif        
 
     }
 }
@@ -674,8 +673,8 @@ int main()
 
 
 	portA->CFG0 	= 0x11311111;
-	portA->CFG1 	= 0x12211111;
-	portA->CFG2 	= 0x11111112;
+	portA->CFG1 	= 0x02211111;
+	portA->CFG2 	= 0x11111110;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
 	portA->DRV0 	= 0x22222222;
