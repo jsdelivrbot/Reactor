@@ -563,7 +563,7 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
     //portA->DAT  = 0;            
 
 
-    pwmPort->CH0_PERIOD = (8<<16)|4;
+    pwmPort->CH0_PERIOD = (20<<16)|10;
 
     uint32_t    value;
 
@@ -666,40 +666,15 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 #else
         value 	= ~value;
 
-        //uint32_t    value   = portA->DAT;
         portA->DAT  = value & ~(1<<13);
         portA->DAT  = value | (1<<13);
         value   = portA->DAT;
 
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
-        portA->DAT  = value | (1<<14);
-        portA->DAT  = value;
-
 
         //*pINTCTL = 0x80000002;
-        //pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-        //for(volatile uint32_t i=0; i<100; i++);
-        //pwmPort->CH_CTL     = 0;
+        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+        for(volatile uint32_t i=0; i<1000; i++);
+        pwmPort->CH_CTL     = 0;
 
 #endif        
     }
@@ -783,8 +758,8 @@ int main()
 
 
 
-	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x11111111;
+	portA->CFG0 	= 0x11311111;
+	portA->CFG1 	= 0x10111111;
 	portA->CFG2 	= 0x11111110;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
