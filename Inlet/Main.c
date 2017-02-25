@@ -569,114 +569,29 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 
     while(true)
     {
+        spiX->CTL 	= 0x00000001;       // slave mode.
+
+
         uint32_t    currentValue    = portA->DAT;
-#if 0
-        //SetOutputState(x);
-#if 1 
-        x++;
-        if( (x&1) == 0)
-        {
-            currentValue  |= 1<<2;
-        }
-        else
-        {
-            currentValue  &= ~(1<<2);            
-        }
-#endif
-        //
-        // clear down all status flags.
-        //
-        //*pINT_STA   = 0xffffffff;
-
-        //
-        // reset the FIFOs and write the data into the FIFO.
-        //
-        //*pFCR       = 0x80008000;
-        //*pTXD 	    = 0xff;
-
-        //
-        //
-        //
-        //*pBC 	    = 0x00000040;
-        //*pTC        = 0;
-
-
-        //DebugPrintf("[%08x] %d\n", *pINT_STA, wordCount);
-        //DebugPrintf("[%08x]\n", *pFSR);
-        //while( (*pINT_STA) == 0);
-
-
-        //
-        // Set XCHG and wait for it to complete.
-        // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
-        //
-        //*pINTCTL = 0x800000c2;
-        *pINTCTL = 0x80000002;
-        //for(volatile uint32_t i=0; i<10; i++);
-        //temp    = *pINT_STA;
-        //while( (*pINT_STA&0x00001000) == 0);
-/*
-        while( ((*pINT_STA)&0x02) != 0 )
-        {
-            *pTXD   = 0xff;
-        }
-*/
-        //while( (spiX->INTCTL&0x80000000) != 0);
-
-        //
-        // Read from the Rx FIFO while it isn't empty.
-        //
-        
-        //while( (spiX->FSR&0x0000000f) >= 0 )
-
-        //
-        // Pulse SS for parallel-load.
-        //
-        //*pINTCTL = 0x00000042;
-        //*pINTCTL = 0x000000c2;
-        portA->DAT  = currentValue & ~(1<<4);
-        for(volatile uint32_t i=0; i<100; i++);
-        portA->DAT  = currentValue | (1<<4);
-
-        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
-
-        while( ((*pFSR)&0xff) == 0 );
-        volatile uint8_t     value;
-        //uint32_t    i=0;
-        while( ((*pFSR)&0xff) > 0 )
-        {
-            value = *((uint8_t*)pRXD);
-            pwmPort->CH_CTL     = 0;
-            //DebugPrintf("[%02x, %d, %08x]\n", value,i, *pFSR);
-            //i++;
-        }
-        //DebugPrintf("[%02x]\n", value);
-
-        //wordCount++;
-
-        //uint32_t    rxValue;
-        //rxValue     = *pRXD;
-        //for(volatile uint32_t i=0; i<100000; i++);
-        //DebugPrintf("%d [%02x]\n", wordCount,value);
-        //DebugPrintf("%d [%d]\n", wordCount, value);
-        //sleep(1);
-        //while( (spiX->INT_STA&0x00000002) == 0 );
-
-#else
         value 	= ~value;
 
         portA->DAT  = value & ~(1<<4);
         portA->DAT  = value | (1<<4);
         value   = portA->DAT;
 
-
-        //*pINTCTL = 0x80000002;
+#if 1
         pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
         for(volatile uint32_t i=0; i<1000; i++);
         pwmPort->CH_CTL     = 0;
-
+#else 
+        *pINTCTL = 0x00000002;
+        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+        while( ((*pFSR)&0xff) == 0 );
+        pwmPort->CH_CTL     = 0;
+        volatile uint8_t     rxValue;
+        rxValue = *((uint8_t*)pRXD);
 #endif        
+
     }
 }
 
