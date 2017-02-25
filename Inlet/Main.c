@@ -560,15 +560,15 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 
 
 
-    portA->DAT  = 0;            
+    //portA->DAT  = 0;            
 
 
-    pwmPort->CH0_PERIOD = (20<<16)|10;
+    pwmPort->CH0_PERIOD = (8<<16)|4;
 
     while(true)
     {
         uint32_t    currentValue    = portA->DAT;
-
+#if 0
         //SetOutputState(x);
 #if 1 
         x++;
@@ -660,6 +660,44 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
         //DebugPrintf("%d [%d]\n", wordCount, value);
         //sleep(1);
         //while( (spiX->INT_STA&0x00000002) == 0 );
+
+#else
+        uint32_t    value   = portA->DAT;
+        portA->DAT  = value & ~(1<<13);
+        portA->DAT  = value | (1<<13);
+        value   = portA->DAT;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+        portA->DAT  = value | (1<<14);
+        portA->DAT  = value;
+
+
+        //*pINTCTL = 0x80000002;
+        //pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+        //for(volatile uint32_t i=0; i<100; i++);
+        //pwmPort->CH_CTL     = 0;
+
+#endif        
     }
 }
 
@@ -723,7 +761,7 @@ int main()
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    while( inletToControl->numberOfReaders == 0 );
+    //while( inletToControl->numberOfReaders == 0 );
     DebugPrintf("Connected.\n");
 
 
@@ -797,7 +835,7 @@ int main()
     {
         //portA->DAT  |= 1<<6;
         //portA->DAT  &= ~(1<<6);
-        //GetByteFromShiftRegister(spiX, pwmPort);
+        GetByteFromShiftRegister(spiX, pwmPort);
     }
 
     uint32_t 	i 	= 0;
