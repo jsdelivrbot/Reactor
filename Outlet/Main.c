@@ -247,26 +247,26 @@ TWI0-SCK = 5 = PA11 = LED2
 UART1_TX = 8 = PG6 = LED3
 UART1_RX = 10 = PG7 = LED4
 */
-uint32_t 	ledMask 	= 0;
-uint32_t 	ledClearMask	= ~((1<<12)|(1<<11));
+uint32_t 	ledStatus 		= 0;
+uint32_t 	ledMask			= ((1<<12)|(1<<11));
 void SetLEDState(bool ledA, bool ledB, bool ledC, bool ledD)
 {
 	if(ledA == true)
 	{
-		ledMask 	|= 1<<12;
+		ledStatus 	|= 1<<12	;
 	}
 	else
 	{
-		ledMask 	&= ~(1<<12);
+		ledStatus 	&= ~(1<<12);	
 	}
 
 	if(ledB == true)
 	{
-		ledMask 	|= 1<<11;
+		ledStatus 	|= 1<<11	;
 	}
 	else
 	{
-		ledMask 	&= ~(1<<11);
+		ledStatus 	&= ~(1<<11);	
 	}
 
 	if(ledC == true)
@@ -317,12 +317,8 @@ void ChangeLEDState()
 
 
 volatile uint32_t    Abuffer[0xffff];   // aligned on 64KB boundary so 16 bit index wraps.
-volatile uint8_t     Cbuffer[0xffff];
 
-#define CS           (1<<13)
-#define CLK          (1<<14)
-#define CLK_CS       (CLK|CS)
-#define MISO         (1<<16)
+#define PL           (1<<4)
     
 
 //
@@ -332,27 +328,20 @@ volatile uint8_t     Cbuffer[0xffff];
 //
 void Loop()
 {
-	uint8_t             C;
     uint16_t    aIndex  = 0;
-    uint16_t    cIndex  = 0;
 	volatile uint32_t*  portA_DAT   = &portA->DAT;
-#if 1
-	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer)/128; i+=128)
+
+	memset( (void*)&Abuffer[0], 0xff, sizeof(Abuffer));
+
+	//
+	// values used for output should have bits set as appropriate for the pins and 
+	// should have PL and LED bits cleared.
+	// This avoids performing repeated processing in the inner loop.
+	//
+	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer); i++)
 	{
-		for(uint32_t j=0; j<128; j+=8)
-		{
-			Abuffer[i+j+0] 	= 1<<6;
-			Abuffer[i+j+1] 	= 1<<7;
-			Abuffer[i+j+2] 	= 1<<15;
-			Abuffer[i+j+3] 	= 1<<0;
-			Abuffer[i+j+4] 	= 1<<10;
-			Abuffer[i+j+5] 	= 1<<2;
-			Abuffer[i+j+6] 	= 1<<3;
-			Abuffer[i+j+7] 	= 1<<1;
-		}
+		Abuffer[i] 	= 0xffffffff & (~PL) & (~ledMask);
 	}
-#endif
-	memset( (void*)&Abuffer[0], 0x20, sizeof(Abuffer));
 
 	uint32_t 	temp;
 	uint32_t 	output;
@@ -361,82 +350,55 @@ void Loop()
     while(true)
     {
 		ChangeLEDState();
-		SetOutputState(value);
-		value 	= ~value;
-#if 0
-        output      = (value & ledClearMask) | ledMask;
+
+		//
+		//
+		//
+		value 	= Abuffer[aIndex];
         aIndex++;        
-        *portA_DAT  = output;                   // CLR_CS
+        output      = value | ledStatus;
+        *portA_DAT  = output;                   // CLR_PL
 
-        output      = (value & ledClearMask) | ledMask;
+		value 	= Abuffer[aIndex];
         aIndex++;        
-        *portA_DAT  = output;                   // CLR_CS
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-		*portA_DAT 	|= CS;
-		*portA_DAT 	&= ~CS;
-#endif
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-#if 1
-        *portA_DAT  = value;                      // CLR_CS
-        aIndex++;
-        *portA_DAT  = value | CS;                 // SET_CS
-        aIndex++;
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-        C           = (*portA_DAT & MISO)>>9;   // 7
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-        C           |= (*portA_DAT & MISO)>>10; // 6
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-        C           |= (*portA_DAT & MISO)>>11; // 5
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-        C           |= (*portA_DAT & MISO)>>12; // 4
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-        C           |= (*portA_DAT & MISO)>>13; // 3
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
+		value 	= Abuffer[aIndex];
+        aIndex++;        
+        output      = value | ledStatus	 | PL;
+        *portA_DAT  = output;                   // SET_PL
 
-        C           |= (*portA_DAT & MISO)>>14; // 2
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
-
-        C           |= (*portA_DAT & MISO)>>15; // 1
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
-
-        C           |= (*portA_DAT & MISO)>>16; // 0
-        *portA_DAT  = value | CLK_CS;             // SET_CLK
-        aIndex++;
-        *portA_DAT  = value | CS;                 // CLR_CLK
-        aIndex++;
-
-        //
-        //
-        //
-        //Cbuffer[cIndex]     = C;
-        //cIndex++;
-#endif
-		DebugPrintf("[%02x]\n",C);
     }
 
 }
@@ -459,8 +421,9 @@ int main()
 
 
 
-	portA->CFG0 	= 0x11111111;
-	portA->CFG1 	= 0x11111111;
+
+	portA->CFG0 	= 0x11311111;
+	portA->CFG1 	= 0x02211111;
 	portA->CFG2 	= 0x11111110;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
@@ -468,6 +431,8 @@ int main()
 	portA->DRV1 	= 0x22222222;
 	portA->PUL0 	= 0x22222222;
 	portA->PUL1 	= 0x22222222;
+
+
 
 
 	portG->DAT  	= 0xffffffff;
