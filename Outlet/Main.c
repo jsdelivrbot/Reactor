@@ -316,7 +316,7 @@ void ChangeLEDState()
 }
 
 
-volatile uint32_t    Abuffer[0xffff];   // aligned on 64KB boundary so 16 bit index wraps.
+volatile uint32_t    Abuffer[0xffff];   // index is 16 bit in size to give nice wrapping behaviour.
 
 #define PL           (1<<4)
     
@@ -350,7 +350,7 @@ void Loop()
     while(true)
     {
 		ChangeLEDState();
-
+#if 0
 		//
 		//
 		//
@@ -398,7 +398,7 @@ void Loop()
         aIndex++;        
         output      = value | ledStatus	 | PL;
         *portA_DAT  = output;                   // SET_PL
-
+#endif
     }
 
 }
@@ -423,8 +423,8 @@ int main()
 
 
 	portA->CFG0 	= 0x11311111;
-	portA->CFG1 	= 0x02211111;
-	portA->CFG2 	= 0x11111110;
+	portA->CFG1 	= 0x22211111;
+	portA->CFG2 	= 0x11111111;
 	portA->CFG3 	= 0x11111111;
 	portA->DAT  	= 0xffffffff;
 	portA->DRV0 	= 0x22222222;
