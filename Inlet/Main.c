@@ -584,10 +584,11 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 
         while( ((*pFSR)&0xff) == 0 );
         pwmPort->CH_CTL     = 0;
-        while( ((*pFSR)&0xff) > 0 )
+        //while( ((*pFSR)&0xff) > 0 )
         {
             rxValue = *((uint8_t*)pRXD);
-            DebugPrintf("[%02x]\n", rxValue);
+            volatile uint32_t i=rxValue;
+            //DebugPrintf("[%02x]\n", rxValue);
         }
 
     }
