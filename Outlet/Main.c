@@ -350,7 +350,7 @@ void Loop()
     while(true)
     {
 		ChangeLEDState();
-#if 0
+#if 1
 		//
 		//
 		//
@@ -443,68 +443,22 @@ int main()
 
 	portG->CFG0 	&= ~0xff000000;
 	portG->CFG0 	|=  0x11000000;
-#if 0
-	while(true)
-	{
-		SetLEDState(true, false, false, false);
-		for(volatile uint32_t i=0; i<12000000; i++);
-		SetLEDState(false, true, false, false);
-		for(volatile uint32_t i=0; i<12000000; i++);
-		SetLEDState(false, false, true, false);
-		for(volatile uint32_t i=0; i<12000000; i++);
-		SetLEDState(false, false, false, true);
-		for(volatile uint32_t i=0; i<12000000; i++);
-	}
-#endif
+
     //
     //
     //
     volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
 
-    //
-    // InletToControl = 1000->2000;
-    // ControlToOutlet = 2000->3000;
-    //
-    CircularBuffer*  controlToOutlet  = (CircularBuffer*)&sharedMemory[2000];
-	CircularBufferInitialiseAsReader( 	controlToOutlet, 
-										sizeof(DataToOutlet), 
-										(void*)&sharedMemory[2000+sizeof(CircularBuffer)] , 
-										(2000-sizeof(CircularBuffer))/sizeof(DataToOutlet) );
 
     //
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    while( controlToOutlet->numberOfWriters == 0 );
+    //while( controlToOutlet->numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
 
 	Loop();
-
-	while(true)
-	{
-		//
-		//
-		//
-		Timestamp 	timestamp 	= GetTimestamp();
-
-        //
-        //
-        //
-        DataToOutlet  outData;
-        SharedMemoryFlush( sharedMemory );
-        CircularBufferGet( controlToOutlet, &outData );
-        SharedMemoryFlush( sharedMemory );
-
-		for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(outData.data); i++)
-		{
-			//SetOutputState( outData.data[i] );
-				portA->DAT 	= 0xffffffff;
-				portA->DAT 	= 0x00000000;
-		}	
-
-		
-	}
 
 }
 

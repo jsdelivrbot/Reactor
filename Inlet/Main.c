@@ -535,10 +535,11 @@ void SetOutputState( uint8_t state )
 
 
 
+
 //
 //
 //
-void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
+void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPort* spiX, PWMPort* pwmPort )
 {
     volatile uint32_t*   pINTCTL     = &spiX->INTCTL;
     volatile uint32_t*   pINT_STA    = &spiX->INT_STA;
@@ -574,21 +575,19 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
     volatile uint8_t     rxValue;
     while(true)
     {
-        uint32_t    currentValue    = portA->DAT;
-        value   = portA->DAT;
-        value 	= ~value;
+        //uint32_t    currentValue    = portA->DAT;
+        //value   = portA->DAT;
+        //value 	= ~value;
 
-        portA->DAT  = value & ~(1<<4);
-        portA->DAT  = value | (1<<4);
+        //portA->DAT  = value & ~(1<<4);
+        //portA->DAT  = value | (1<<4);
         //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
 
         while( ((*pFSR)&0xff) == 0 );
         //pwmPort->CH_CTL     = 0;
         //while( ((*pFSR)&0xff) > 0 )
         {
-            rxValue = *((uint8_t*)pRXD);
-            volatile uint32_t i=rxValue;
-            //DebugPrintf("[%02x]\n", rxValue);
+            FastSharedBufferPut( buffer, *((uint8_t*)pRXD) );
         }
 
     }
@@ -639,22 +638,17 @@ int main()
     strcpy( (char*)sharedMemory, "Hello World." );
 
     //
-    // InletToControl = 1000->2000;
-    // ControlToOutlet = 2000->3000;
-    // ControlToServer = 3000->13000;
     //
-    CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
-    CircularBufferInitialiseAsWriter(   inletToControl, 
-                                        sizeof(DataFromInlet), 
-                                        (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
-                                        (1000-sizeof(CircularBuffer))/sizeof(DataFromInlet) );
-
+    //
+    SharedMemoryLayout*     layout  = (SharedMemoryLayout*)sharedMemory;
+    volatile FastSharedBuffer*       inletToControl  = &layout->inletToControl;
+    FastSharedBufferInitialiseAsWriter( inletToControl );
 
     //
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    //while( inletToControl->numberOfReaders == 0 );
+    while( inletToControl->numberOfReaders == 0 );
     DebugPrintf("Connected.\n");
 
 
@@ -682,20 +676,10 @@ int main()
 	portA->PUL0 	= 0x22222222;
 	portA->PUL1 	= 0x22222222;
 
-
-
-/*
-    for(uint32_t i=0; i<sizeof(SPIPort)/sizeof(uint32_t); i++)
-    {
-        DebugPrintf("%08x : %08x\n",i,((uint32_t*)spiX)[i] );
-    }
-*/
-
     //
     //
     //
     SetupSPIController( spiX );
-
 
     //
     // CCU:BUS_CLK_GATING_REG0:SPI1     = PASS.
@@ -727,52 +711,8 @@ int main()
 
     while(true)
     {
-        //portA->DAT  |= 1<<6;
-        //portA->DAT  &= ~(1<<6);
-        GetByteFromShiftRegister(spiX, pwmPort);
+        GetByteFromShiftRegister( inletToControl, spiX, pwmPort);
     }
-
-    uint32_t 	i 	= 0;
-    while(true)
-    {
-        static DataFromInlet    inData;
-
-        //
-        // Get the current timestamp.
-        //
-        Timestamp    timestamp 	= GetTimestamp();
-        inData.timestamp    = timestamp;
-
-        //
-        // Transmit the data to the other cores.
-        //
-        static uint32_t         value   = 0;
-        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
-        {
-            //
-            // Get the line state(s) from the shift register.
-            //
-            //uint8_t     byteFromShiftRegister   = GetByteFromShiftRegister();
-#if 0
-            if( (i&1) == 0)
-            {
-                portA->DAT |= (1<<6);
-            }
-            else 
-            {
-                portA->DAT &= ~(1<<6);
-            }
-#endif
-            //inData.data[i]  = byteFromShiftRegister;
-            //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
-        }
-        //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
-        SharedMemoryFlush( sharedMemory );
-        CircularBufferPut( inletToControl, &inData );
-        SharedMemoryFlush( sharedMemory );
-
-    }
-
 }
 
 
