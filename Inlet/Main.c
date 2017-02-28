@@ -567,6 +567,7 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 
     uint32_t    value = 0;
     
+    pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
 
     spiX->CTL 	= 0x00000001;       // slave mode.
     *pINTCTL = 0x00000000;      // CS polarity bit.
@@ -579,11 +580,10 @@ void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
 
         portA->DAT  = value & ~(1<<4);
         portA->DAT  = value | (1<<4);
-        pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
-        //pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
 
         while( ((*pFSR)&0xff) == 0 );
-        pwmPort->CH_CTL     = 0;
+        //pwmPort->CH_CTL     = 0;
         //while( ((*pFSR)&0xff) > 0 )
         {
             rxValue = *((uint8_t*)pRXD);
