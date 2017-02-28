@@ -534,7 +534,23 @@ void SetOutputState( uint8_t state )
 
 
 
+//assumes little endian
+void printBits(size_t const size, void const * const ptr)
+{
+    unsigned char *b = (unsigned char*) ptr;
+    unsigned char byte;
+    int i, j;
 
+    for (i=size-1;i>=0;i--)
+    {
+        for (j=7;j>=0;j--)
+        {
+            byte = (b[i] >> j) & 1;
+            printf("%u", byte);
+        }
+    }
+    puts("\n");
+}
 
 //
 //
@@ -576,18 +592,23 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
     while(true)
     {
         //uint32_t    currentValue    = portA->DAT;
-        //value   = portA->DAT;
+        SetOutputState(x);
+        x++;
+        value   = portA->DAT;
         //value 	= ~value;
 
-        //portA->DAT  = value & ~(1<<4);
-        //portA->DAT  = value | (1<<4);
-        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
+        portA->DAT  = value & ~(1<<4);
+        portA->DAT  = value | (1<<4);
+        pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
 
         while( ((*pFSR)&0xff) == 0 );
-        //pwmPort->CH_CTL     = 0;
+        pwmPort->CH_CTL     = 0;
         //while( ((*pFSR)&0xff) > 0 )
         {
-            FastSharedBufferPut( buffer, *((uint8_t*)pRXD) );
+            rxValue     = *((uint8_t*)pRXD);
+            DebugPrintf("[%02x]\n",rxValue);
+            printBits(sizeof(rxValue), &rxValue);
+            //FastSharedBufferPut( buffer, rxValue );
         }
 
     }
