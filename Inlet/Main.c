@@ -519,9 +519,9 @@ void SetOutputState( uint8_t state )
 	bool 		d6 			= state & 0x40;
 	bool 		d7 			= state & 0x80;
 
-	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
+	SET_OR_CLEAR_BIT( portValue, 16,  d0 ); 	// d0 15
 	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
-	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
+	SET_OR_CLEAR_BIT( portValue, 6, d2 ); 	// d2 6
 	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
 	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
 	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
@@ -592,22 +592,23 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
     while(true)
     {
         //uint32_t    currentValue    = portA->DAT;
-        SetOutputState(x);
-        x++;
+        SetOutputState(1<<x);
+        x   = (x+1)%8;
         value   = portA->DAT;
         //value 	= ~value;
 
         portA->DAT  = value & ~(1<<4);
         portA->DAT  = value | (1<<4);
-        pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
+        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
+        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
 
         while( ((*pFSR)&0xff) == 0 );
         pwmPort->CH_CTL     = 0;
-        //while( ((*pFSR)&0xff) > 0 )
+        while( ((*pFSR)&0xff) > 0 )
         {
             rxValue     = *((uint8_t*)pRXD);
             DebugPrintf("[%02x]\n",rxValue);
-            printBits(sizeof(rxValue), &rxValue);
+            printBits(sizeof(rxValue), (void const * const )&rxValue);
             //FastSharedBufferPut( buffer, rxValue );
         }
 

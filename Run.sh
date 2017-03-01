@@ -1,7 +1,18 @@
 #!/bin/sh
 
 
+#
+#
+#
 insmod ~/Projects/enable_arm_pmu/ko/enable_arm_pmu.ko
+
+#
+#
+#
+rm -f /tmp/Control.log
+rm -f /tmp/Outlet.log
+rm -f /tmp/Inlet.log
+rm -f /tmp/Server.log
 
 #
 # Control *must* be first. Order is important.
