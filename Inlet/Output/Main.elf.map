@@ -605,25 +605,25 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x375f
+.debug_info     0x0000000000000000     0x3762
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000     0x237f Main.o
- .debug_info    0x000000000000237f      0x1ba Common.o
- .debug_info    0x0000000000002539      0x55a CircularBuffer.o
- .debug_info    0x0000000000002a93       0xba Timestamp.o
- .debug_info    0x0000000000002b4d      0x3b5 SharedMemory.o
- .debug_info    0x0000000000002f02       0xa0 ErrorHandling.o
- .debug_info    0x0000000000002fa2      0x7bd DebugText.o
+ .debug_info    0x0000000000000000     0x2382 Main.o
+ .debug_info    0x0000000000002382      0x1ba Common.o
+ .debug_info    0x000000000000253c      0x55a CircularBuffer.o
+ .debug_info    0x0000000000002a96       0xba Timestamp.o
+ .debug_info    0x0000000000002b50      0x3b5 SharedMemory.o
+ .debug_info    0x0000000000002f05       0xa0 ErrorHandling.o
+ .debug_info    0x0000000000002fa5      0x7bd DebugText.o
 
-.debug_abbrev   0x0000000000000000      0xbd1
+.debug_abbrev   0x0000000000000000      0xbc8
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x48c Main.o
- .debug_abbrev  0x000000000000048c       0xff Common.o
- .debug_abbrev  0x000000000000058b      0x17b CircularBuffer.o
- .debug_abbrev  0x0000000000000706       0x76 Timestamp.o
- .debug_abbrev  0x000000000000077c      0x193 SharedMemory.o
- .debug_abbrev  0x000000000000090f       0x6a ErrorHandling.o
- .debug_abbrev  0x0000000000000979      0x258 DebugText.o
+ .debug_abbrev  0x0000000000000000      0x483 Main.o
+ .debug_abbrev  0x0000000000000483       0xff Common.o
+ .debug_abbrev  0x0000000000000582      0x17b CircularBuffer.o
+ .debug_abbrev  0x00000000000006fd       0x76 Timestamp.o
+ .debug_abbrev  0x0000000000000773      0x193 SharedMemory.o
+ .debug_abbrev  0x0000000000000906       0x6a ErrorHandling.o
+ .debug_abbrev  0x0000000000000970      0x258 DebugText.o
 
 .debug_line     0x0000000000000000     0x10b2
  *(.debug_line .debug_line.* .debug_line_end)
@@ -662,14 +662,14 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .debug_str     0x0000000000000ae2      0x13f DebugText.o
                                         0x4cf (size before relaxing)
 
-.debug_loc      0x0000000000000000     0x17aa
+.debug_loc      0x0000000000000000     0x17e4
  *(.debug_loc)
- .debug_loc     0x0000000000000000      0xee0 Main.o
- .debug_loc     0x0000000000000ee0       0x66 Common.o
- .debug_loc     0x0000000000000f46      0x4ca CircularBuffer.o
- .debug_loc     0x0000000000001410       0x1f Timestamp.o
- .debug_loc     0x000000000000142f      0x181 SharedMemory.o
- .debug_loc     0x00000000000015b0      0x1fa DebugText.o
+ .debug_loc     0x0000000000000000      0xf1a Main.o
+ .debug_loc     0x0000000000000f1a       0x66 Common.o
+ .debug_loc     0x0000000000000f80      0x4ca CircularBuffer.o
+ .debug_loc     0x000000000000144a       0x1f Timestamp.o
+ .debug_loc     0x0000000000001469      0x181 SharedMemory.o
+ .debug_loc     0x00000000000015ea      0x1fa DebugText.o
 
 .debug_macinfo
  *(.debug_macinfo)

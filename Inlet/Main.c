@@ -589,13 +589,13 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
     spiX->CTL 	= 0x00000001;       // slave mode.
     *pINTCTL = 0x00000000;      // CS polarity bit.
     volatile uint8_t     rxValue;
+    pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
     while(true)
     {
         //uint32_t    currentValue    = portA->DAT;
-        SetOutputState(1<<x);
-        x   = (x+1)%8;
+        SetOutputState(x);
+        x++;
         value   = portA->DAT;
-        //value 	= ~value;
 
         portA->DAT  = value & ~(1<<4);
         portA->DAT  = value | (1<<4);

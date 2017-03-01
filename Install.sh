@@ -6,6 +6,7 @@ scp Outlet/Output/Main.elf steve@$1:~/Outlet
 scp Control/Output/Main.elf steve@$1:~/Control
 scp Server/Output/Main.elf steve@$1:~/Server
 scp Run.sh steve@$1:~/
+scp Kill.sh steve@$1:~/
 
 
 
