@@ -625,15 +625,15 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .debug_abbrev  0x0000000000000906       0x6a ErrorHandling.o
  .debug_abbrev  0x0000000000000970      0x258 DebugText.o
 
-.debug_line     0x0000000000000000     0x10b2
+.debug_line     0x0000000000000000     0x10b5
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x0000000000000000      0x6dd Main.o
- .debug_line    0x00000000000006dd       0xa2 Common.o
- .debug_line    0x000000000000077f      0x2d2 CircularBuffer.o
- .debug_line    0x0000000000000a51      0x115 Timestamp.o
- .debug_line    0x0000000000000b66      0x1fe SharedMemory.o
- .debug_line    0x0000000000000d64       0xea ErrorHandling.o
- .debug_line    0x0000000000000e4e      0x264 DebugText.o
+ .debug_line    0x0000000000000000      0x6e0 Main.o
+ .debug_line    0x00000000000006e0       0xa2 Common.o
+ .debug_line    0x0000000000000782      0x2d2 CircularBuffer.o
+ .debug_line    0x0000000000000a54      0x115 Timestamp.o
+ .debug_line    0x0000000000000b69      0x1fe SharedMemory.o
+ .debug_line    0x0000000000000d67       0xea ErrorHandling.o
+ .debug_line    0x0000000000000e51      0x264 DebugText.o
 
 .debug_frame    0x0000000000000000      0x470
  *(.debug_frame)

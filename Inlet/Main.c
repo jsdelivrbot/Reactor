@@ -580,7 +580,7 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
     //portA->DAT  = 0;            
 
 
-    pwmPort->CH0_PERIOD = (20<<16)|10;
+    pwmPort->CH0_PERIOD = (2<<16)|1;
 
     uint32_t    value = 0;
     
