@@ -584,33 +584,34 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
 
     uint32_t    value = 0;
     
-    pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
+    //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
+    pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
 
     spiX->CTL 	= 0x00000001;       // slave mode.
-    *pINTCTL = 0x00000000;      // CS polarity bit.
+    *pINTCTL = 0x00000003;      // CS polarity bit.
     volatile uint8_t     rxValue;
-    pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
     while(true)
     {
         //uint32_t    currentValue    = portA->DAT;
-        SetOutputState(x);
-        x++;
+        //SetOutputState(x);
+        //x++;
         value   = portA->DAT;
 
         portA->DAT  = value & ~(1<<4);
         portA->DAT  = value | (1<<4);
         //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
-        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
+        //pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
 
         while( ((*pFSR)&0xff) == 0 );
-        pwmPort->CH_CTL     = 0;
-        while( ((*pFSR)&0xff) > 0 )
+        //pwmPort->CH_CTL     = 0;
+        //while( ((*pFSR)&0xff) > 0 )
         {
             rxValue     = *((uint8_t*)pRXD);
-            DebugPrintf("[%02x]\n",rxValue);
-            printBits(sizeof(rxValue), (void const * const )&rxValue);
+            //DebugPrintf("[%02x]\n",rxValue);
+            //printBits(sizeof(rxValue), (void const * const )&rxValue);
             //FastSharedBufferPut( buffer, rxValue );
         }
+        volatile uint8_t rr = rxValue+1;
 
     }
 }
