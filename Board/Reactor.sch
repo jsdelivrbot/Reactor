@@ -225,17 +225,6 @@ F 3 "" H 5600 1900 50  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L PCF8574 U2
-U 1 1 58BC7CE0
-P 3100 5800
-F 0 "U2" H 2750 6400 50  0000 L CNN
-F 1 "PCF8574" H 3200 6400 50  0000 L CNN
-F 2 "Housings_DIP:DIP-16_W7.62mm_LongPads" H 3100 5800 50  0001 C CNN
-F 3 "" H 3100 5800 50  0000 C CNN
-	1    3100 5800
-	0    1    1    0   
-$EndComp
-$Comp
 L LED_Dual_AAC D3
 U 1 1 58BC85B6
 P 3400 7250
@@ -601,27 +590,8 @@ Wire Wire Line
 Wire Wire Line
 	2250 5800 2250 5000
 Wire Wire Line
-	3900 5800 3800 5800
-Wire Wire Line
 	3900 750  3900 5800
-Wire Wire Line
-	2250 5000 4000 5000
 Connection ~ 4000 5000
-Wire Wire Line
-	3200 5300 3200 4950
-Wire Wire Line
-	3200 4950 4000 4950
-Connection ~ 4000 4950
-Wire Wire Line
-	3100 5300 3100 4900
-Wire Wire Line
-	3100 4900 4000 4900
-Connection ~ 4000 4900
-Wire Wire Line
-	3000 5300 3000 4850
-Wire Wire Line
-	3000 4850 4000 4850
-Connection ~ 4000 4850
 Wire Wire Line
 	6100 3500 9400 3500
 Wire Wire Line
@@ -744,15 +714,11 @@ Wire Wire Line
 Wire Wire Line
 	4500 5200 3400 5200
 Wire Wire Line
-	3400 5200 3400 5300
-Wire Wire Line
 	9050 6000 4450 6000
 Wire Wire Line
 	4450 6000 4450 5250
 Wire Wire Line
 	4450 5250 3500 5250
-Wire Wire Line
-	3500 5250 3500 5300
 Connection ~ 8800 4000
 Connection ~ 7800 3900
 Connection ~ 7850 3800
@@ -765,4 +731,38 @@ Connection ~ 6100 4250
 Wire Wire Line
 	6100 4100 6100 4250
 Connection ~ 4000 4250
+Wire Wire Line
+	2250 5000 4000 5000
+Connection ~ 4000 4950
+Connection ~ 4000 4900
+Connection ~ 4000 4850
+Wire Wire Line
+	3200 4950 4000 4950
+Wire Wire Line
+	3100 4900 4000 4900
+Wire Wire Line
+	3000 4850 4000 4850
+Wire Wire Line
+	3000 5300 3000 4850
+Wire Wire Line
+	3100 5300 3100 4900
+Wire Wire Line
+	3200 5300 3200 4950
+Wire Wire Line
+	3500 5250 3500 5300
+Wire Wire Line
+	3400 5200 3400 5300
+Wire Wire Line
+	3900 5800 3800 5800
+$Comp
+L PCF8574 U2
+U 1 1 58BC7CE0
+P 3100 5800
+F 0 "U2" H 2750 6400 50  0000 L CNN
+F 1 "PCF8574" H 3200 6400 50  0000 L CNN
+F 2 "Housings_DIP:DIP-16_W7.62mm_LongPads" H 3100 5800 50  0001 C CNN
+F 3 "" H 3100 5800 50  0000 C CNN
+	1    3100 5800
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC

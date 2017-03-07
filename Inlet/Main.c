@@ -27,7 +27,29 @@
 #include "CircularBuffer.h"
 #include "Reactor.h"
 #include "Utilities.h"
+#include <pthread.h>
 
+
+
+
+
+
+
+
+
+
+volatile uint32_t        inputCount  = 0;
+
+
+void* doSomeThing(void *arg)
+{
+    while(true)
+    {
+        DebugPrintf("%d\n", inputCount/10);
+        inputCount  = 0;
+        sleep(10);
+    }
+}
 
 
 //
@@ -569,6 +591,9 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
     volatile uint32_t*   pFSR        = &spiX->FSR;
     uint32_t            temp;
     static uint32_t     wordCount   = 0;
+	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
+	volatile uint16_t*  portA_DAT16   = (uint16_t*)&portA->DAT;
+	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
 
     *pCTL 	    = 0x00000001;
     *pIER       = 0;
@@ -590,8 +615,10 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
     spiX->CTL 	= 0x00000001;       // slave mode.
     *pINTCTL = 0x00000003;      // CS polarity bit.
     volatile uint8_t     rxValue;
+    uint16_t*   portA_DAT   = (uint16_t*)&portA->DAT;
     while(true)
     {
+#if 0        
         //uint32_t    currentValue    = portA->DAT;
         //SetOutputState(x);
         //x++;
@@ -612,7 +639,10 @@ void GetByteFromShiftRegister( volatile FastSharedBuffer* buffer, volatile SPIPo
             //FastSharedBufferPut( buffer, rxValue );
         }
         volatile uint8_t rr = rxValue+1;
-
+#else
+        volatile uint16_t   inputValue  = *portA_DAT16;
+        inputCount++;
+#endif
     }
 }
 
@@ -730,6 +760,9 @@ int main()
     pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0x6;
     pwmPort->CH0_PERIOD = (0xffff<<16)|0xffff;
 
+    static pthread_t    threadId;
+    pthread_create( &threadId, NULL, &doSomeThing, NULL);
+    DebugPrintf(" Started display thread\n ");
 
 
     while(true)

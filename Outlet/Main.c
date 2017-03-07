@@ -69,6 +69,21 @@ UART1_RX = 10 = PG7 = LED4
 #include "ErrorHandling.h"
 #include "Reactor.h"
 #include "Utilities.h"
+#include <pthread.h>
+
+
+volatile uint32_t        inputCount  = 0;
+
+
+void* doSomeThing(void *arg)
+{
+    while(true)
+    {
+        DebugPrintf("%d\n", inputCount/10);
+        inputCount  = 0;
+        sleep(10);
+    }
+}
 
 //
 //
@@ -329,7 +344,9 @@ volatile uint32_t    Abuffer[0xffff];   // index is 16 bit in size to give nice 
 void Loop()
 {
     uint16_t    aIndex  = 0;
-	volatile uint32_t*  portA_DAT   = &portA->DAT;
+	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
+	volatile uint16_t*  portA_DAT16   = (uint16_t*)&portA->DAT;
+	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
 
 	memset( (void*)&Abuffer[0], 0xff, sizeof(Abuffer));
 
@@ -345,11 +362,18 @@ void Loop()
 
 	uint32_t 	temp;
 	uint32_t 	output;
-	uint8_t 	value 	= 0;
+	uint8_t 	value 	= *portA_DAT32;
 
     while(true)
     {
-		ChangeLEDState();
+		//DebugPrintf("tick\n");
+		//ChangeLEDState();
+        *portA_DAT8  = value;
+        //volatile uint8_t   inputValue  = *portA_DAT8;
+        //volatile uint32_t   inputValue  = *portA_DAT;
+        //value++;
+        inputCount++;
+		for(volatile uint32_t i=0; i<10; i++);
 #if 0
 		//
 		//
@@ -457,6 +481,9 @@ int main()
     //while( controlToOutlet->numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
+    static pthread_t    threadId;
+    pthread_create( &threadId, NULL, &doSomeThing, NULL);
+    DebugPrintf(" Started display thread\n ");
 
 	Loop();
 

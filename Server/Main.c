@@ -85,7 +85,7 @@ int main()
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connection.\n");
-    while( controlToServer->numberOfWriters == 0 )
+    while( controlToServer->numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
     //

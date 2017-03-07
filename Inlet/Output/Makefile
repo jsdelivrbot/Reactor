@@ -35,7 +35,7 @@ ECHO_GREEN		= echo -e "\033[0;32m"
 #
 # Build flags.
 #
-CFLAGS 			= -O3 -g --std=c99 -Wno-unused-result -D_GNU_SOURCE -mfpu=neon -std=c++17
+CFLAGS 			= -O3 -g --std=c99 -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
 LDFLAGS			= -g
 
 
@@ -54,7 +54,7 @@ include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #
 #
 #
-LIBS		+= -lc -lgcc -lrt
+LIBS		+= -lc -lgcc -lrt -lpthread
 
 
 #########################################################################################################
