@@ -1,4 +1,4 @@
-Main.o: ../../Outlet/Main.c \
+Main.o: ../../Outlet/Main.cpp \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Common/Common.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Timestamp/Timestamp.h \

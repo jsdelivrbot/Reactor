@@ -35,7 +35,8 @@ ECHO_GREEN		= echo -e "\033[0;32m"
 #
 # Build flags.
 #
-CFLAGS 			= -O3 -g --std=c99 -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
+CFLAGS 			= -O2 -g --std=c99   -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
+CPPFLAGS 		= -O2 -g --std=c++17 -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
 LDFLAGS			= -g
 
 
@@ -106,5 +107,12 @@ Main.elf: $(OBJS)
 %.o: %.c
 	@ $(ECHO) Building $(basename $<)
 	@ $(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@ -MMD -MP -MF $(notdir $(patsubst %.o,%.d,$@) )
+
+#
+# Compile a file and then generate its dependencies.
+#
+%.o: %.cpp
+	@ $(ECHO) Building $(basename $<)
+	@ $(CPPC) $(CPPFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@ -MMD -MP -MF $(notdir $(patsubst %.o,%.d,$@) )
 
 

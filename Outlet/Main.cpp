@@ -62,6 +62,9 @@ UART1_RX = 10 = PG7 = LED4
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+extern "C"
+{
 #include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
@@ -70,6 +73,7 @@ UART1_RX = 10 = PG7 = LED4
 #include "Reactor.h"
 #include "Utilities.h"
 #include <pthread.h>
+}
 
 
 volatile uint32_t        inputCount  = 0;
@@ -206,7 +210,7 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 		{
 			DebugPrintf("%d != %d\n", checkValue, value);
 			CircularBufferShow( circularBuffer );
-			PANIC("mismatch!");
+			PANIC();
 			fflush(stdout);
 		}
 		checkValue++;

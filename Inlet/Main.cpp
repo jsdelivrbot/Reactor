@@ -20,6 +20,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stddef.h>
+
+extern "C"
+{ 
 #include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
@@ -28,7 +31,7 @@
 #include "Reactor.h"
 #include "Utilities.h"
 #include <pthread.h>
-
+}
 
 
 

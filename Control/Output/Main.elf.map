@@ -12,6 +12,7 @@ As-needed library included to satisfy reference by file (symbol)
 libc.so.6                     Main.o (fflush@@GLIBC_2.4)
 ld-linux-armhf.so.3           DebugText.o (__stack_chk_guard@@GLIBC_2.4)
 librt.so.1                    SharedMemory.o (shm_open@@GLIBC_2.4)
+libgcc_s.so.1                 Main.o (__aeabi_unwind_cpp_pr0@@GCC_3.5)
 
 Discarded input sections
 
@@ -114,29 +115,29 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.gnu.hash)
  .gnu.hash      0x00000000000101b4       0x68 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.dynsym         0x000000000001021c      0x140
+.dynsym         0x000000000001021c      0x150
  *(.dynsym)
- .dynsym        0x000000000001021c      0x140 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .dynsym        0x000000000001021c      0x150 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.dynstr         0x000000000001035c      0x126
+.dynstr         0x000000000001036c      0x153
  *(.dynstr)
- .dynstr        0x000000000001035c      0x126 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .dynstr        0x000000000001036c      0x153 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.gnu.version    0x0000000000010482       0x28
+.gnu.version    0x00000000000104c0       0x2a
  *(.gnu.version)
- .gnu.version   0x0000000000010482       0x28 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .gnu.version   0x00000000000104c0       0x2a /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.gnu.version_d  0x00000000000104ac        0x0
+.gnu.version_d  0x00000000000104ec        0x0
  *(.gnu.version_d)
  .gnu.version_d
-                0x00000000000104ac        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+                0x00000000000104ec        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.gnu.version_r  0x00000000000104ac       0x60
+.gnu.version_r  0x00000000000104ec       0x80
  *(.gnu.version_r)
  .gnu.version_r
-                0x00000000000104ac       0x60 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+                0x00000000000104ec       0x80 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.rel.dyn        0x000000000001050c       0x18
+.rel.dyn        0x000000000001056c       0x18
  *(.rel.init)
  *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
  *(.rel.fini)
@@ -148,15 +149,15 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.rel.ctors)
  *(.rel.dtors)
  *(.rel.got)
- .rel.got       0x000000000001050c        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .rel.got       0x000000000001056c        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
  *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
- .rel.bss       0x0000000000010514       0x10 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .rel.bss       0x0000000000010574       0x10 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
                 [!provide]                        PROVIDE (__rel_iplt_start, .)
  *(.rel.iplt)
- .rel.iplt      0x0000000000010524        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .rel.iplt      0x0000000000010584        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
                 [!provide]                        PROVIDE (__rel_iplt_end, .)
 
-.rela.dyn       0x0000000000010524        0x0
+.rela.dyn       0x0000000000010584        0x0
  *(.rela.init)
  *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
  *(.rela.fini)
@@ -172,153 +173,160 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.rela.iplt)
                 [!provide]                        PROVIDE (__rela_iplt_end, .)
 
-.rel.plt        0x0000000000010524       0x70
+.rel.plt        0x0000000000010584       0x70
  *(.rel.plt)
- .rel.plt       0x0000000000010524       0x70 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .rel.plt       0x0000000000010584       0x70 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
 .rela.plt
  *(.rela.plt)
 
-.init           0x0000000000010594        0xc
+.init           0x00000000000105f4        0xc
  *(SORT(.init))
- .init          0x0000000000010594        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
-                0x0000000000010594                _init
- .init          0x000000000001059c        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
+ .init          0x00000000000105f4        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
+                0x00000000000105f4                _init
+ .init          0x00000000000105fc        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
 
-.plt            0x00000000000105a0       0xc4
+.plt            0x0000000000010600       0xc4
  *(.plt)
- .plt           0x00000000000105a0       0xc4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
-                0x00000000000105b4                raise@@GLIBC_2.4
-                0x00000000000105c4                fflush@@GLIBC_2.4
-                0x00000000000105d0                __vsnprintf_chk@@GLIBC_2.4
-                0x00000000000105dc                memcpy@@GLIBC_2.4
-                0x00000000000105e8                shm_open@@GLIBC_2.4
-                0x00000000000105f4                __stack_chk_fail@@GLIBC_2.4
-                0x0000000000010600                __libc_start_main@@GLIBC_2.4
-                0x0000000000010618                mmap@@GLIBC_2.4
-                0x0000000000010624                memset@@GLIBC_2.4
-                0x0000000000010630                __fprintf_chk@@GLIBC_2.4
-                0x000000000001063c                ftruncate@@GLIBC_2.4
-                0x000000000001064c                msync@@GLIBC_2.4
-                0x0000000000010658                abort@@GLIBC_2.4
+ .plt           0x0000000000010600       0xc4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+                0x0000000000010614                raise@@GLIBC_2.4
+                0x0000000000010624                fflush@@GLIBC_2.4
+                0x0000000000010630                __vsnprintf_chk@@GLIBC_2.4
+                0x000000000001063c                memcpy@@GLIBC_2.4
+                0x0000000000010648                shm_open@@GLIBC_2.4
+                0x0000000000010654                __stack_chk_fail@@GLIBC_2.4
+                0x0000000000010660                __libc_start_main@@GLIBC_2.4
+                0x0000000000010678                mmap@@GLIBC_2.4
+                0x0000000000010684                memset@@GLIBC_2.4
+                0x0000000000010690                __fprintf_chk@@GLIBC_2.4
+                0x000000000001069c                ftruncate@@GLIBC_2.4
+                0x00000000000106ac                msync@@GLIBC_2.4
+                0x00000000000106b8                abort@@GLIBC_2.4
 
-.iplt           0x0000000000010664        0x0
+.iplt           0x00000000000106c4        0x0
  *(.iplt)
- .iplt          0x0000000000010664        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .iplt          0x00000000000106c4        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
 
-.text           0x0000000000010668      0x8c4
+.text           0x00000000000106c8      0x8bc
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
- .text.startup  0x0000000000010668       0x7c Main.o
-                0x0000000000010668                main
+ .text.startup  0x00000000000106c8       0x7c Main.o
+                0x00000000000106c8                main
  *(.text.hot .text.hot.*)
  *(.text .stub .text.* .gnu.linkonce.t.*)
- .text          0x00000000000106e4       0x30 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
-                0x00000000000106e4                _start
- .text          0x0000000000010714       0x24 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
- .text          0x0000000000010738       0x8c /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
- .text          0x00000000000107c4       0x98 Main.o
-                0x00000000000107c4                ProcessValue
- .text          0x000000000001085c       0x70 Common.o
-                0x000000000001085c                FastSharedBufferInitialiseAsReader
-                0x0000000000010868                FastSharedBufferInitialiseAsWriter
-                0x000000000001087c                FastSharedBufferPut
-                0x00000000000108a0                FastSharedBufferGet
- .text          0x00000000000108cc      0x1bc CircularBuffer.o
-                0x00000000000108cc                CircularBufferShow
-                0x0000000000010928                CircularBufferInitialiseAsReader
-                0x0000000000010950                CircularBufferInitialiseAsWriter
-                0x0000000000010978                CircularBufferPut
-                0x00000000000109d4                CircularBufferLossyPut
-                0x0000000000010a2c                CircularBufferGet
- .text          0x0000000000010a88        0xc Timestamp.o
-                0x0000000000010a88                TimestampInitialise
-                0x0000000000010a8c                GetTimestamp
- .text          0x0000000000010a94       0xcc SharedMemory.o
-                0x0000000000010a94                SharedMemoryMasterInitialise
-                0x0000000000010b04                SharedMemorySlaveInitialise
-                0x0000000000010b54                SharedMemoryFlush
- .text          0x0000000000010b60       0x10 ErrorHandling.o
-                0x0000000000010b60                PANIC
- .text          0x0000000000010b70       0xf8 DebugText.o
-                0x0000000000010b70                DebugTextOutput
-                0x0000000000010b98                DebugPrintf
-                0x0000000000010bec                NibbleToHex
-                0x0000000000010bf8                DebugHexDumpBytes
-                0x0000000000010c64                DebugHexDumpWords
- .text          0x0000000000010c68       0x40 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
-                0x0000000000010c68                __libc_csu_init
-                0x0000000000010ca4                __libc_csu_fini
- .text          0x0000000000010ca8      0x278 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/libgcc.a(_udivsi3.o)
-                0x0000000000010ca8                __aeabi_uidiv
-                0x0000000000010ca8                __udivsi3
-                0x0000000000010f04                __aeabi_uidivmod
- .text          0x0000000000010f20        0xc /usr/lib/gcc-cross/arm-linux-gnueabihf/6/libgcc.a(_dvmd_lnx.o)
-                0x0000000000010f20                __aeabi_ldiv0
-                0x0000000000010f20                __aeabi_idiv0
- .text          0x0000000000010f2c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
- .text          0x0000000000010f2c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
+ .text          0x0000000000010744       0x30 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+                0x0000000000010744                _start
+ .text          0x0000000000010774       0x24 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
+ .text          0x0000000000010798       0x8c /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
+ .text          0x0000000000010824       0x90 Main.o
+                0x0000000000010824                ProcessValue(CircularBuffer*, unsigned int)
+ .text          0x00000000000108b4       0x70 Common.o
+                0x00000000000108b4                FastSharedBufferInitialiseAsReader
+                0x00000000000108c0                FastSharedBufferInitialiseAsWriter
+                0x00000000000108d4                FastSharedBufferPut
+                0x00000000000108f8                FastSharedBufferGet
+ .text          0x0000000000010924      0x1bc CircularBuffer.o
+                0x0000000000010924                CircularBufferShow
+                0x0000000000010980                CircularBufferInitialiseAsReader
+                0x00000000000109a8                CircularBufferInitialiseAsWriter
+                0x00000000000109d0                CircularBufferPut
+                0x0000000000010a2c                CircularBufferLossyPut
+                0x0000000000010a84                CircularBufferGet
+ .text          0x0000000000010ae0        0xc Timestamp.o
+                0x0000000000010ae0                TimestampInitialise
+                0x0000000000010ae4                GetTimestamp
+ .text          0x0000000000010aec       0xcc SharedMemory.o
+                0x0000000000010aec                SharedMemoryMasterInitialise
+                0x0000000000010b5c                SharedMemorySlaveInitialise
+                0x0000000000010bac                SharedMemoryFlush
+ .text          0x0000000000010bb8       0x10 ErrorHandling.o
+                0x0000000000010bb8                PANIC
+ .text          0x0000000000010bc8       0xf8 DebugText.o
+                0x0000000000010bc8                DebugTextOutput
+                0x0000000000010bf0                DebugPrintf
+                0x0000000000010c44                NibbleToHex
+                0x0000000000010c50                DebugHexDumpBytes
+                0x0000000000010cbc                DebugHexDumpWords
+ .text          0x0000000000010cc0       0x40 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
+                0x0000000000010cc0                __libc_csu_init
+                0x0000000000010cfc                __libc_csu_fini
+ .text          0x0000000000010d00      0x278 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/libgcc.a(_udivsi3.o)
+                0x0000000000010d00                __aeabi_uidiv
+                0x0000000000010d00                __udivsi3
+                0x0000000000010f5c                __aeabi_uidivmod
+ .text          0x0000000000010f78        0xc /usr/lib/gcc-cross/arm-linux-gnueabihf/6/libgcc.a(_dvmd_lnx.o)
+                0x0000000000010f78                __aeabi_ldiv0
+                0x0000000000010f78                __aeabi_idiv0
+ .text          0x0000000000010f84        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
+ .text          0x0000000000010f84        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
  *(.gnu.warning)
  *(.glue_7t)
- .glue_7t       0x0000000000010f2c        0x0 linker stubs
+ .glue_7t       0x0000000000010f84        0x0 linker stubs
  *(.glue_7)
- .glue_7        0x0000000000010f2c        0x0 linker stubs
+ .glue_7        0x0000000000010f84        0x0 linker stubs
  *(.vfp11_veneer)
- .vfp11_veneer  0x0000000000010f2c        0x0 linker stubs
+ .vfp11_veneer  0x0000000000010f84        0x0 linker stubs
  *(.v4_bx)
- .v4_bx         0x0000000000010f2c        0x0 linker stubs
+ .v4_bx         0x0000000000010f84        0x0 linker stubs
 
-.fini           0x0000000000010f2c        0x8
+.fini           0x0000000000010f84        0x8
  *(SORT(.fini))
- .fini          0x0000000000010f2c        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
-                0x0000000000010f2c                _fini
- .fini          0x0000000000010f30        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
+ .fini          0x0000000000010f84        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
+                0x0000000000010f84                _fini
+ .fini          0x0000000000010f88        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
                 [!provide]                        PROVIDE (__etext, .)
                 [!provide]                        PROVIDE (_etext, .)
                 [!provide]                        PROVIDE (etext, .)
 
-.rodata         0x0000000000010f34      0x130
+.rodata         0x0000000000010f8c      0x124
  *(.rodata .rodata.* .gnu.linkonce.r.*)
- .rodata.cst4   0x0000000000010f34        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
-                0x0000000000010f34                _IO_stdin_used
+ .rodata.cst4   0x0000000000010f8c        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+                0x0000000000010f8c                _IO_stdin_used
  .rodata.str1.4
-                0x0000000000010f38       0x6f Main.o
- *fill*         0x0000000000010fa7        0x1 
+                0x0000000000010f90       0x63 Main.o
+ *fill*         0x0000000000010ff3        0x1 
  .rodata.str1.4
-                0x0000000000010fa8       0x71 CircularBuffer.o
- *fill*         0x0000000000011019        0x3 
- .rodata        0x000000000001101c        0x4 SharedMemory.o
-                0x000000000001101c                SIZE
+                0x0000000000010ff4       0x71 CircularBuffer.o
+ *fill*         0x0000000000011065        0x3 
+ .rodata        0x0000000000011068        0x4 SharedMemory.o
+                0x0000000000011068                SIZE
  .rodata.str1.4
-                0x0000000000011020       0x2d SharedMemory.o
- *fill*         0x000000000001104d        0x3 
+                0x000000000001106c       0x2d SharedMemory.o
+ *fill*         0x0000000000011099        0x3 
  .rodata.str1.4
-                0x0000000000011050       0x10 ErrorHandling.o
+                0x000000000001109c       0x10 ErrorHandling.o
  .rodata.str1.4
-                0x0000000000011060        0x4 DebugText.o
+                0x00000000000110ac        0x4 DebugText.o
                                           0x6 (size before relaxing)
 
 .rodata1
  *(.rodata1)
 
-.ARM.extab      0x0000000000011064        0x0
+.ARM.extab      0x00000000000110b0        0x0
  *(.ARM.extab* .gnu.linkonce.armextab.*)
- .ARM.extab     0x0000000000011064        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .ARM.extab     0x00000000000110b0        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .ARM.extab     0x00000000000110b0        0x0 Main.o
+ .ARM.extab.text.startup
+                0x00000000000110b0        0x0 Main.o
                 [!provide]                        PROVIDE (__exidx_start, .)
 
-.ARM.exidx      0x0000000000011064        0x8
+.ARM.exidx      0x00000000000110b0       0x20
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
- .ARM.exidx     0x0000000000011064        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .ARM.exidx     0x00000000000110b8        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+ .ARM.exidx     0x00000000000110c0       0x10 Main.o
+                                          0x8 (size before relaxing)
+ .ARM.exidx.text.startup
+                0x00000000000110b0        0x8 Main.o
                 [!provide]                        PROVIDE (__exidx_end, .)
 
 .eh_frame_hdr
  *(.eh_frame_hdr)
  *(.eh_frame_entry .eh_frame_entry.*)
 
-.eh_frame       0x000000000001106c        0x4
+.eh_frame       0x00000000000110d0        0x4
  *(.eh_frame)
- .eh_frame      0x000000000001106c        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
+ .eh_frame      0x00000000000110d0        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
  *(.eh_frame.*)
 
 .gcc_except_table
@@ -329,7 +337,7 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 
 .exception_ranges
  *(.exception_ranges .exception_ranges*)
-                0x0000000000021efc                . = DATA_SEGMENT_ALIGN (0x10000, 0x1000)
+                0x0000000000021ef4                . = DATA_SEGMENT_ALIGN (0x10000, 0x1000)
 
 .eh_frame
  *(.eh_frame)
@@ -351,23 +359,23 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.tbss .tbss.* .gnu.linkonce.tb.*)
  *(.tcommon)
 
-.preinit_array  0x0000000000021efc        0x0
+.preinit_array  0x0000000000021ef4        0x0
                 [!provide]                        PROVIDE (__preinit_array_start, .)
  *(.preinit_array)
                 [!provide]                        PROVIDE (__preinit_array_end, .)
 
-.init_array     0x0000000000021efc        0x4
-                0x0000000000021efc                PROVIDE (__init_array_start, .)
+.init_array     0x0000000000021ef4        0x4
+                0x0000000000021ef4                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*) SORT(.ctors.*))
  *(.init_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .ctors)
- .init_array    0x0000000000021efc        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
-                0x0000000000021f00                PROVIDE (__init_array_end, .)
+ .init_array    0x0000000000021ef4        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
+                0x0000000000021ef8                PROVIDE (__init_array_end, .)
 
-.fini_array     0x0000000000021f00        0x4
+.fini_array     0x0000000000021ef8        0x4
                 [!provide]                        PROVIDE (__fini_array_start, .)
  *(SORT(.fini_array.*) SORT(.dtors.*))
  *(.fini_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .dtors)
- .fini_array    0x0000000000021f00        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
+ .fini_array    0x0000000000021ef8        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
                 [!provide]                        PROVIDE (__fini_array_end, .)
 
 .ctors
@@ -384,19 +392,19 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(SORT(.dtors.*))
  *(.dtors)
 
-.jcr            0x0000000000021f04        0x4
+.jcr            0x0000000000021efc        0x4
  *(.jcr)
- .jcr           0x0000000000021f04        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
- .jcr           0x0000000000021f04        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
+ .jcr           0x0000000000021efc        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
+ .jcr           0x0000000000021efc        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
 
 .data.rel.ro
  *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*)
  *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*)
 
-.dynamic        0x0000000000021f08       0xf8
+.dynamic        0x0000000000021f00      0x100
  *(.dynamic)
- .dynamic       0x0000000000021f08       0xf8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
-                0x0000000000021f08                _DYNAMIC
+ .dynamic       0x0000000000021f00      0x100 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
+                0x0000000000021f00                _DYNAMIC
                 0x0000000000022000                . = DATA_SEGMENT_RELRO_END (., 0x0)
 
 .got            0x0000000000022000       0x48
@@ -448,7 +456,6 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 
 .bss            0x0000000000022050      0x118
  *(.dynbss)
- *fill*         0x0000000000022050        0x0 
  .dynbss        0x0000000000022050        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
                 0x0000000000022050                __stack_chk_guard@@GLIBC_2.4
                 0x0000000000022054                stdout@@GLIBC_2.4
@@ -580,35 +587,35 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x1a22
+.debug_info     0x0000000000000000     0x1a2b
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000      0x749 Main.o
- .debug_info    0x0000000000000749      0x1ba Common.o
- .debug_info    0x0000000000000903      0x55a CircularBuffer.o
- .debug_info    0x0000000000000e5d       0xba Timestamp.o
- .debug_info    0x0000000000000f17      0x3b5 SharedMemory.o
- .debug_info    0x00000000000012cc       0xa0 ErrorHandling.o
- .debug_info    0x000000000000136c      0x6b6 DebugText.o
+ .debug_info    0x0000000000000000      0x752 Main.o
+ .debug_info    0x0000000000000752      0x1ba Common.o
+ .debug_info    0x000000000000090c      0x55a CircularBuffer.o
+ .debug_info    0x0000000000000e66       0xba Timestamp.o
+ .debug_info    0x0000000000000f20      0x3b5 SharedMemory.o
+ .debug_info    0x00000000000012d5       0xa0 ErrorHandling.o
+ .debug_info    0x0000000000001375      0x6b6 DebugText.o
 
-.debug_abbrev   0x0000000000000000      0x91b
+.debug_abbrev   0x0000000000000000      0x926
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x1ef Main.o
- .debug_abbrev  0x00000000000001ef       0xff Common.o
- .debug_abbrev  0x00000000000002ee      0x17b CircularBuffer.o
- .debug_abbrev  0x0000000000000469       0x76 Timestamp.o
- .debug_abbrev  0x00000000000004df      0x193 SharedMemory.o
- .debug_abbrev  0x0000000000000672       0x6a ErrorHandling.o
- .debug_abbrev  0x00000000000006dc      0x23f DebugText.o
+ .debug_abbrev  0x0000000000000000      0x1fa Main.o
+ .debug_abbrev  0x00000000000001fa       0xff Common.o
+ .debug_abbrev  0x00000000000002f9      0x17b CircularBuffer.o
+ .debug_abbrev  0x0000000000000474       0x76 Timestamp.o
+ .debug_abbrev  0x00000000000004ea      0x193 SharedMemory.o
+ .debug_abbrev  0x000000000000067d       0x6a ErrorHandling.o
+ .debug_abbrev  0x00000000000006e7      0x23f DebugText.o
 
-.debug_line     0x0000000000000000      0xcc1
+.debug_line     0x0000000000000000      0xcc7
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x0000000000000000      0x326 Main.o
- .debug_line    0x0000000000000326       0xa4 Common.o
- .debug_line    0x00000000000003ca      0x2d2 CircularBuffer.o
- .debug_line    0x000000000000069c      0x115 Timestamp.o
- .debug_line    0x00000000000007b1      0x1fe SharedMemory.o
- .debug_line    0x00000000000009af       0xea ErrorHandling.o
- .debug_line    0x0000000000000a99      0x228 DebugText.o
+ .debug_line    0x0000000000000000      0x32c Main.o
+ .debug_line    0x000000000000032c       0xa4 Common.o
+ .debug_line    0x00000000000003d0      0x2d2 CircularBuffer.o
+ .debug_line    0x00000000000006a2      0x115 Timestamp.o
+ .debug_line    0x00000000000007b7      0x1fe SharedMemory.o
+ .debug_line    0x00000000000009b5       0xea ErrorHandling.o
+ .debug_line    0x0000000000000a9f      0x228 DebugText.o
 
 .debug_frame    0x0000000000000000      0x2fc
  *(.debug_frame)
@@ -620,21 +627,21 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .debug_frame   0x0000000000000220       0x28 ErrorHandling.o
  .debug_frame   0x0000000000000248       0xb4 DebugText.o
 
-.debug_str      0x0000000000000000      0x9b1
+.debug_str      0x0000000000000000      0xa82
  *(.debug_str)
- .debug_str     0x0000000000000000      0x4eb Main.o
-                                        0x568 (size before relaxing)
- .debug_str     0x00000000000004eb       0x67 Common.o
+ .debug_str     0x0000000000000000      0x537 Main.o
+                                        0x5e7 (size before relaxing)
+ .debug_str     0x0000000000000537       0xec Common.o
                                         0x223 (size before relaxing)
- .debug_str     0x0000000000000552      0x152 CircularBuffer.o
+ .debug_str     0x0000000000000623      0x152 CircularBuffer.o
                                         0x34e (size before relaxing)
- .debug_str     0x00000000000006a4       0x75 Timestamp.o
+ .debug_str     0x0000000000000775       0x75 Timestamp.o
                                         0x1bf (size before relaxing)
- .debug_str     0x0000000000000719       0xf9 SharedMemory.o
+ .debug_str     0x00000000000007ea       0xf9 SharedMemory.o
                                         0x2a4 (size before relaxing)
- .debug_str     0x0000000000000812       0x61 ErrorHandling.o
+ .debug_str     0x00000000000008e3       0x61 ErrorHandling.o
                                         0x19d (size before relaxing)
- .debug_str     0x0000000000000873      0x13e DebugText.o
+ .debug_str     0x0000000000000944      0x13e DebugText.o
                                         0x4cc (size before relaxing)
 
 .debug_loc      0x0000000000000000      0x8e8

@@ -12,6 +12,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+
+extern "C"
+{
 #include "Timestamp.h"
 #include "DebugText.h"
 #include "SharedMemory.h"
@@ -19,7 +23,7 @@
 #include "Reactor.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
-
+}
 
 
 
@@ -37,8 +41,7 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 		{
 			DebugPrintf("%d != %d\n", checkValue, value);
 			CircularBufferShow( circularBuffer );
-			PANIC("mismatch!");
-            fflush(stdout);
+			PANIC();
 		}
 		checkValue++;
 	}
@@ -50,8 +53,7 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 	
 	if( (checkValue % 10000000) == 0)
 	{
-		DebugPrintf("[%d]\n", value );
-        fflush(stdout);
+		printf("[%d]\n", value );
 	}
 	
 }
@@ -65,25 +67,29 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 //
 int main()
 {
-    DebugPrintf("\nReactorControl.\n");
+    DebugPrintf("\nReactorServer.\n");
 
     //
     //
     //
-    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemoryMasterInitialise(0x00000001);
+    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
 
     //
+    // InletToControl = 1000->2000;
+    // ControlToOutlet = 2000->3000;
+    // ControlToServer = 4000->14000;
     //
-    //
-    SharedMemoryLayout*     layout  = (SharedMemoryLayout*)sharedMemory;
-    volatile FastSharedBuffer*       inletToControl  = &layout->inletToControl;
-    FastSharedBufferInitialiseAsReader( inletToControl );
+    CircularBuffer*  controlToServer  = (CircularBuffer*)&sharedMemory[4000];
+    CircularBufferInitialiseAsReader( controlToServer, 
+                                      sizeof(DataToServer), 
+                                      (void*)&sharedMemory[4000+sizeof(CircularBuffer)] , 
+                                      (10000-sizeof(CircularBuffer))/sizeof(DataToServer) );
 
     //
     // Wait until we are fully connected.
     //
-    DebugPrintf("Waiting for connections.\n");
-    while( (inletToControl->numberOfWriters == 0) );
+    DebugPrintf("Waiting for connection.\n");
+    while( controlToServer->numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
     //
@@ -92,13 +98,12 @@ int main()
     uint32_t 	i 	= 0;
     while(true)
     {
-        static uint8_t      state   = 0;
-
         //
         //
         //
+        DataToServer  inData;
         SharedMemoryFlush( sharedMemory );
-        uint8_t value   = FastSharedBufferGet( inletToControl );
+        CircularBufferGet( controlToServer, &inData );
         SharedMemoryFlush( sharedMemory );
 
         //
@@ -109,18 +114,18 @@ int main()
         //
         //
         //
-        static uint8_t     oldState    = 0;
-        uint8_t            newState    = value;
-        if(oldState != newState )
-        {
-            //
-            // Change of data.
-            //
-            DebugPrintf("[%08x, %02x %02x]\n", timestamp, newState, oldState);
+        //for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
+        //{
+        //  ProcessValue( controlToServer, inData.data[i] );
+        //}	
 
-            oldState    = newState;
+        static uint32_t count   = 0;
+        count++;
+        if((count%10000) == 0)
+        {
+            DebugPrintf("[%d] ",inData.data[0]);
+            fflush(stdout);
         }
-        //fprintf(stderr, "[%d]",outData);
     }
 
 }

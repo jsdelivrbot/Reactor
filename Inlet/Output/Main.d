@@ -1,4 +1,4 @@
-Main.o: ../../Inlet/Main.c \
+Main.o: ../../Inlet/Main.cpp \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Common/Common.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Timestamp/Timestamp.h \
