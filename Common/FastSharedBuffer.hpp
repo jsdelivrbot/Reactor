@@ -32,6 +32,7 @@ public:
     {
         numberOfReaders++;
         DMB;
+        DSB;
     }
 
     void InitialiseAsWriter()
@@ -40,6 +41,7 @@ public:
         head    = 0;
         numberOfWriters++;
         DMB;
+        DSB;
     }
 
     void Put(ContainedType value)
@@ -50,6 +52,7 @@ public:
         // Wait until there is space in the buffer.
         //
         DMB;
+        DSB;
         while(newHead == tail);
     
         //
@@ -58,6 +61,7 @@ public:
         data[head]  = value;
         head    = newHead;
         DMB;
+        DSB;
     }
 
 
@@ -67,6 +71,7 @@ public:
         // Wait until there is data in the buffer.
         //
         DMB;
+        DSB;
         while(head == tail);
 
         //
@@ -75,6 +80,7 @@ public:
         ContainedType     value   = data[head];
         tail++;
         DMB;
+        DSB;
 
         return value;
     }
