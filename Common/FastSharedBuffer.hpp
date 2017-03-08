@@ -65,9 +65,9 @@ public:
 private:
 public:
 
-    ContainedType   data[2^sizeof(IndexType)];
-    IndexType       head;
-    IndexType       tail;
+    volatile ContainedType   data[2^sizeof(IndexType)];
+    volatile IndexType       head;
+    volatile IndexType       tail;
     volatile uint32_t        numberOfReaders;
     volatile uint32_t        numberOfWriters;
 

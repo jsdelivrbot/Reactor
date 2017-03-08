@@ -378,7 +378,7 @@ void Loop( FastSharedBuffer<uint8_t,uint16_t>& buffer )
         //volatile uint32_t   inputValue  = *portA_DAT;
         //value++;
         inputCount++;
-		for(volatile uint32_t i=0; i<10; i++);
+		for(volatile uint32_t i=0; i<3; i++);
 #if 0
 		//
 		//
