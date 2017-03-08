@@ -15,14 +15,6 @@
 #include "FastSharedBuffer.hpp"
 
 
-//
-//
-//
-#define ISB	__asm__ volatile ("mcr     p15, 0, %0, c7, c5, 4" : : "r" (0))
-#define DSB	__asm__ volatile ("mcr     p15, 0, %0, c7, c10, 4" : : "r" (0))
-#define DMB	__asm__ volatile ("mcr     p15, 0, %0, c7, c10, 5" : : "r" (0))
-
-
 
 
 

@@ -101,7 +101,8 @@ int main()
         //
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
-
+        sharedMemory->controlToOutlet.Put( value );
+#if 0
         //
         // Get the current timestamp.
         //
@@ -122,6 +123,7 @@ int main()
             oldState    = newState;
         }
         //fprintf(stderr, "[%d]",outData);
+#endif        
     }
 
 }

@@ -12,6 +12,17 @@
 
 #include "Reactor.h"
 
+
+
+//
+//
+//
+#define ISB	__asm__ volatile ("mcr     p15, 0, %0, c7, c5, 4" : : "r" (0))
+#define DSB	__asm__ volatile ("mcr     p15, 0, %0, c7, c10, 4" : : "r" (0))
+#define DMB	__asm__ volatile ("mcr     p15, 0, %0, c7, c10, 5" : : "r" (0))
+
+
+
 template <typename ContainedType, typename IndexType>
 class FastSharedBuffer
 {
@@ -20,6 +31,7 @@ public:
     void InitialiseAsReader()
     {
         numberOfReaders++;
+        DMB;
     }
 
     void InitialiseAsWriter()
@@ -27,6 +39,7 @@ public:
         tail    = 0;
         head    = 0;
         numberOfWriters++;
+        DMB;
     }
 
     void Put(ContainedType value)
@@ -36,13 +49,15 @@ public:
         //
         // Wait until there is space in the buffer.
         //
-        //while(newHead == tail);
+        DMB;
+        while(newHead == tail);
     
         //
         // Put the data in the buffer.
         //
         data[head]  = value;
         head    = newHead;
+        DMB;
     }
 
 
@@ -51,13 +66,15 @@ public:
         //
         // Wait until there is data in the buffer.
         //
-        //while(head == tail);
+        DMB;
+        while(head == tail);
 
         //
         // Get the data out of the buffer.
         //
         ContainedType     value   = data[head];
         tail++;
+        DMB;
 
         return value;
     }
