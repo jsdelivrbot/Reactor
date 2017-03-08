@@ -63,6 +63,8 @@ UART1_RX = 10 = PG7 = LED4
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "Reactor.h"
+
 extern "C"
 {
 #include "DebugText.h"
@@ -70,7 +72,6 @@ extern "C"
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
 #include "ErrorHandling.h"
-#include "Reactor.h"
 #include "Utilities.h"
 #include <pthread.h>
 }
@@ -123,7 +124,7 @@ uint32_t* SetupGPIO()
 	const unsigned long	GPIO_BASEPage 		= GPIO_BASE & ~(PAGE_SIZE-1);
 	uint32_t 		GPIO_BASEOffsetIntoPage	= GPIO_BASE - GPIO_BASEPage;
   	int			mem_fd			= 0;
-  	void*			regAddrMap 		= MAP_FAILED;
+  	uint8_t*			regAddrMap 		= NULL;
 
 
 	if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
@@ -132,7 +133,7 @@ uint32_t* SetupGPIO()
 		exit (1);
 	}
 
-  	regAddrMap = mmap(
+  	regAddrMap = (uint8_t*)mmap(
       		NULL,          
       		0xffff,       	
 			PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
@@ -140,7 +141,7 @@ uint32_t* SetupGPIO()
       		mem_fd,           
 		GPIO_BASEPage);
 
-  	if (regAddrMap == MAP_FAILED) 
+  	if (regAddrMap == NULL) 
 	{
           	perror("mmap error");
           	close(mem_fd);
@@ -345,7 +346,7 @@ volatile uint32_t    Abuffer[0xffff];   // index is 16 bit in size to give nice 
 // A: 00000000 00000000 10000100 11001111
 // B: 00000000 00000001 01100000 00000000
 //
-void Loop()
+void Loop( FastSharedBuffer<uint8_t,uint16_t>& buffer )
 {
     uint16_t    aIndex  = 0;
 	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
@@ -372,7 +373,7 @@ void Loop()
     {
 		//DebugPrintf("tick\n");
 		//ChangeLEDState();
-        *portA_DAT8  = value;
+        *portA_DAT8  = buffer.Get();
         //volatile uint8_t   inputValue  = *portA_DAT8;
         //volatile uint32_t   inputValue  = *portA_DAT;
         //value++;
@@ -475,21 +476,21 @@ int main()
     //
     //
     //
-    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
+    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
 
     //
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    //while( controlToOutlet->numberOfWriters == 0 );
+    while( sharedMemory->controlToOutlet.numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
     static pthread_t    threadId;
     pthread_create( &threadId, NULL, &doSomeThing, NULL);
     DebugPrintf(" Started display thread\n ");
 
-	Loop();
+	Loop( sharedMemory->controlToOutlet );
 
 }
 

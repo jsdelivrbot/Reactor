@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "Reactor.h"
 
 extern "C"
 {
@@ -20,11 +21,9 @@ extern "C"
 #include "DebugText.h"
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
-#include "Reactor.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
 }
-
 
 
 
@@ -72,24 +71,13 @@ int main()
     //
     //
     //
-    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
-
-    //
-    // InletToControl = 1000->2000;
-    // ControlToOutlet = 2000->3000;
-    // ControlToServer = 4000->14000;
-    //
-    CircularBuffer*  controlToServer  = (CircularBuffer*)&sharedMemory[4000];
-    CircularBufferInitialiseAsReader( controlToServer, 
-                                      sizeof(DataToServer), 
-                                      (void*)&sharedMemory[4000+sizeof(CircularBuffer)] , 
-                                      (10000-sizeof(CircularBuffer))/sizeof(DataToServer) );
+    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
     //
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connection.\n");
-    while( controlToServer->numberOfWriters == 0 );
+    while( sharedMemory->controlToServer.numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
     //
@@ -101,10 +89,6 @@ int main()
         //
         //
         //
-        DataToServer  inData;
-        SharedMemoryFlush( sharedMemory );
-        CircularBufferGet( controlToServer, &inData );
-        SharedMemoryFlush( sharedMemory );
 
         //
         // Get the current timestamp.
@@ -123,7 +107,6 @@ int main()
         count++;
         if((count%10000) == 0)
         {
-            DebugPrintf("[%d] ",inData.data[0]);
             fflush(stdout);
         }
     }

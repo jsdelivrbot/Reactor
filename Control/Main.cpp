@@ -13,6 +13,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "Reactor.h"
+
+
 extern "C"
 {
 
@@ -20,7 +23,6 @@ extern "C"
 #include "DebugText.h"
 #include "SharedMemory.h"
 #include "CircularBuffer.h"
-#include "Reactor.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
 
@@ -74,20 +76,17 @@ int main()
     //
     //
     //
-    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemoryMasterInitialise(0x00000001);
+    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
-    //
-    //
-    //
-    SharedMemoryLayout*     layout  = (SharedMemoryLayout*)sharedMemory;
-    volatile FastSharedBuffer*       inletToControl  = &layout->inletToControl;
-    FastSharedBufferInitialiseAsReader( inletToControl );
+
+    sharedMemory->inletToControl.InitialiseAsReader();
+    sharedMemory->controlToOutlet.InitialiseAsWriter();
 
     //
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    while( (inletToControl->numberOfWriters == 0) );
+    while( (sharedMemory->inletToControl.numberOfWriters == 0) );
     DebugPrintf("Connected.\n");
 
     //
@@ -101,9 +100,7 @@ int main()
         //
         //
         //
-        SharedMemoryFlush( sharedMemory );
-        uint8_t value   = FastSharedBufferGet( inletToControl );
-        SharedMemoryFlush( sharedMemory );
+        uint8_t value   = sharedMemory->inletToControl.Get();
 
         //
         // Get the current timestamp.
