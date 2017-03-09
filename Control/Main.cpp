@@ -102,6 +102,7 @@ int main()
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
         sharedMemory->controlToOutlet.Put( value );
+        SharedMemoryFlush(sharedMemory);
 #if 0
         //
         // Get the current timestamp.

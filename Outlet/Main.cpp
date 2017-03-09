@@ -77,6 +77,7 @@ extern "C"
 }
 
 
+SharedMemoryLayout*   sharedMemory;
 volatile uint32_t        inputCount  = 0;
 
 
@@ -84,7 +85,7 @@ void* doSomeThing(void *arg)
 {
     while(true)
     {
-        DebugPrintf("%d\n", inputCount/10);
+        DebugPrintf("%d (%d,%d)\n", inputCount/10, sharedMemory->controlToOutlet.head, sharedMemory->controlToOutlet.tail);
         inputCount  = 0;
         sleep(10);
     }
@@ -373,6 +374,7 @@ void Loop( FastSharedBuffer<uint8_t,uint16_t>& buffer )
     {
 		//DebugPrintf("tick\n");
 		//ChangeLEDState();
+        SharedMemoryFlush(sharedMemory);
         *portA_DAT8  = buffer.Get();
         //volatile uint8_t   inputValue  = *portA_DAT8;
         //volatile uint32_t   inputValue  = *portA_DAT;
@@ -476,7 +478,7 @@ int main()
     //
     //
     //
-    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
+    sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
 
     //

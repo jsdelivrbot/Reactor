@@ -42,7 +42,7 @@ extern "C"
 
 
 
-
+SharedMemoryLayout*   sharedMemory;
 volatile uint32_t        inputCount  = 0;
 
 
@@ -50,7 +50,7 @@ void* doSomeThing(void *arg)
 {
     while(true)
     {
-        DebugPrintf("%d\n", inputCount/10);
+        DebugPrintf("%d (%d,%d)\n", inputCount/10, sharedMemory->inletToControl.head, sharedMemory->inletToControl.tail);
         inputCount  = 0;
         sleep(10);
     }
@@ -646,6 +646,8 @@ void GetByteFromShiftRegister( FastSharedBuffer<uint8_t,uint16_t>& buffer, volat
 #else
         volatile uint16_t   inputValue  = *portA_DAT16;
         buffer.Put(inputValue);
+        SharedMemoryFlush(sharedMemory);
+
         inputCount++;
 #endif
     }
@@ -692,7 +694,7 @@ int main()
     //
     //
     //
-    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
+    sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
     //
     //
@@ -703,7 +705,7 @@ int main()
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    while( sharedMemory->inletToControl.numberOfReaders == 0 );
+    //while( sharedMemory->inletToControl.numberOfReaders == 0 );
     DebugPrintf("Connected.\n");
 
 
