@@ -23,9 +23,9 @@
 //
 typedef struct 
 {
-    FastSharedBuffer<uint8_t,uint16_t>    inletToControl;
-    FastSharedBuffer<uint8_t,uint16_t>    controlToOutlet;
-    FastSharedBuffer<uint8_t,uint16_t>    controlToServer;
+    FastSharedBuffer<uint8_t,uint8_t>    inletToControl;
+    FastSharedBuffer<uint8_t,uint8_t>    controlToOutlet;
+    FastSharedBuffer<uint8_t,uint8_t>    controlToServer;
 
 } SharedMemoryLayout;
 

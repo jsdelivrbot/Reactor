@@ -347,7 +347,7 @@ volatile uint32_t    Abuffer[0xffff];   // index is 16 bit in size to give nice 
 // A: 00000000 00000000 10000100 11001111
 // B: 00000000 00000001 01100000 00000000
 //
-void Loop( FastSharedBuffer<uint8_t,uint16_t>& buffer )
+void Loop( FastSharedBuffer<uint8_t,uint8_t>& buffer )
 {
     uint16_t    aIndex  = 0;
 	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
@@ -374,8 +374,10 @@ void Loop( FastSharedBuffer<uint8_t,uint16_t>& buffer )
     {
 		//DebugPrintf("tick\n");
 		//ChangeLEDState();
-        SharedMemoryFlush(sharedMemory);
-        *portA_DAT8  = buffer.Get();
+        //SharedMemoryFlush(sharedMemory);
+		uint8_t 	b = buffer.Get();
+		DebugPrintf("%d\n",b);
+        *portA_DAT8  = b;
         //volatile uint8_t   inputValue  = *portA_DAT8;
         //volatile uint32_t   inputValue  = *portA_DAT;
         //value++;

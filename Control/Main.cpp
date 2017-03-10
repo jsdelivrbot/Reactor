@@ -76,7 +76,7 @@ int main()
     //
     //
     //
-    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
+    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemoryMasterInitialise(0x00000001);
 
 
     sharedMemory->inletToControl.InitialiseAsReader();
@@ -101,20 +101,22 @@ int main()
         //
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
-        sharedMemory->controlToOutlet.Put( value );
-        SharedMemoryFlush(sharedMemory);
-#if 0
+        //sharedMemory->controlToOutlet.Put( value );
+        //SharedMemoryFlush(sharedMemory);
+        DebugPrintf("%d\n",value);
+
+
         //
         // Get the current timestamp.
         //
         Timestamp    timestamp 	= GetTimestamp();
-
+#if 0
         //
         //
         //
         static uint8_t     oldState    = 0;
         uint8_t            newState    = value;
-        if(oldState != newState )
+        if(oldState+1 != newState )
         {
             //
             // Change of data.
@@ -124,7 +126,7 @@ int main()
             oldState    = newState;
         }
         //fprintf(stderr, "[%d]",outData);
-#endif        
+#endif
     }
 
 }

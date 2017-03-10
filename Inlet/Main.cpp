@@ -581,75 +581,21 @@ void printBits(size_t const size, void const * const ptr)
 //
 //
 //
-void GetByteFromShiftRegister( FastSharedBuffer<uint8_t,uint16_t>& buffer, volatile SPIPort* spiX, PWMPort* pwmPort )
+void GetByteFromShiftRegister( FastSharedBuffer<uint8_t,uint8_t>& buffer, volatile SPIPort* spiX, PWMPort* pwmPort )
 {
-    volatile uint32_t*   pINTCTL     = &spiX->INTCTL;
-    volatile uint32_t*   pINT_STA    = &spiX->INT_STA;
-    volatile uint32_t*   pFCR        = &spiX->FCR;
-    volatile uint32_t*   pTXD        = &spiX->TXD;
-    volatile uint32_t*   pBC         = &spiX->BC;
-    volatile uint32_t*   pCTL        = &spiX->CTL;
-    volatile uint32_t*   pRXD        = &spiX->RXD;
-    volatile uint32_t*   pIER        = &spiX->IER;
-    volatile uint32_t*   pTC         = &spiX->TC;
-    volatile uint32_t*   pFSR        = &spiX->FSR;
-    uint32_t            temp;
-    static uint32_t     wordCount   = 0;
-    volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
-    volatile uint16_t*  portA_DAT16   = (uint16_t*)&portA->DAT;
-    volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
-
-    *pCTL 	    = 0x00000001;
-    *pIER       = 0;
-    
-    uint8_t x = 0;
-
-
-
-    //portA->DAT  = 0;            
-
-
-    pwmPort->CH0_PERIOD = (2<<16)|1;
-
-    uint32_t    value = 0;
-    
-    //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
-    pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-
-    spiX->CTL 	= 0x00000001;       // slave mode.
-    *pINTCTL = 0x00000003;      // CS polarity bit.
     volatile uint8_t     rxValue;
-    uint16_t*   portA_DAT   = (uint16_t*)&portA->DAT;
+    uint16_t*   portA_DAT16   = (uint16_t*)&portA->DAT;
+
     while(true)
     {
-#if 0        
-        //uint32_t    currentValue    = portA->DAT;
-        //SetOutputState(x);
-        //x++;
-        value   = portA->DAT;
-
-        portA->DAT  = value & ~(1<<4);
-        portA->DAT  = value | (1<<4);
-        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
-        //pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-
-        while( ((*pFSR)&0xff) == 0 );
-        //pwmPort->CH_CTL     = 0;
-        //while( ((*pFSR)&0xff) > 0 )
-        {
-            rxValue     = *((uint8_t*)pRXD);
-            //DebugPrintf("[%02x]\n",rxValue);
-            //printBits(sizeof(rxValue), (void const * const )&rxValue);
-            //FastSharedBufferPut( buffer, rxValue );
-        }
-        volatile uint8_t rr = rxValue+1;
-#else
         volatile uint16_t   inputValue  = *portA_DAT16;
-        buffer.Put(inputValue);
-        SharedMemoryFlush(sharedMemory);
+        static uint8_t  value   = 0;
+        buffer.Put( value );
+        value++;
+        usleep(1000);
+        //SharedMemoryFlush(sharedMemory);
 
         inputCount++;
-#endif
     }
 }
 
@@ -705,7 +651,7 @@ int main()
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    //while( sharedMemory->inletToControl.numberOfReaders == 0 );
+    while( sharedMemory->inletToControl.numberOfReaders == 0 );
     DebugPrintf("Connected.\n");
 
 
