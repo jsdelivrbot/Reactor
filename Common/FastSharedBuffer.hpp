@@ -30,6 +30,8 @@ public:
 
     void InitialiseAsReader()
     {
+        tail    = 0;
+        head    = 0;
         numberOfReaders++;
         //DSB;
     }
@@ -80,8 +82,9 @@ public:
 private:
 public:
 
-    const uint32_t              numberOfElements = 2^sizeof(IndexType);
-    volatile ContainedType   data[2^sizeof(IndexType)];
+    const uint32_t              s = sizeof(IndexType);
+    const uint32_t              numberOfElements = 2^(sizeof(IndexType)*8);
+    volatile ContainedType   data[256];
     volatile IndexType       head;
     volatile IndexType       tail;
     volatile uint32_t        numberOfReaders;

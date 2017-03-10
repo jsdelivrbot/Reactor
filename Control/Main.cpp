@@ -101,9 +101,9 @@ int main()
         //
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
-        //sharedMemory->controlToOutlet.Put( value );
+        sharedMemory->controlToOutlet.Put( value );
         //SharedMemoryFlush(sharedMemory);
-        DebugPrintf("%d\n",value);
+        //DebugPrintf("%d\n",value);
 
 
         //

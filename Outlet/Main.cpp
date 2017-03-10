@@ -376,7 +376,7 @@ void Loop( FastSharedBuffer<uint8_t,uint8_t>& buffer )
 		//ChangeLEDState();
         //SharedMemoryFlush(sharedMemory);
 		uint8_t 	b = buffer.Get();
-		DebugPrintf("%d\n",b);
+		//DebugPrintf("%d\n",b);
         *portA_DAT8  = b;
         //volatile uint8_t   inputValue  = *portA_DAT8;
         //volatile uint32_t   inputValue  = *portA_DAT;

@@ -586,13 +586,16 @@ void GetByteFromShiftRegister( FastSharedBuffer<uint8_t,uint8_t>& buffer, volati
     volatile uint8_t     rxValue;
     uint16_t*   portA_DAT16   = (uint16_t*)&portA->DAT;
 
+    DebugPrintf("-- %d\n", sizeof(buffer) );
+    DebugPrintf("-- %d\n", buffer.s );
+
     while(true)
     {
         volatile uint16_t   inputValue  = *portA_DAT16;
         static uint8_t  value   = 0;
         buffer.Put( value );
         value++;
-        usleep(1000);
+        //usleep(1000);
         //SharedMemoryFlush(sharedMemory);
 
         inputCount++;
