@@ -1,6 +1,5 @@
 Main.o: ../../Outlet/Main.cpp ../../Outlet/../Common/Reactor.h \
  ../../Outlet/../Common/FastSharedBuffer.hpp \
- ../../Outlet/../Common/Reactor.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Common/Common.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Timestamp/Timestamp.h \
@@ -12,8 +11,6 @@ Main.o: ../../Outlet/Main.cpp ../../Outlet/../Common/Reactor.h \
 ../../Outlet/../Common/Reactor.h:
 
 ../../Outlet/../Common/FastSharedBuffer.hpp:
-
-../../Outlet/../Common/Reactor.h:
 
 /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h:
 

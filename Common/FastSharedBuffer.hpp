@@ -10,7 +10,7 @@
 #define __FASTSHAREDBUFFER_HPP__
 
 
-#include "Reactor.h"
+#include <stdint.h>
 
 
 
@@ -82,9 +82,7 @@ public:
 private:
 public:
 
-    const uint32_t              s = sizeof(IndexType);
-    const uint32_t              numberOfElements = 2^(sizeof(IndexType)*8);
-    volatile ContainedType   data[256];
+    volatile ContainedType   data[1<<(sizeof(IndexType)*8)];
     volatile IndexType       head;
     volatile IndexType       tail;
     volatile uint32_t        numberOfReaders;

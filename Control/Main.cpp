@@ -95,8 +95,6 @@ int main()
     uint32_t 	i 	= 0;
     while(true)
     {
-        static uint8_t      state   = 0;
-
         //
         //
         //
@@ -110,21 +108,22 @@ int main()
         // Get the current timestamp.
         //
         Timestamp    timestamp 	= GetTimestamp();
-#if 0
+#if 1
         //
         //
         //
         static uint8_t     oldState    = 0;
         uint8_t            newState    = value;
-        if(oldState+1 != newState )
+        if( (oldState+1)%100 != newState )
         {
             //
             // Change of data.
             //
             DebugPrintf("[%08x, %02x %02x]\n", timestamp, newState, oldState);
+            //DebugPrintf(".");
 
-            oldState    = newState;
         }
+        oldState    = newState;
         //fprintf(stderr, "[%d]",outData);
 #endif
     }

@@ -1,6 +1,5 @@
 Main.o: ../../Inlet/Main.cpp ../../Inlet/../Common/Reactor.h \
  ../../Inlet/../Common/FastSharedBuffer.hpp \
- ../../Inlet/../Common/Reactor.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Common/Common.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Timestamp/Timestamp.h \
@@ -12,8 +11,6 @@ Main.o: ../../Inlet/Main.cpp ../../Inlet/../Common/Reactor.h \
 ../../Inlet/../Common/Reactor.h:
 
 ../../Inlet/../Common/FastSharedBuffer.hpp:
-
-../../Inlet/../Common/Reactor.h:
 
 /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/DebugText/DebugText.h:
 
