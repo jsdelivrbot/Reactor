@@ -31,17 +31,17 @@ public:
     void InitialiseAsReader()
     {
         tail    = 0;
-        head    = 0;
+        head    = 1;
         numberOfReaders++;
-        //DSB;
+        DSB;
     }
 
     void InitialiseAsWriter()
     {
         tail    = 0;
-        head    = 0;
+        head    = 1;
         numberOfWriters++;
-        //DSB;
+        DSB;
     }
 
     void Put(ContainedType value)
@@ -58,23 +58,25 @@ public:
         //
         data[head]  = value;
         head    = newHead;
-        //DSB;
+        DSB;
     }
 
 
     ContainedType Get()
     {
+        IndexType   newTail     = tail + 1;
+
         //
         // Wait until there is data in the buffer.
         //
-        while(head == tail);
+        while(head == newTail);
 
         //
         // Get the data out of the buffer.
         //
         ContainedType     value   = data[tail];
-        tail    = tail+1;
-        //DSB;
+        tail    = newTail;
+        DSB;
 
         return value;
     }

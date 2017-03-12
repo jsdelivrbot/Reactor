@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-
+#include <unistd.h>
 #include "Reactor.h"
 
 
@@ -102,6 +102,8 @@ int main()
         sharedMemory->controlToOutlet.Put( value );
         //SharedMemoryFlush(sharedMemory);
         //DebugPrintf("%d\n",value);
+        //usleep(10);
+
 
 
         //
@@ -119,7 +121,7 @@ int main()
             //
             // Change of data.
             //
-            DebugPrintf("[%08x, %02x %02x]\n", timestamp, newState, oldState);
+            DebugPrintf("[%08x, %02x %02x] (%d,%d) \n", timestamp, newState, oldState, sharedMemory->inletToControl.head,sharedMemory->inletToControl.tail);
             //DebugPrintf(".");
 
         }

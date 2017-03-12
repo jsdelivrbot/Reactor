@@ -347,7 +347,7 @@ volatile uint32_t    Abuffer[0xffff];   // index is 16 bit in size to give nice 
 // A: 00000000 00000000 10000100 11001111
 // B: 00000000 00000001 01100000 00000000
 //
-void Loop( FastSharedBuffer<uint8_t,uint8_t>& buffer )
+void Loop( BufferType& buffer )
 {
     uint16_t    aIndex  = 0;
 	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
