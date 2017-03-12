@@ -16,7 +16,7 @@
 
 
 
-typedef FastSharedBuffer<uint8_t,uint16_t>   BufferType;
+typedef FastSharedBuffer<uint8_t,uint8_t>   BufferType;
 
 
 //

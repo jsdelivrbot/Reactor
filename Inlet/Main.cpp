@@ -592,7 +592,7 @@ void GetByteFromShiftRegister( BufferType& buffer, volatile SPIPort* spiX, PWMPo
         static uint8_t  value   = 0;
         buffer.Put( value );
         value = (value+1)%100;
-        usleep(10);
+        //usleep(10);
         //SharedMemoryFlush(sharedMemory);
 
         inputCount++;
