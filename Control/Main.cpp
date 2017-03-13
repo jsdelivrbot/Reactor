@@ -19,6 +19,7 @@
 #include "UARTTransmitter8N1.hpp"
 #include "UARTReceiver8N1.hpp"
 #include "NoOperation.hpp"
+#include "I2CMaster.hpp"
 
 extern "C"
 {
@@ -100,19 +101,21 @@ int main()
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
     typedef PWM<30,30, 0x4>                         PWMType;
+    typedef I2CMaster<5, 30, 0x04,0x08>             I2CMasterType;
     TxType          one;
     RxType          two;
     NoOperation     nop;
     PWMType         pwm;
+    I2CMasterType   i2cMaster;
     Scheduler<  100, 
                 RxType, 
                 RxType,
                 RxType,
+                I2CMasterType,
                 RxType,
                 RxType,
                 RxType,
-                RxType,
-                RxType >  scheduler(two,two, two, two, two,two, two, two);    
+                RxType >  scheduler(two, two, two, i2cMaster, two,two, two, two);    
 
 
     //
