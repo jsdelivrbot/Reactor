@@ -14,7 +14,10 @@
 #include <stddef.h>
 #include <unistd.h>
 #include "Reactor.h"
-
+#include "Scheduler.hpp"
+#include "PulseWidthModulator.hpp"
+#include "UARTTransmitter8N1.hpp"
+#include "NoOperation.hpp"
 
 extern "C"
 {
@@ -89,21 +92,54 @@ int main()
     while( (sharedMemory->inletToControl.numberOfWriters == 0) );
     DebugPrintf("Connected.\n");
 
+
+    //
+    //
+    //
+    typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
+    typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
+    typedef PWM<30,30, 0x4>                         PWMType;
+    TxType          one;
+    RxType          two;
+    NoOperation     nop;
+    PWMType         pwm;
+    Scheduler<  100, 
+                RxType, 
+                RxType,
+                RxType,
+                RxType,
+                RxType,
+                RxType,
+                RxType,
+                RxType >  scheduler(two,two, two, two, two,two, two, two);    
+
+
     //
     //
     //
     while(true)
     {
         //
-        //
-        //
-        uint8_t value   = sharedMemory->inletToControl.Get();
-        sharedMemory->controlToOutlet.Put( value );
-
-        //
         // Get the current timestamp.
         //
         Timestamp    timestamp 	= GetTimestamp();
+
+        //
+        // Get the current input values.
+        //
+        uint8_t value   = sharedMemory->inletToControl.Get();
+
+        //
+        // Process the input.
+        //
+        uint8_t     outputValue;
+        scheduler.PeriodicProcessing( timestamp, 0xab, outputValue );
+
+        //
+        // Set the outputs.
+        //
+        sharedMemory->controlToOutlet.Put( outputValue );
+
 #if 1
         //
         //
