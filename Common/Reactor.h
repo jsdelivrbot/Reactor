@@ -1,3 +1,9 @@
+//
+// Copyright (C) BlockWorks Consulting Ltd - All Rights Reserved.
+// Unauthorized copying of this file, via any medium is strictly prohibited.
+// Proprietary and confidential.
+// Written by Steve Tickle <Steve@BlockWorks.co>, September 2014.
+//
 
 
 
@@ -6,45 +12,24 @@
 
 
 #include <stdint.h>
+#include "FastSharedBuffer.hpp"
 
 
 
-// InletToControl = 1000->2000;
-// ControlToOutlet = 2000->3000;
-// ControlToServer = 3000->13000;
+typedef FastSharedBuffer<uint8_t,uint16_t>   BufferType;
 
 
 //
 //
 //
-typedef struct
+typedef struct 
 {
-    uint32_t    timestamp;
-    uint32_t    data[64];
+    BufferType    inletToControl;
+    BufferType    controlToOutlet;
+    BufferType    controlToServer;
 
-} DataFromInlet;
+} SharedMemoryLayout;
 
-
-//
-//
-//
-typedef struct
-{
-    uint32_t    data[64];
-
-} DataToOutlet;
-
-
-
-//
-//
-//
-typedef struct
-{
-    uint32_t    timestamp;
-    uint32_t    data[64*10];
-
-} DataToServer;
 
 
 

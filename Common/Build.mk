@@ -2,7 +2,7 @@
 #
 # Source directories
 #
-VPATH		+=	
+VPATH		+=	$(PROJECT_BASE)/../Common
 
 
 #
@@ -14,7 +14,7 @@ INCLUDES	+=	-I$(PROJECT_BASE)/../Common
 #
 # Objects to build.
 #
-OBJS		+=	
+OBJS		+=	Common.o
     		  		
 
 #

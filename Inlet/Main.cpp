@@ -20,14 +20,41 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stddef.h>
+
+#include "Reactor.h"
+
+extern "C"
+{ 
 #include "DebugText.h"
 #include "Timestamp.h"
 #include "SharedMemory.h"
 #include <time.h>
 #include "CircularBuffer.h"
-#include "Reactor.h"
 #include "Utilities.h"
+#include <pthread.h>
+}
 
+#include "FastSharedBuffer.hpp"
+
+
+
+
+
+
+
+SharedMemoryLayout*   sharedMemory;
+volatile uint32_t        inputCount  = 0;
+
+
+void* doSomeThing(void *arg)
+{
+    while(true)
+    {
+        DebugPrintf("%d (%d,%d)\n", inputCount/10, sharedMemory->inletToControl.head, sharedMemory->inletToControl.tail);
+        inputCount  = 0;
+        sleep(10);
+    }
+}
 
 
 //
@@ -60,8 +87,7 @@ uint32_t* SetupGPIO()
     const unsigned long	GPIO_BASEPage 		= GPIO_BASE & ~(PAGE_SIZE-1);
     uint32_t 		GPIO_BASEOffsetIntoPage	= GPIO_BASE - GPIO_BASEPage;
       int			mem_fd			= 0;
-      void*			regAddrMap 		= MAP_FAILED;
-
+      uint8_t*			regAddrMap 		= NULL;
 
     if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
     {
@@ -69,7 +95,7 @@ uint32_t* SetupGPIO()
         exit (1);
     }
 
-      regAddrMap = mmap(
+      regAddrMap = (uint8_t*)mmap(
               NULL,          
               8192,       	
             PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
@@ -77,8 +103,8 @@ uint32_t* SetupGPIO()
               mem_fd,           
         GPIO_BASEPage);
 
-      if (regAddrMap == MAP_FAILED) 
-    {
+      if (regAddrMap == NULL) 
+      {
               perror("mmap error");
               close(mem_fd);
               exit (1);
@@ -98,7 +124,7 @@ void writel(uint32_t offset, uint32_t value)
     const uint32_t		BASEPage 				= BASE & ~(PAGE_SIZE-1);
     uint32_t 			BASEOffsetIntoPage		= BASE - BASEPage;
     int					mem_fd					= 0;
-    void*				regAddrMap 				= MAP_FAILED;
+    uint8_t*			regAddrMap 				= NULL;
 
 
     if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
@@ -107,7 +133,7 @@ void writel(uint32_t offset, uint32_t value)
         exit (1);
     }
 
-      regAddrMap = mmap(
+      regAddrMap = (uint8_t*)mmap(
                         NULL,          
                         BASEOffsetIntoPage+(PAGE_SIZE*1),       	
                         PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
@@ -115,7 +141,7 @@ void writel(uint32_t offset, uint32_t value)
                         mem_fd,           
                         BASEPage);
 
-        if (regAddrMap == MAP_FAILED) 
+        if (regAddrMap == NULL) 
         {
               perror("mmap error");
               close(mem_fd);
@@ -137,7 +163,7 @@ uint32_t readl(uint32_t offset)
     const uint32_t		BASEPage 				= BASE & ~(PAGE_SIZE-1);
     uint32_t 			BASEOffsetIntoPage		= BASE - BASEPage;
     int					mem_fd					= 0;
-    void*				regAddrMap 				= MAP_FAILED;
+    uint8_t*			regAddrMap 				= NULL;
 
 
     if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
@@ -146,7 +172,7 @@ uint32_t readl(uint32_t offset)
         exit (1);
     }
 
-      regAddrMap = mmap(
+      regAddrMap = (uint8_t*)mmap(
                         NULL,          
                         BASEOffsetIntoPage+(PAGE_SIZE*1),       	
                         PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
@@ -154,7 +180,7 @@ uint32_t readl(uint32_t offset)
                         mem_fd,           
                         BASEPage);
 
-        if (regAddrMap == MAP_FAILED) 
+        if (regAddrMap == NULL) 
         {
               perror("mmap error");
               close(mem_fd);
@@ -196,7 +222,7 @@ PWMPort* SetupPWM()
     const uint32_t		BASEPage 				= BASE & ~(PAGE_SIZE-1);
     uint32_t 			BASEOffsetIntoPage		= BASE - BASEPage;
     int					mem_fd					= 0;
-    void*				regAddrMap 				= MAP_FAILED;
+    uint8_t*			regAddrMap 				= NULL;
 
 
     if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
@@ -205,7 +231,7 @@ PWMPort* SetupPWM()
         exit (1);
     }
 
-      regAddrMap = mmap(
+      regAddrMap = (uint8_t*)mmap(
                         NULL,          
                         BASEOffsetIntoPage+(PAGE_SIZE*2),       	
                         PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
@@ -213,7 +239,7 @@ PWMPort* SetupPWM()
                         mem_fd,           
                         BASEPage);
 
-        if (regAddrMap == MAP_FAILED) 
+        if (regAddrMap == NULL) 
         {
               perror("mmap error");
               close(mem_fd);
@@ -278,7 +304,7 @@ SPIPort* SetupSPI()
     const uint32_t		BASEPage 				= BASE & ~(PAGE_SIZE-1);
     uint32_t 			BASEOffsetIntoPage		= BASE - BASEPage;
     int					mem_fd					= 0;
-    void*				regAddrMap 				= MAP_FAILED;
+    uint8_t*			regAddrMap 				= NULL;
 
 
     if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
@@ -287,7 +313,7 @@ SPIPort* SetupSPI()
         exit (1);
     }
 
-      regAddrMap = mmap(
+      regAddrMap = (uint8_t*)mmap(
                         NULL,          
                         BASEOffsetIntoPage+(PAGE_SIZE*2),       	
                         PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
@@ -295,7 +321,7 @@ SPIPort* SetupSPI()
                         mem_fd,           
                         BASEPage);
 
-        if (regAddrMap == MAP_FAILED) 
+        if (regAddrMap == NULL) 
         {
               perror("mmap error");
               close(mem_fd);
@@ -336,11 +362,11 @@ void spi_set_clk(SPIPort* spi, uint32_t spi_clk, uint32_t ahb_clk)
         printf("CDR2 - n = %d \n", div_clk);
     }/* CDR1 */
     else {
-		div_clk = 0;
-		while(ahb_clk > spi_clk){
-			div_clk++;
-			ahb_clk >>= 1;
-		}
+        div_clk = 0;
+        while(ahb_clk > spi_clk){
+            div_clk++;
+            ahb_clk >>= 1;
+        }
         reg_val &= ~(SPI_CLK_CTL_CDR1 | SPI_CLK_CTL_DRS);
         reg_val |= (div_clk << 8);
         printf("CDR1 - n = %d \n", div_clk);
@@ -495,204 +521,78 @@ void SetupSPIController( volatile SPIPort* spiX )
 
 
 #define SET_OR_CLEAR_BIT(value,bitNumber, state)\
-	if(state != false) 							\
-	{											\
-		value 	= value | (1<<bitNumber);		\
-	}											\
-	else										\
-	{											\
-		value 	= value & ~(1<<bitNumber);		\
-	}
+    if(state != false) 							\
+    {											\
+        value 	= value | (1<<bitNumber);		\
+    }											\
+    else										\
+    {											\
+        value 	= value & ~(1<<bitNumber);		\
+    }
 
 //
 //
 //
 void SetOutputState( uint8_t state )
 {
-	uint32_t 	portValue 	= portA->DAT;
-	bool 		d0 			= state & 0x01;
-	bool 		d1 			= state & 0x02;
-	bool 		d2 			= state & 0x04;
-	bool 		d3 			= state & 0x08;
-	bool 		d4 			= state & 0x10;
-	bool 		d5 			= state & 0x20;
-	bool 		d6 			= state & 0x40;
-	bool 		d7 			= state & 0x80;
+    uint32_t 	portValue 	= portA->DAT;
+    bool 		d0 			= state & 0x01;
+    bool 		d1 			= state & 0x02;
+    bool 		d2 			= state & 0x04;
+    bool 		d3 			= state & 0x08;
+    bool 		d4 			= state & 0x10;
+    bool 		d5 			= state & 0x20;
+    bool 		d6 			= state & 0x40;
+    bool 		d7 			= state & 0x80;
 
-	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
-	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
-	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
-	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
-	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
-	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
-	SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
-	SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
-	
-	portA->DAT 	= portValue;
+    SET_OR_CLEAR_BIT( portValue, 16,  d0 ); 	// d0 15
+    SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
+    SET_OR_CLEAR_BIT( portValue, 6, d2 ); 	// d2 6
+    SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
+    SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
+    SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
+    SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
+    SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
+    
+    portA->DAT 	= portValue;
 
 }
 
 
 
-#define CS           (1<<13)
-#define CLK          (1<<14)
-#define CLK_CS       (CLK|CS)
-#define MISO         (1<<16)
-    
-
-
-//
-//
-//
-void GetByteFromShiftRegister( volatile SPIPort* spiX, PWMPort* pwmPort )
+//assumes little endian
+void printBits(size_t const size, void const * const ptr)
 {
-    volatile uint32_t*   pINTCTL     = &spiX->INTCTL;
-    volatile uint32_t*   pINT_STA    = &spiX->INT_STA;
-    volatile uint32_t*   pFCR        = &spiX->FCR;
-    volatile uint32_t*   pTXD        = &spiX->TXD;
-    volatile uint32_t*   pBC         = &spiX->BC;
-    volatile uint32_t*   pCTL        = &spiX->CTL;
-    volatile uint32_t*   pRXD        = &spiX->RXD;
-    volatile uint32_t*   pIER        = &spiX->IER;
-    volatile uint32_t*   pTC         = &spiX->TC;
-    volatile uint32_t*   pFSR        = &spiX->FSR;
-    uint32_t            temp;
-    static uint32_t     wordCount   = 0;
+    unsigned char *b = (unsigned char*) ptr;
+    unsigned char byte;
+    int i, j;
 
-    *pCTL 	    = 0x00000001;
-    *pIER       = 0;
-    
-    uint8_t x = 0;
+    for (i=size-1;i>=0;i--)
+    {
+        for (j=7;j>=0;j--)
+        {
+            byte = (b[i] >> j) & 1;
+            printf("%u", byte);
+        }
+    }
+    puts("\n");
+}
 
-
-
-    portA->DAT  = 0;            
-
-
-    pwmPort->CH0_PERIOD = (4<<16)|2;
-
-    uint8_t value = 0;
-    volatile uint32_t*   portA_DAT   = &portA->DAT;
+//
+//
+//
+void GetByteFromShiftRegister( BufferType& buffer, volatile SPIPort* spiX, PWMPort* pwmPort )
+{
+    uint16_t*   portA_DAT16   = (uint16_t*)&portA->DAT;
 
     while(true)
-    {        
-        uint32_t    currentValue    = portA->DAT;
-        uint8_t     C               = 0;
-#if 0
-        //SetOutputState(x);
-#if 1 
-        x++;
-        if( (x&1) == 0)
-        {
-            currentValue  |= 1<<2;
-        }
-        else
-        {
-            currentValue  &= ~(1<<2);            
-        }
-#endif
-        //
-        // clear down all status flags.
-        //
-        //*pINT_STA   = 0xffffffff;
+    {
+        volatile uint16_t   inputValue  = *portA_DAT16;
+        static uint8_t  value   = 0;
+        buffer.Put( value );
+        value = value+1;
 
-        //
-        // reset the FIFOs and write the data into the FIFO.
-        //
-        //*pFCR       = 0x80008000;
-        //*pTXD 	    = 0xff;
-
-        //
-        //
-        //
-        //*pBC 	    = 0x00000040;
-        //*pTC        = 0;
-
-
-        //DebugPrintf("[%08x] %d\n", *pINT_STA, wordCount);
-        //DebugPrintf("[%08x]\n", *pFSR);
-        //while( (*pINT_STA) == 0);
-
-
-        //
-        // Set XCHG and wait for it to complete.
-        // also set chip-select polarity to generate a pulse prior to the clks to act as a parallel-load pulse for the shift register.
-        //
-        //*pINTCTL = 0x800000c2;
-        *pINTCTL = 0x80000002;
-        //for(volatile uint32_t i=0; i<10; i++);
-        //temp    = *pINT_STA;
-        //while( (*pINT_STA&0x00001000) == 0);
-/*
-        while( ((*pINT_STA)&0x02) != 0 )
-        {
-            *pTXD   = 0xff;
-        }
-*/
-        //while( (spiX->INTCTL&0x80000000) != 0);
-
-        //
-        // Read from the Rx FIFO while it isn't empty.
-        //
-        
-        //while( (spiX->FSR&0x0000000f) >= 0 )
-
-        //
-        // Pulse SS for parallel-load.
-        //
-        //*pINTCTL = 0x00000042;
-        //*pINTCTL = 0x000000c2;
-        portA->DAT  = currentValue & ~(1<<4);
-        for(volatile uint32_t i=0; i<100; i++);
-        portA->DAT  = currentValue | (1<<4);
-
-        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-        //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4) | 0xf;
-
-        while( ((*pFSR)&0xff) == 0 );
-        volatile uint8_t     value;
-        //uint32_t    i=0;
-        while( ((*pFSR)&0xff) > 0 )
-        {
-            value = *((uint8_t*)pRXD);
-            pwmPort->CH_CTL     = 0;
-            //DebugPrintf("[%02x, %d, %08x]\n", value,i, *pFSR);
-            //i++;
-        }
-        //DebugPrintf("[%02x]\n", value);
-
-
-        //uint32_t    rxValue;
-        //rxValue     = *pRXD;
-        //for(volatile uint32_t i=0; i<100000; i++);
-        //DebugPrintf("%d [%02x]\n", wordCount,value);
-        //DebugPrintf("%d [%d]\n", wordCount, value);
-        //sleep(1);
-        //while( (spiX->INT_STA&0x00000002) == 0 );
-#endif
-
-        value   = ~value;
-
-
-        *portA_DAT  = value;                      // CLR_CS
-        for(volatile uint32_t i=0; i<10; i++);
-        *portA_DAT  = value | (1<<13);                 // SET_CS
-        
-        //*portA_DAT  = value;                      // CLR_CS
-        //*portA_DAT  = value | (1<<4);                 // SET_CS
-
-
-        pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0xf;
-
-
-        for(volatile uint32_t i=0; i<100; i++);
-
-
-        pwmPort->CH_CTL     = 0;
-
-        //DebugPrintf("%d [%d]\n", wordCount, C);
-        //wordCount++;
-        
+        inputCount++;
     }
 }
 
@@ -737,26 +637,18 @@ int main()
     //
     //
     //
-    volatile uint8_t*   sharedMemory    = (uint8_t*)SharedMemorySlaveInitialise(0x00000001);
-    strcpy( (char*)sharedMemory, "Hello World." );
+    sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
     //
-    // InletToControl = 1000->2000;
-    // ControlToOutlet = 2000->3000;
-    // ControlToServer = 3000->13000;
     //
-    CircularBuffer*  inletToControl  = (CircularBuffer*)&sharedMemory[1000];
-    CircularBufferInitialiseAsWriter(   inletToControl, 
-                                        sizeof(DataFromInlet), 
-                                        (void*)&sharedMemory[1000+sizeof(CircularBuffer)] , 
-                                        (1000-sizeof(CircularBuffer))/sizeof(DataFromInlet) );
-
+    //
+    sharedMemory->inletToControl.InitialiseAsWriter();
 
     //
     // Wait until we are fully connected.
     //
     DebugPrintf("Waiting for connections.\n");
-    while( inletToControl->numberOfReaders == 0 );
+    while( sharedMemory->inletToControl.numberOfReaders == 0 );
     DebugPrintf("Connected.\n");
 
 
@@ -774,29 +666,20 @@ int main()
 
 
 
-	portA->CFG0 	= 0x11311111;
-	portA->CFG1 	= 0x12111111;
-	portA->CFG2 	= 0x11111111;
-	portA->CFG3 	= 0x11111111;
-	portA->DAT  	= 0xffffffff;
-	portA->DRV0 	= 0x22222222;
-	portA->DRV1 	= 0x22222222;
-	portA->PUL0 	= 0x22222222;
-	portA->PUL1 	= 0x22222222;
-
-
-/*
-    for(uint32_t i=0; i<sizeof(SPIPort)/sizeof(uint32_t); i++)
-    {
-        DebugPrintf("%08x : %08x\n",i,((uint32_t*)spiX)[i] );
-    }
-*/
+    portA->CFG0 	= 0x11311111;
+    portA->CFG1 	= 0x22211111;
+    portA->CFG2 	= 0x11111111;
+    portA->CFG3 	= 0x11111111;
+    portA->DAT  	= 0xffffffff;
+    portA->DRV0 	= 0x22222222;
+    portA->DRV1 	= 0x22222222;
+    portA->PUL0 	= 0x22222222;
+    portA->PUL1 	= 0x22222222;
 
     //
     //
     //
     SetupSPIController( spiX );
-
 
     //
     // CCU:BUS_CLK_GATING_REG0:SPI1     = PASS.
@@ -819,61 +702,20 @@ int main()
     PWMPort* pwmPort    = SetupPWM();
     pwmPort->CH_CTL     = 0;
     pwmPort->CH0_PERIOD = (4096<<16)|4096;
-    sleep(1);
+    //sleep(1);
     //pwmPort->CH_CTL     = (1<<9)|(1<<6)|(1<<4)|(1<<20)|(1<<23) | 0xf;
     pwmPort->CH_CTL     = (1<<6)|(1<<4) | 0x6;
     pwmPort->CH0_PERIOD = (0xffff<<16)|0xffff;
 
+    static pthread_t    threadId;
+    pthread_create( &threadId, NULL, &doSomeThing, NULL);
+    DebugPrintf(" Started display thread\n ");
 
 
     while(true)
     {
-        //portA->DAT  |= 1<<6;
-        //portA->DAT  &= ~(1<<6);
-        GetByteFromShiftRegister(spiX, pwmPort);
+        GetByteFromShiftRegister( sharedMemory->inletToControl, spiX, pwmPort);
     }
-
-    uint32_t 	i 	= 0;
-    while(true)
-    {
-        static DataFromInlet    inData;
-
-        //
-        // Get the current timestamp.
-        //
-        Timestamp    timestamp 	= GetTimestamp();
-        inData.timestamp    = timestamp;
-
-        //
-        // Transmit the data to the other cores.
-        //
-        static uint32_t         value   = 0;
-        for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(inData.data); i++)
-        {
-            //
-            // Get the line state(s) from the shift register.
-            //
-            //uint8_t     byteFromShiftRegister   = GetByteFromShiftRegister();
-#if 0
-            if( (i&1) == 0)
-            {
-                portA->DAT |= (1<<6);
-            }
-            else 
-            {
-                portA->DAT &= ~(1<<6);
-            }
-#endif
-            //inData.data[i]  = byteFromShiftRegister;
-            //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
-        }
-        //DebugPrintf("%08x: [%02x]\n",inData.timestamp, inData.data[i]);
-        SharedMemoryFlush( sharedMemory );
-        CircularBufferPut( inletToControl, &inData );
-        SharedMemoryFlush( sharedMemory );
-
-    }
-
 }
 
 
