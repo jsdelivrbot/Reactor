@@ -101,7 +101,7 @@ int main()
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
     typedef PWM<30,30, 0x4>                         PWMType;
-    typedef I2CMaster<5, 30, 0x04,0x08>             I2CMasterType;
+    typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
     TxType          one;
     RxType          two;
     NoOperation     nop;

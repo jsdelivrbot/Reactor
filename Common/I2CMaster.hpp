@@ -2,7 +2,7 @@
 // Copyright (C) BlockWorks Consulting Ltd - All Rights Reserved.
 // Unauthorized copying of this file, via any medium is strictly prohibited.
 // Proprietary and confidential.
-// Written by Steve Tickle <Steve@BlockWorks.co>, September 2014.
+// Written by Steve Tickle <Steve@BlockWorks.co>, March 2017.
 //
 
 
@@ -226,11 +226,8 @@ public:
 
     }
 
-    uint32_t    timestampOfStartBit     = 0;
-    bool        startDetected           = false;
     uint8_t     currentByte             = 0;
     uint8_t     currentLevel            = 0;
-    uint8_t     bitNumber               = 0;
     uint8_t     state                   = 0;
     bool        ack                     = 0;
 };
