@@ -3,6 +3,7 @@ Main.o: ../../Control/Main.cpp ../../Control/../Common/Reactor.h \
  ../../Control/../Common/Scheduler.hpp \
  ../../Control/../Common/PulseWidthModulator.hpp \
  ../../Control/../Common/UARTTransmitter8N1.hpp \
+ ../../Control/../Common/UARTReceiver8N1.hpp \
  ../../Control/../Common/NoOperation.hpp \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Timestamp/Timestamp.h \
  /home/steve/BlockWorks/ProjectLayout/SourceLibrary/Interfaces/Common/Common.h \
@@ -21,6 +22,8 @@ Main.o: ../../Control/Main.cpp ../../Control/../Common/Reactor.h \
 ../../Control/../Common/PulseWidthModulator.hpp:
 
 ../../Control/../Common/UARTTransmitter8N1.hpp:
+
+../../Control/../Common/UARTReceiver8N1.hpp:
 
 ../../Control/../Common/NoOperation.hpp:
 

@@ -17,6 +17,7 @@
 #include "Scheduler.hpp"
 #include "PulseWidthModulator.hpp"
 #include "UARTTransmitter8N1.hpp"
+#include "UARTReceiver8N1.hpp"
 #include "NoOperation.hpp"
 
 extern "C"
