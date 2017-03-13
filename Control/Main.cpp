@@ -152,7 +152,7 @@ int main()
             //
             // Change of data.
             //
-            //DebugPrintf("[%08x, %02x %02x] (%d,%d) \n", timestamp, newState, oldState, sharedMemory->inletToControl.head,sharedMemory->inletToControl.tail);
+            DebugPrintf("[%08x, %02x %02x] (%d,%d) \n", timestamp, newState, oldState, sharedMemory->inletToControl.head,sharedMemory->inletToControl.tail);
             //DebugPrintf(".");
 
         }
