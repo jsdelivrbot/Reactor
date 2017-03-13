@@ -583,7 +583,6 @@ void printBits(size_t const size, void const * const ptr)
 //
 void GetByteFromShiftRegister( BufferType& buffer, volatile SPIPort* spiX, PWMPort* pwmPort )
 {
-    volatile uint8_t     rxValue;
     uint16_t*   portA_DAT16   = (uint16_t*)&portA->DAT;
 
     while(true)
@@ -591,9 +590,7 @@ void GetByteFromShiftRegister( BufferType& buffer, volatile SPIPort* spiX, PWMPo
         volatile uint16_t   inputValue  = *portA_DAT16;
         static uint8_t  value   = 0;
         buffer.Put( value );
-        value = (value+1)%100;
-        //usleep(10);
-        //SharedMemoryFlush(sharedMemory);
+        value = value+1;
 
         inputCount++;
     }

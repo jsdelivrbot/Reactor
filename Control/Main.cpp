@@ -92,7 +92,6 @@ int main()
     //
     //
     //
-    uint32_t 	i 	= 0;
     while(true)
     {
         //
@@ -100,11 +99,6 @@ int main()
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
         sharedMemory->controlToOutlet.Put( value );
-        //SharedMemoryFlush(sharedMemory);
-        //DebugPrintf("%d\n",value);
-        //usleep(10);
-
-
 
         //
         // Get the current timestamp.
@@ -116,17 +110,16 @@ int main()
         //
         static uint8_t     oldState    = 0;
         uint8_t            newState    = value;
-        if( (oldState+1)%100 != newState )
+        if( (uint8_t)((oldState+1)) != newState )
         {
             //
             // Change of data.
             //
-            DebugPrintf("[%08x, %02x %02x] (%d,%d) \n", timestamp, newState, oldState, sharedMemory->inletToControl.head,sharedMemory->inletToControl.tail);
+            //DebugPrintf("[%08x, %02x %02x] (%d,%d) \n", timestamp, newState, oldState, sharedMemory->inletToControl.head,sharedMemory->inletToControl.tail);
             //DebugPrintf(".");
 
         }
         oldState    = newState;
-        //fprintf(stderr, "[%d]",outData);
 #endif
     }
 

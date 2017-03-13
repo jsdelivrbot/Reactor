@@ -372,66 +372,10 @@ void Loop( BufferType& buffer )
 
     while(true)
     {
-		//DebugPrintf("tick\n");
-		//ChangeLEDState();
-        //SharedMemoryFlush(sharedMemory);
 		uint8_t 	b = buffer.Get();
-		//DebugPrintf("%d\n",b);
         *portA_DAT8  = b;
-        //volatile uint8_t   inputValue  = *portA_DAT8;
-        //volatile uint32_t   inputValue  = *portA_DAT;
-        //value++;
         inputCount++;
-		for(volatile uint32_t i=0; i<10; i++);
-#if 0
-		//
-		//
-		//
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus;
-        *portA_DAT  = output;                   // CLR_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-
-		value 	= Abuffer[aIndex];
-        aIndex++;        
-        output      = value | ledStatus	 | PL;
-        *portA_DAT  = output;                   // SET_PL
-#endif
+		//for(volatile uint32_t i=0; i<10; i++);
     }
 
 }

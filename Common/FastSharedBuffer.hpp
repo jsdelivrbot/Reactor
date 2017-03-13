@@ -58,7 +58,7 @@ public:
         //
         data[head]  = value;
         head    = newHead;
-        DSB;
+        //DSB;
     }
 
 
@@ -76,7 +76,7 @@ public:
         //
         ContainedType     value   = data[tail];
         tail    = newTail;
-        DSB;
+        //DSB;
 
         return value;
     }
