@@ -155,7 +155,7 @@ int main()
     DebugPrintf("Waiting for connections.\n");
     while( (sharedMemory->inletToControl.numberOfWriters == 0) )
     {
-        printf("%llx\n",GetCounter64());        
+        //printf("%llx\n",GetCounter64());        
     }
     DebugPrintf("Connected.\n");
 
@@ -165,7 +165,7 @@ int main()
     //
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    typedef PWM<10000,0, 0xff>                      PWMType;
+    typedef PWM<24000000/2000,0, 0xff>                      PWMType;
     typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
     TxType          one;
     RxType          two;
@@ -174,13 +174,13 @@ int main()
     I2CMasterType   i2cMaster;
     Scheduler<  100, 
                 PWMType, 
-                RxType,
-                RxType,
-                I2CMasterType,
-                RxType,
-                RxType,
-                RxType,
-                RxType >  scheduler(pwm, two, two, i2cMaster, two,two, two, two);    
+                NoOperation,
+                NoOperation,
+                NoOperation,
+                NoOperation,
+                NoOperation,
+                NoOperation,
+                NoOperation >  scheduler(pwm, nop, nop, nop, nop,nop, nop, nop);    
 
 
     //

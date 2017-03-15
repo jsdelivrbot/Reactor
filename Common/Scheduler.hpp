@@ -14,9 +14,13 @@
 #include <stdio.h>
 #include <stdint.h>
 
+extern "C"
+{
+ #include "DebugText.h"
+}
 
 typedef uint8_t     uint8x8_t[8];
-typedef uint8_t     uint64x8_t[8];
+typedef uint64_t    uint64x8_t[8];
 
 
 
@@ -61,10 +65,6 @@ public:
 
     void PeriodicProcessing( uint64_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
-        static uint8x8_t    bits;
-        static uint8x8_t    previousBits;
-        static uint64x8_t   previousTimestamps;
-        static uint32_t     iteration       = 0;
 
 #define PROCESS_SCHEDULEE(bitNumber, s)                                         \
         bits[bitNumber]     = (inputValue & (1<<bitNumber)) >> bitNumber;       \
@@ -77,7 +77,7 @@ public:
             s.ProcessPositiveEdge(timestamp);                                   \
         }                                                                       \
         if( (timestamp-previousTimestamps[bitNumber]) >= s.GetPeriod() )        \
-        {                                                                       \
+        {   DebugPrintf("%lld - %lld = %lld\n",timestamp,previousTimestamps[bitNumber],timestamp-previousTimestamps[bitNumber]);                                                                    \
             s.PeriodicProcessing( timestamp, inputValue, outputValue );         \
             previousTimestamps[bitNumber]   = timestamp;                        \
         }                                                                       \
@@ -91,8 +91,6 @@ public:
         PROCESS_SCHEDULEE(5, schedulee6);
         PROCESS_SCHEDULEE(6, schedulee7);
         PROCESS_SCHEDULEE(7, schedulee8);
-
-        iteration++;
     }
 
 private:
@@ -105,6 +103,10 @@ private:
     Schedulee6Type&     schedulee6;
     Schedulee7Type&     schedulee7;
     Schedulee8Type&     schedulee8;
+
+    uint8x8_t           bits;
+    uint8x8_t           previousBits;
+    uint64x8_t          previousTimestamps;
 
 };
 
