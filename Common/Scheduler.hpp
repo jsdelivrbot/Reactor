@@ -16,6 +16,7 @@
 
 
 typedef uint8_t     uint8x8_t[8];
+typedef uint8_t     uint64x8_t[8];
 
 
 
@@ -58,10 +59,12 @@ public:
 
     }
 
-    void PeriodicProcessing( uint32_t timestamp, uint8_t inputValue, uint8_t& outputValue )
+    void PeriodicProcessing( uint64_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
         static uint8x8_t    bits;
         static uint8x8_t    previousBits;
+        static uint64x8_t   previousTimestamps;
+        static uint32_t     iteration       = 0;
 
 #define PROCESS_SCHEDULEE(bitNumber, s)                                         \
         bits[bitNumber]     = (inputValue & (1<<bitNumber)) >> bitNumber;       \
@@ -73,11 +76,12 @@ public:
         {                                                                       \
             s.ProcessPositiveEdge(timestamp);                                   \
         }                                                                       \
-        if( (timestamp%s.GetPeriod()) == 0)                                     \
+        if( (timestamp-previousTimestamps[bitNumber]) >= s.GetPeriod() )        \
         {                                                                       \
             s.PeriodicProcessing( timestamp, inputValue, outputValue );         \
+            previousTimestamps[bitNumber]   = timestamp;                        \
         }                                                                       \
-        previousBits[bitNumber]     = bits[bitNumber];
+        previousBits[bitNumber]     = bits[bitNumber];        
 
         PROCESS_SCHEDULEE(0, schedulee1);
         PROCESS_SCHEDULEE(1, schedulee2);
@@ -87,6 +91,8 @@ public:
         PROCESS_SCHEDULEE(5, schedulee6);
         PROCESS_SCHEDULEE(6, schedulee7);
         PROCESS_SCHEDULEE(7, schedulee8);
+
+        iteration++;
     }
 
 private:

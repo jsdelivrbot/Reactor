@@ -587,10 +587,8 @@ void GetByteFromShiftRegister( BufferType& buffer, volatile SPIPort* spiX, PWMPo
 
     while(true)
     {
-        volatile uint16_t   inputValue  = *portA_DAT16;
-        static uint8_t  value   = 0;
-        buffer.Put( value );
-        value = value+1;
+        uint16_t   inputValue  = *portA_DAT16;
+        buffer.Put( inputValue );
 
         inputCount++;
     }

@@ -35,23 +35,16 @@ public:
 
     void PeriodicProcessing( uint32_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
-        if(timestamp > nextBitTimestamp)
+        if( (bitNumber&0x01) == 0 )
         {
-            nextBitTimestamp    = timestamp + ticksPerBit;
-
-            switch(bitNumber)
-            {
-                case 0:     // ON
-                    SetTxLow( outputValue );
-                    break;
-
-                case 1:     // OFF
-                    SetTxHigh( outputValue );
-                    break;
-            }
-
-            bitNumber           = (bitNumber+1) & 0x1;
+            SetTxLow( outputValue );
         }
+        else
+        {
+            SetTxHigh( outputValue );
+        }
+        
+        bitNumber++;
     }
 
     void SetTxHigh( uint8_t& outputValue )
@@ -64,17 +57,6 @@ public:
         outputValue     &= ~txMask;
     }
 
-    void SetTx( uint8_t zeroToClearFlag, uint8_t& outputValue )
-    {
-        if( zeroToClearFlag == 0 )
-        {
-            outputValue     &= ~txMask;
-        }
-        else
-        {
-            outputValue     |= txMask;            
-        }
-    }
 
     uint32_t    nextBitTimestamp    = 0;
     uint32_t    bitNumber           = 0;
