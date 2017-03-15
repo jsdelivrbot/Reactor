@@ -78,18 +78,6 @@ extern "C"
 
 
 SharedMemoryLayout*   sharedMemory;
-volatile uint32_t        inputCount  = 0;
-
-
-void* doSomeThing(void *arg)
-{
-    while(true)
-    {
-        DebugPrintf("%d (%d,%d)\n", inputCount/10, sharedMemory->controlToOutlet.head, sharedMemory->controlToOutlet.tail);
-        inputCount  = 0;
-        sleep(10);
-    }
-}
 
 //
 //
@@ -154,232 +142,6 @@ uint32_t* SetupGPIO()
 	return (uint32_t*)(regAddrMap + GPIO_BASEOffsetIntoPage);
 }
 
-
-
-#define SET_OR_CLEAR_BIT(value,bitNumber, state)\
-	if(state != false) 							\
-	{											\
-		value 	= value | (1<<bitNumber);		\
-	}											\
-	else										\
-	{											\
-		value 	= value & ~(1<<bitNumber);		\
-	}
-
-/*
-Input bits->Port->Pin
-D0  - PA6   - 2
-D1  - PA7   - 3
-D2  - PA15  - 4
-D3  - PA0   - 5
-D4  - PA10  - 6
-D5  - PA2   - 7
-D6  - PA3   - 8
-D7  - PA1   - 9
-*/
-void SetLineState(bool d0, bool d1, bool d2, bool d3, bool d4, bool d5, bool d6, bool d7)
-{
-	uint32_t 	portValue 	= portA->DAT;
-
-	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
-	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
-	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
-	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
-	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
-	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
-	SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
-	SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
-	
-	portA->DAT 	= portValue;
-}
-
-#define O 		false
-#define I 		true
-
-
-
-
-uint32_t 		checkValue 	= 0;
-bool 			started 	= false;
-
-void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
-{
-	//fprintf(stderr, "[%d]",value);
-
-	if(started == true)
-	{
-		if(value != checkValue)
-		{
-			DebugPrintf("%d != %d\n", checkValue, value);
-			CircularBufferShow( circularBuffer );
-			PANIC();
-			fflush(stdout);
-		}
-		checkValue++;
-	}
-	else
-	{
-		checkValue 	= value+1;
-		started 	= true;
-	}
-	
-	if( (checkValue % 1000000) == 0)
-	{
-		DebugPrintf("[%d]\n", value );
-        fflush(stdout);
-	}
-	
-}
-
-
-//
-//
-//
-void SetOutputState( uint8_t state )
-{
-	uint32_t 	portValue 	= portA->DAT;
-	bool 		d0 			= state & 0x01;
-	bool 		d1 			= state & 0x02;
-	bool 		d2 			= state & 0x04;
-	bool 		d3 			= state & 0x08;
-	bool 		d4 			= state & 0x10;
-	bool 		d5 			= state & 0x20;
-	bool 		d6 			= state & 0x40;
-	bool 		d7 			= state & 0x80;
-
-	SET_OR_CLEAR_BIT( portValue, 6,  d0 ); 	// d0 15
-	SET_OR_CLEAR_BIT( portValue, 7,  d1 ); 	// d1 7
-	SET_OR_CLEAR_BIT( portValue, 15, d2 ); 	// d2 6
-	SET_OR_CLEAR_BIT( portValue, 0,  d3 ); 	// d3 0
-	SET_OR_CLEAR_BIT( portValue, 10, d4 ); 	// d4 10
-	SET_OR_CLEAR_BIT( portValue, 2,  d5 ); 	// d5 2
-	SET_OR_CLEAR_BIT( portValue, 3,  d6 ); 	// d6 18
-	SET_OR_CLEAR_BIT( portValue, 1,  d7 ); 	// d7 19
-	
-	portA->DAT 	= portValue;
-
-}
-
-
-
-/*
-TWI0-SDA = 3 = PA12 = LED1
-TWI0-SCK = 5 = PA11 = LED2
-UART1_TX = 8 = PG6 = LED3
-UART1_RX = 10 = PG7 = LED4
-*/
-uint32_t 	ledStatus 		= 0;
-uint32_t 	ledMask			= ((1<<12)|(1<<11));
-void SetLEDState(bool ledA, bool ledB, bool ledC, bool ledD)
-{
-	if(ledA == true)
-	{
-		ledStatus 	|= 1<<12	;
-	}
-	else
-	{
-		ledStatus 	&= ~(1<<12);	
-	}
-
-	if(ledB == true)
-	{
-		ledStatus 	|= 1<<11	;
-	}
-	else
-	{
-		ledStatus 	&= ~(1<<11);	
-	}
-
-	if(ledC == true)
-	{
-		portG->DAT 	|= 1<<6;
-	}
-	else
-	{
-		portG->DAT 	&= ~(1<<6);
-	}
-
-	if(ledD == true)
-	{
-		portG->DAT 	|= 1<<7;
-	}
-	else
-	{
-		portG->DAT 	&= ~(1<<7);
-	}
-
-}
-
-
-
-void ChangeLEDState()
-{
-	static uint32_t 	i=0;
-
-	i++;
-	if(i>=200000)
-	{
-		static uint32_t 	j=0;
-		uint32_t 			k 	= j % 4;
-
-		switch(k)
-		{
-			case 0: SetLEDState(true, false, false, false); break;
-			case 1: SetLEDState(false, true, false, false); break;
-			case 2: SetLEDState(false, false, true, false); break;
-			case 3: SetLEDState(false, false, false, true); break;
-			default: break;
-		}
-
-		j++;
-		i 	= 0;
-	}
-}
-
-
-volatile uint32_t    Abuffer[0xffff];   // index is 16 bit in size to give nice wrapping behaviour.
-
-#define PL           (1<<4)
-    
-
-//
-//    31       23       15     8 7      0 
-// A: 00000000 00000000 10000100 11001111
-// B: 00000000 00000001 01100000 00000000
-//
-void Loop( BufferType& buffer )
-{
-    uint16_t    aIndex  = 0;
-	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
-	volatile uint16_t*  portA_DAT16   = (uint16_t*)&portA->DAT;
-	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
-
-	memset( (void*)&Abuffer[0], 0xff, sizeof(Abuffer));
-
-	//
-	// values used for output should have bits set as appropriate for the pins and 
-	// should have PL and LED bits cleared.
-	// This avoids performing repeated processing in the inner loop.
-	//
-	for(uint32_t i=0; i<NUMBER_OF_ELEMENTS(Abuffer); i++)
-	{
-		Abuffer[i] 	= 0xffffffff & (~PL) & (~ledMask);
-	}
-
-	uint32_t 	temp;
-	uint32_t 	output;
-	uint8_t 	value 	= *portA_DAT32;
-
-    while(true)
-    {
-		uint8_t 	b = buffer.Get();
-        *portA_DAT8  = b;
-        inputCount++;
-		//for(volatile uint32_t i=0; i<10; i++);
-    }
-
-}
-
     
 
 //
@@ -396,9 +158,6 @@ int main()
 	portG 	= &gpio[6];
 
 
-
-
-
 	portA->CFG0 	= 0x11311111;
 	portA->CFG1 	= 0x22211111;
 	portA->CFG2 	= 0x11111111;
@@ -408,9 +167,6 @@ int main()
 	portA->DRV1 	= 0x22222222;
 	portA->PUL0 	= 0x22222222;
 	portA->PUL1 	= 0x22222222;
-
-
-
 
 	portG->DAT  	= 0xffffffff;
 	portG->DRV0 	= 0x33333333;
@@ -426,7 +182,6 @@ int main()
     //
     sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
 
-
     //
     // Wait until we are fully connected.
     //
@@ -434,11 +189,19 @@ int main()
     while( sharedMemory->controlToOutlet.numberOfWriters == 0 );
     DebugPrintf("Connected.\n");
 
-    static pthread_t    threadId;
-    pthread_create( &threadId, NULL, &doSomeThing, NULL);
-    DebugPrintf(" Started display thread\n ");
+	//
+	//
+	//
+	uint32_t 	outputStates 	= portA->DAT&0xffffff00;
+	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
 
-	Loop( sharedMemory->controlToOutlet );
+	uint8_t 	i = 0;
+    while(true)
+    {
+		uint8_t 	b = sharedMemory->controlToOutlet.Get();
+		//DebugPrintf("[%02x]\n",b);
+        portA->DAT  = outputStates|(uint32_t)(b);
+    }
 
 }
 

@@ -77,20 +77,21 @@ public:
             s.ProcessPositiveEdge(timestamp);                                   \
         }                                                                       \
         if( (timestamp-previousTimestamps[bitNumber]) >= s.GetPeriod() )        \
-        {   DebugPrintf("%lld - %lld = %lld\n",timestamp,previousTimestamps[bitNumber],timestamp-previousTimestamps[bitNumber]);                                                                    \
+        {                                                                       \
+            DebugPrintf(".\n");\
             s.PeriodicProcessing( timestamp, inputValue, outputValue );         \
             previousTimestamps[bitNumber]   = timestamp;                        \
         }                                                                       \
         previousBits[bitNumber]     = bits[bitNumber];        
 
         PROCESS_SCHEDULEE(0, schedulee1);
-        PROCESS_SCHEDULEE(1, schedulee2);
-        PROCESS_SCHEDULEE(2, schedulee3);
-        PROCESS_SCHEDULEE(3, schedulee4);
-        PROCESS_SCHEDULEE(4, schedulee5);
-        PROCESS_SCHEDULEE(5, schedulee6);
-        PROCESS_SCHEDULEE(6, schedulee7);
-        PROCESS_SCHEDULEE(7, schedulee8);
+        //PROCESS_SCHEDULEE(1, schedulee2);
+        //PROCESS_SCHEDULEE(2, schedulee3);
+        //PROCESS_SCHEDULEE(3, schedulee4);
+        //PROCESS_SCHEDULEE(4, schedulee5);
+        //PROCESS_SCHEDULEE(5, schedulee6);
+        //PROCESS_SCHEDULEE(6, schedulee7);
+        //PROCESS_SCHEDULEE(7, schedulee8);
     }
 
 private:

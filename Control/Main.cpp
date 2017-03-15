@@ -34,45 +34,12 @@ extern "C"
 #include "Timestamp.h"
 #include "DebugText.h"
 #include "SharedMemory.h"
-#include "CircularBuffer.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
 
 }
 
 
-
-
-uint32_t 		checkValue 	= 0;
-bool 			started 	= false;
-void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
-{
-	//fprintf(stderr, "[%d]",value);
-
-	if(started == true)
-	{
-		if(value != checkValue)
-		{
-			DebugPrintf("%d != %d\n", checkValue, value);
-			CircularBufferShow( circularBuffer );
-			PANIC();
-            fflush(stdout);
-		}
-		checkValue++;
-	}
-	else
-	{
-		checkValue 	= value+1;
-		started 	= true;
-	}
-	
-	if( (checkValue % 10000000) == 0)
-	{
-		DebugPrintf("[%d]\n", value );
-        fflush(stdout);
-	}
-	
-}
 
 
 uint8_t*    counter64Base   = 0;
@@ -155,7 +122,7 @@ int main()
     DebugPrintf("Waiting for connections.\n");
     while( (sharedMemory->inletToControl.numberOfWriters == 0) )
     {
-        //printf("%llx\n",GetCounter64());        
+        printf("%llx\n",GetCounter64());        
     }
     DebugPrintf("Connected.\n");
 
@@ -165,13 +132,13 @@ int main()
     //
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    typedef PWM<24000000/2000,0, 0xff>                      PWMType;
+    typedef PWM<24000000/20000,0, 0x08>                      PWMType;
     typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
-    TxType          one;
-    RxType          two;
+    //TxType          one;
+    //RxType          two;
     NoOperation     nop;
     PWMType         pwm;
-    I2CMasterType   i2cMaster;
+    //I2CMasterType   i2cMaster;
     Scheduler<  100, 
                 PWMType, 
                 NoOperation,
@@ -186,6 +153,7 @@ int main()
     //
     //
     //
+    uint32_t    i   = 0;
     while(true)
     {
         //
@@ -209,24 +177,6 @@ int main()
         // Set the outputs.
         //
         sharedMemory->controlToOutlet.Put( outputValue );
-
-#if 0
-        //
-        //
-        //
-        static uint8_t     oldState    = 0;
-        uint8_t            newState    = value;
-        if( (uint8_t)((oldState+1)) != newState )
-        {
-            //
-            // Change of data.
-            //
-            DebugPrintf("[%08x, %02x %02x] (%d,%d) \n", timestamp, newState, oldState, sharedMemory->inletToControl.head,sharedMemory->inletToControl.tail);
-            //DebugPrintf(".");
-
-        }
-        oldState    = newState;
-#endif
     }
 
 }
