@@ -233,36 +233,35 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
                 0x0000000000010a4c                ProcessValue(CircularBuffer*, unsigned int)
                 0x0000000000010adc                SetupCounter64()
                 0x0000000000010b50                GetCounter64()
- .text._ZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRh
-                0x0000000000010b7c      0x6cc Main.o
-                0x0000000000010b7c                Scheduler<100u, PWM<10000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)
- .text          0x0000000000011248        0x0 Common.o
- .text          0x0000000000011248      0x1bc CircularBuffer.o
-                0x0000000000011248                CircularBufferShow
-                0x00000000000112a4                CircularBufferInitialiseAsReader
-                0x00000000000112cc                CircularBufferInitialiseAsWriter
-                0x00000000000112f4                CircularBufferPut
-                0x0000000000011350                CircularBufferLossyPut
-                0x00000000000113a8                CircularBufferGet
- .text          0x0000000000011404        0xc Timestamp.o
-                0x0000000000011404                TimestampInitialise
-                0x0000000000011408                GetTimestamp
- .text          0x0000000000011410       0xcc SharedMemory.o
-                0x0000000000011410                SharedMemoryMasterInitialise
-                0x0000000000011480                SharedMemorySlaveInitialise
-                0x00000000000114d0                SharedMemoryFlush
- .text          0x00000000000114dc       0x10 ErrorHandling.o
-                0x00000000000114dc                PANIC
- .text          0x00000000000114ec       0xf8 DebugText.o
-                0x00000000000114ec                DebugTextOutput
-                0x0000000000011514                DebugPrintf
-                0x0000000000011568                NibbleToHex
-                0x0000000000011574                DebugHexDumpBytes
-                0x00000000000115e0                DebugHexDumpWords
- .text          0x00000000000115e4       0x40 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
-                0x00000000000115e4                __libc_csu_init
-                0x0000000000011620                __libc_csu_fini
- *fill*         0x0000000000011624        0x4 
+ .text._ZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRh
+                0x0000000000010b7c      0x6d0 Main.o
+                0x0000000000010b7c                Scheduler<100u, PWM<100000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)
+ .text          0x000000000001124c        0x0 Common.o
+ .text          0x000000000001124c      0x1bc CircularBuffer.o
+                0x000000000001124c                CircularBufferShow
+                0x00000000000112a8                CircularBufferInitialiseAsReader
+                0x00000000000112d0                CircularBufferInitialiseAsWriter
+                0x00000000000112f8                CircularBufferPut
+                0x0000000000011354                CircularBufferLossyPut
+                0x00000000000113ac                CircularBufferGet
+ .text          0x0000000000011408        0xc Timestamp.o
+                0x0000000000011408                TimestampInitialise
+                0x000000000001140c                GetTimestamp
+ .text          0x0000000000011414       0xcc SharedMemory.o
+                0x0000000000011414                SharedMemoryMasterInitialise
+                0x0000000000011484                SharedMemorySlaveInitialise
+                0x00000000000114d4                SharedMemoryFlush
+ .text          0x00000000000114e0       0x10 ErrorHandling.o
+                0x00000000000114e0                PANIC
+ .text          0x00000000000114f0       0xf8 DebugText.o
+                0x00000000000114f0                DebugTextOutput
+                0x0000000000011518                DebugPrintf
+                0x000000000001156c                NibbleToHex
+                0x0000000000011578                DebugHexDumpBytes
+                0x00000000000115e4                DebugHexDumpWords
+ .text          0x00000000000115e8       0x40 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
+                0x00000000000115e8                __libc_csu_init
+                0x0000000000011624                __libc_csu_fini
  .text          0x0000000000011628      0x278 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/libgcc.a(_udivsi3.o)
                 0x0000000000011628                __aeabi_uidiv
                 0x0000000000011628                __udivsi3
@@ -319,7 +318,7 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.ARM.extab* .gnu.linkonce.armextab.*)
  .ARM.extab     0x00000000000119f8        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
  .ARM.extab     0x00000000000119f8        0x0 Main.o
- .ARM.extab.text._ZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRh
+ .ARM.extab.text._ZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRh
                 0x00000000000119f8        0x0 Main.o
  .ARM.extab.text.startup
                 0x00000000000119f8        0x0 Main.o
@@ -329,7 +328,7 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
  .ARM.exidx     0x0000000000011a00        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
  .ARM.exidx     0x0000000000011a08       0x18 Main.o
- .ARM.exidx.text._ZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRh
+ .ARM.exidx.text._ZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRh
                 0x0000000000011a20        0x0 Main.o
                                           0x8 (size before relaxing)
  .ARM.exidx.text.startup
@@ -485,18 +484,18 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
                 0x0000000000022074                started
                 0x0000000000022078                checkValue
                 0x000000000002207c                counter64Base
- .bss._ZZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE9iteration
+ .bss._ZZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE9iteration
                 0x0000000000022080        0x4 Main.o
-                0x0000000000022080                Scheduler<100u, PWM<10000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::iteration
- .bss._ZZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE18previousTimestamps
+                0x0000000000022080                Scheduler<100u, PWM<100000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::iteration
+ .bss._ZZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE18previousTimestamps
                 0x0000000000022084        0x8 Main.o
-                0x0000000000022084                Scheduler<100u, PWM<10000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::previousTimestamps
- .bss._ZZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE12previousBits
+                0x0000000000022084                Scheduler<100u, PWM<100000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::previousTimestamps
+ .bss._ZZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE12previousBits
                 0x000000000002208c        0x8 Main.o
-                0x000000000002208c                Scheduler<100u, PWM<10000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::previousBits
- .bss._ZZN9SchedulerILj100E3PWMILj10000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE4bits
+                0x000000000002208c                Scheduler<100u, PWM<100000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::previousBits
+ .bss._ZZN9SchedulerILj100E3PWMILj100000ELj0ELh255EE15UARTReceiver8N1ILj8ELj3ELh2ELj1024EES3_9I2CMasterILj5ELj10ELh4ELh8EES3_S3_S3_S3_E18PeriodicProcessingEyhRhE4bits
                 0x0000000000022094        0x8 Main.o
-                0x0000000000022094                Scheduler<100u, PWM<10000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::bits
+                0x0000000000022094                Scheduler<100u, PWM<100000u, 0u, (unsigned char)255>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, I2CMaster<5u, 10u, (unsigned char)4, (unsigned char)8>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u>, UARTReceiver8N1<8u, 3u, (unsigned char)2, 1024u> >::PeriodicProcessing(unsigned long long, unsigned char, unsigned char&)::bits
  .bss           0x000000000002209c        0x0 Common.o
  .bss           0x000000000002209c        0x0 CircularBuffer.o
  .bss           0x000000000002209c        0x0 Timestamp.o
@@ -614,23 +613,23 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x405d
+.debug_info     0x0000000000000000     0x405f
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000     0x2f3e Main.o
- .debug_info    0x0000000000002f3e      0x55a CircularBuffer.o
- .debug_info    0x0000000000003498       0xba Timestamp.o
- .debug_info    0x0000000000003552      0x3b5 SharedMemory.o
- .debug_info    0x0000000000003907       0xa0 ErrorHandling.o
- .debug_info    0x00000000000039a7      0x6b6 DebugText.o
+ .debug_info    0x0000000000000000     0x2f40 Main.o
+ .debug_info    0x0000000000002f40      0x55a CircularBuffer.o
+ .debug_info    0x000000000000349a       0xba Timestamp.o
+ .debug_info    0x0000000000003554      0x3b5 SharedMemory.o
+ .debug_info    0x0000000000003909       0xa0 ErrorHandling.o
+ .debug_info    0x00000000000039a9      0x6b6 DebugText.o
 
-.debug_abbrev   0x0000000000000000      0xc3f
+.debug_abbrev   0x0000000000000000      0xc4a
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x612 Main.o
- .debug_abbrev  0x0000000000000612      0x17b CircularBuffer.o
- .debug_abbrev  0x000000000000078d       0x76 Timestamp.o
- .debug_abbrev  0x0000000000000803      0x193 SharedMemory.o
- .debug_abbrev  0x0000000000000996       0x6a ErrorHandling.o
- .debug_abbrev  0x0000000000000a00      0x23f DebugText.o
+ .debug_abbrev  0x0000000000000000      0x61d Main.o
+ .debug_abbrev  0x000000000000061d      0x17b CircularBuffer.o
+ .debug_abbrev  0x0000000000000798       0x76 Timestamp.o
+ .debug_abbrev  0x000000000000080e      0x193 SharedMemory.o
+ .debug_abbrev  0x00000000000009a1       0x6a ErrorHandling.o
+ .debug_abbrev  0x0000000000000a0b      0x23f DebugText.o
 
 .debug_line     0x0000000000000000     0x14e7
  *(.debug_line .debug_line.* .debug_line_end)
@@ -651,21 +650,21 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .debug_frame   0x0000000000000220       0x28 ErrorHandling.o
  .debug_frame   0x0000000000000248       0xb4 DebugText.o
 
-.debug_str      0x0000000000000000     0x2ba6
+.debug_str      0x0000000000000000     0x2bb5
  *(.debug_str)
- .debug_str     0x0000000000000000     0x26bf Main.o
-                                       0x28f1 (size before relaxing)
- .debug_str     0x00000000000026bf       0xa6 Common.o
+ .debug_str     0x0000000000000000     0x26ce Main.o
+                                       0x2900 (size before relaxing)
+ .debug_str     0x00000000000026ce       0xa6 Common.o
                                          0xd4 (size before relaxing)
- .debug_str     0x0000000000002765      0x152 CircularBuffer.o
+ .debug_str     0x0000000000002774      0x152 CircularBuffer.o
                                         0x34e (size before relaxing)
- .debug_str     0x00000000000028b7       0x82 Timestamp.o
+ .debug_str     0x00000000000028c6       0x82 Timestamp.o
                                         0x1bf (size before relaxing)
- .debug_str     0x0000000000002939       0xdb SharedMemory.o
+ .debug_str     0x0000000000002948       0xdb SharedMemory.o
                                         0x2a4 (size before relaxing)
- .debug_str     0x0000000000002a14       0x61 ErrorHandling.o
+ .debug_str     0x0000000000002a23       0x61 ErrorHandling.o
                                         0x19d (size before relaxing)
- .debug_str     0x0000000000002a75      0x131 DebugText.o
+ .debug_str     0x0000000000002a84      0x131 DebugText.o
                                         0x4cc (size before relaxing)
 
 .debug_loc      0x0000000000000000     0x18bf

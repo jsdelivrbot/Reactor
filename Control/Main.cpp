@@ -120,9 +120,10 @@ uint64_t GetCounter64()
     //volatile uint32_t*   counterControl  = (uint32_t*)(counter64Base+0x0280);
     //*counterControl     = 2;
 
-    volatile uint32_t    loReg           = *(uint32_t*)(counter64Base+0x0284);
-    volatile uint32_t    hiReg           = *(uint32_t*)(counter64Base+0x0288);
-    uint64_t    counter         = (((uint64_t)hiReg)<<32)|((uint64_t)loReg);
+    volatile uint32_t   loReg          = *(uint32_t*)(counter64Base+0x0284);
+    volatile uint32_t   hiReg          = *(uint32_t*)(counter64Base+0x0288);
+    volatile uint64_t   counter         =  *(uint64_t*)(counter64Base+0x0284);
+    //uint64_t    counter         = (((uint64_t)hiReg)<<32)|((uint64_t)loReg);
 
     return counter;
 }
@@ -162,7 +163,7 @@ int main()
     //
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    typedef PWM<10000,0, 0xff>                      PWMType;
+    typedef PWM<100000,0, 0xff>                      PWMType;
     typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
     TxType          one;
     RxType          two;
