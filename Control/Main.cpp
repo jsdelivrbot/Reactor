@@ -43,7 +43,8 @@ extern "C"
 
 
 uint8_t*    counter64Base   = 0;
-volatile uint32_t*   counterControl;
+volatile uint8_t*   counterControl;
+volatile uint32_t*   counterValue;
 
 void SetupCounter64()
 {
@@ -79,8 +80,10 @@ void SetupCounter64()
     uint32_t*   pvalue = (uint32_t*)(regAddrMap + BASEOffsetIntoPage);
 
     counter64Base   = (uint8_t*)pvalue;
+    //counterValue    = (volatile uint64_t*)(counter64Base+0x0284);
+    counterValue    = (volatile uint32_t*)(counter64Base+0x0284);
 
-    counterControl  = (uint32_t*)(counter64Base+0x0280);
+    counterControl  = (uint8_t*)(counter64Base+0x0280);
 
     //uint32_t*   counterControl  = (uint32_t*)(counter64Base+0x0280);
 }
@@ -88,9 +91,8 @@ void SetupCounter64()
 uint64_t GetCounter64()
 {
     *counterControl     = 2;
-    uint64_t    counter           = *(volatile uint64_t*)(counter64Base+0x0284);
-
-    return counter;
+    uint32_t    value   = *counterValue;
+    return (uint64_t)value;
 }
 
 
@@ -128,7 +130,8 @@ int main()
     //
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    typedef PWM<24000000/200000,0, 0x08>                      PWMType;
+    typedef PWM<24000000/4000000,0, 0x08>                      PWMType;
+    //typedef PWM<912000000/4000000,0, 0x08>                      PWMType;
     typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
     //TxType          one;
     //RxType          two;
@@ -149,7 +152,6 @@ int main()
     //
     //
     //
-    uint32_t    i   = 0;
     while(true)
     {
         //
@@ -173,8 +175,6 @@ int main()
         // Set the outputs.
         //
         sharedMemory->controlToOutlet.Put( outputValue );
-
-        i++;
     }
 
 }
