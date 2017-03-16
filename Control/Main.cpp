@@ -87,12 +87,8 @@ void SetupCounter64()
 
 uint64_t GetCounter64()
 {
-
-    //volatile uint32_t    loReg           = *(uint32_t*)(counter64Base+0x0284);
-    //volatile uint32_t    hiReg           = *(uint32_t*)(counter64Base+0x0288);
-    //uint64_t    counter         = (((uint64_t)hiReg)<<32)|((uint64_t)loReg);
     *counterControl     = 2;
-    uint64_t    counter           = *(uint64_t*)(counter64Base+0x0284);
+    uint64_t    counter           = *(volatile uint64_t*)(counter64Base+0x0284);
 
     return counter;
 }
@@ -122,7 +118,7 @@ int main()
     DebugPrintf("Waiting for connections.\n");
     while( (sharedMemory->inletToControl.numberOfWriters == 0) )
     {
-        printf("%llx\n",GetCounter64());        
+        //printf("%llx\n",GetCounter64());        
     }
     DebugPrintf("Connected.\n");
 
@@ -132,7 +128,7 @@ int main()
     //
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    typedef PWM<24000000/20000,0, 0x08>                      PWMType;
+    typedef PWM<24000000/200000,0, 0x08>                      PWMType;
     typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
     //TxType          one;
     //RxType          two;
@@ -177,6 +173,8 @@ int main()
         // Set the outputs.
         //
         sharedMemory->controlToOutlet.Put( outputValue );
+
+        i++;
     }
 
 }

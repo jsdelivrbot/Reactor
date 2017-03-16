@@ -65,7 +65,6 @@ public:
 
     void PeriodicProcessing( uint64_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
-
 #define PROCESS_SCHEDULEE(bitNumber, s)                                         \
         bits[bitNumber]     = (inputValue & (1<<bitNumber)) >> bitNumber;       \
         if( (bits[bitNumber] == 0) && (previousBits[bitNumber == 1]) )          \
@@ -78,20 +77,19 @@ public:
         }                                                                       \
         if( (timestamp-previousTimestamps[bitNumber]) >= s.GetPeriod() )        \
         {                                                                       \
-            DebugPrintf(".\n");\
             s.PeriodicProcessing( timestamp, inputValue, outputValue );         \
             previousTimestamps[bitNumber]   = timestamp;                        \
         }                                                                       \
         previousBits[bitNumber]     = bits[bitNumber];        
 
         PROCESS_SCHEDULEE(0, schedulee1);
-        //PROCESS_SCHEDULEE(1, schedulee2);
-        //PROCESS_SCHEDULEE(2, schedulee3);
-        //PROCESS_SCHEDULEE(3, schedulee4);
-        //PROCESS_SCHEDULEE(4, schedulee5);
-        //PROCESS_SCHEDULEE(5, schedulee6);
-        //PROCESS_SCHEDULEE(6, schedulee7);
-        //PROCESS_SCHEDULEE(7, schedulee8);
+        PROCESS_SCHEDULEE(1, schedulee2);
+        PROCESS_SCHEDULEE(2, schedulee3);
+        PROCESS_SCHEDULEE(3, schedulee4);
+        PROCESS_SCHEDULEE(4, schedulee5);
+        PROCESS_SCHEDULEE(5, schedulee6);
+        PROCESS_SCHEDULEE(6, schedulee7);
+        PROCESS_SCHEDULEE(7, schedulee8);
     }
 
 private:
@@ -105,9 +103,9 @@ private:
     Schedulee7Type&     schedulee7;
     Schedulee8Type&     schedulee8;
 
-    uint8x8_t           bits;
-    uint8x8_t           previousBits;
-    uint64x8_t          previousTimestamps;
+    volatile uint8x8_t           bits;
+    volatile uint8x8_t           previousBits;
+    volatile uint64x8_t          previousTimestamps;
 
 };
 
