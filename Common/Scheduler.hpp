@@ -17,6 +17,7 @@
 extern "C"
 {
  #include "DebugText.h"
+ #include "Timestamp.h"
 }
 
 typedef uint8_t     uint8x8_t[8];
@@ -63,6 +64,10 @@ public:
 
     }
 
+
+    //
+    // 8xTimeslots, each 24MHz/8 in duration = 8 channels at 1MHz.
+    //
     void PeriodicProcessing( uint64_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
 #define PROCESS_SCHEDULEE(bitNumber, s)                                         \

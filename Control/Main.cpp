@@ -98,11 +98,26 @@ uint64_t GetCounter64()
 
 
 
+//
+//
+//
+typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
+typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
+typedef PWM<30, 0, 0x08>                      PWMType;
+typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
+//TxType          one;
+//RxType          two;
+NoOperation     nop;
+PWMType         pwm;
+//I2CMasterType   i2cMaster;
+
+
 
 void* entryPoint(void*)
 {
     while(true)
     {
+#if 0        
         static uint64_t     previousValue   = 0;
         uint64_t            thisValue       = GetTimestamp();
         uint64_t            delta;
@@ -115,13 +130,42 @@ void* entryPoint(void*)
             delta           = thisValue + (0xffffffff-previousValue);
         }
 
-        DebugPrintf("%lld.\n",delta);
+        //DebugPrintf("%lld.\n",delta);
         previousValue   = thisValue;
 
-        //usleep(1000);
-        sleep(1);
+
+        //
+        //
+        //
+        for(uint32_t i=0; i<256; i++)
+        {
+            DebugPrintf("%d\n",pwm.deltas[i]);
+        }
+#endif
+        {
+            static uint32_t     period;
+            static int32_t      delta   = 1;
+            if(period < 1)
+            {
+                delta   = 1;
+            }
+            if(period >= 500)
+            {
+                delta   = -1;
+            }
+            period  += delta;
+
+            pwm.SetPeriod(period);
+        }
+
+        usleep(1000);
+        //sleep(1);
     }
 }
+
+
+
+
 
 
 //
@@ -153,19 +197,6 @@ int main()
     DebugPrintf("Connected.\n");
 
 
-    //
-    //
-    //
-    typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
-    typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    //typedef PWM<24000000/4000000,0, 0x08>                      PWMType;
-    typedef PWM<720000000/1000000,0, 0x08>                      PWMType;
-    typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
-    //TxType          one;
-    //RxType          two;
-    NoOperation     nop;
-    PWMType         pwm;
-    //I2CMasterType   i2cMaster;
     Scheduler<  100, 
                 PWMType, 
                 NoOperation,
@@ -191,8 +222,8 @@ int main()
         //
         // Get the current timestamp.
         //
-        Timestamp    timestamp 	= GetTimestamp();
-        //uint64_t timestamp   = GetCounter64();
+        //Timestamp    timestamp 	= GetTimestamp();
+        uint64_t timestamp   = GetCounter64();
 
         //
         // Get the current input values.

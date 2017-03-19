@@ -105,14 +105,14 @@ Main.elf: $(OBJS)
 # Compile a file and then generate its dependencies.
 #
 %.o: %.c
-	@ $(ECHO) Building $(basename $<)
+	@ $(ECHO) Building $(basename $(notdir $<))
 	@ $(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@ -MMD -MP -MF $(notdir $(patsubst %.o,%.d,$@) )
 
 #
 # Compile a file and then generate its dependencies.
 #
 %.o: %.cpp
-	@ $(ECHO) Building $(basename $<)
+	@ $(ECHO) Building $(basename $(notdir $<))
 	@ $(CPPC) $(CPPFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@ -MMD -MP -MF $(notdir $(patsubst %.o,%.d,$@) )
 
 

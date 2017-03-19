@@ -19,9 +19,18 @@ class PWM
 {
 public:
 
+    uint32_t    deltas[256];
+    uint32_t    numberOfDeltas  = 0;
+    uint32_t    variablePeriod  = 1;
+
+    void SetPeriod(uint32_t _period)
+    {
+        variablePeriod  = _period;
+    }
+
     uint32_t GetPeriod()
     {
-        return period;
+        return variablePeriod;
     }
 
     void ProcessNegativeEdge( uint32_t timestamp )
@@ -35,6 +44,20 @@ public:
 
     void PeriodicProcessing( uint32_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
+        /*
+        static uint32_t     previousTimestamp = 0;
+        if(timestamp>previousTimestamp)
+        {
+            deltas[numberOfDeltas]  = timestamp - previousTimestamp;
+        }
+        else
+        {
+            deltas[numberOfDeltas]  = timestamp + (0xffffffff-previousTimestamp);
+        }
+        previousTimestamp   = timestamp;
+        numberOfDeltas  = (numberOfDeltas + 1)&0xff;
+        */
+
         if( (bitNumber&0x01) == 0 )
         {
             SetTxLow( outputValue );
