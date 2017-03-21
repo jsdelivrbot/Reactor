@@ -30,6 +30,7 @@ HEX2BIN   		= hex2bin
 ECHO      		= echo
 ECHO_RED  		= echo -e "\033[0;31m"
 ECHO_GREEN		= echo -e "\033[0;32m"
+PYTHON			= python
 
 
 #
@@ -57,6 +58,11 @@ include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #
 LIBS		+= -lc -lgcc -lrt -lpthread
 
+#
+#
+#
+INCLUDES 	+= -I.
+
 
 #########################################################################################################
 
@@ -74,7 +80,7 @@ LIBS		+= -lc -lgcc -lrt -lpthread
 #
 # Default target.
 #
-all: Main.elf
+all: GeneratedScheduler.hpp Main.elf
 
 
 #
@@ -88,12 +94,22 @@ clean:
 	-@ $(RM) -f *.bin
 	-@ $(RM) -f *.hex
 	-@ $(RM) -f *.elf
+	-@ $(RM) -f GeneratedScheduler.hpp
+
+
+
+#
+# Generate the scheduler class.
+#
+GeneratedScheduler.hpp:
+	@ $(ECHO) Generating $@
+	@ $(PYTHON) ../GenerateScheduler.py ../Channels.py ../Scheduler.Template > $@
 
 
 #
 # Link the objects into a binary.
 #
-Main.elf: $(OBJS)
+Main.elf: $(OBJS) 
 	@ $(LD) $(LDFLAGS) -Xlinker -Map=$@.map -o $@ $^ $(LIBS)
 	@ $(SIZE) -d $@
 

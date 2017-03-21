@@ -22,7 +22,7 @@
 #include <pthread.h>
 
 #include "Reactor.h"
-#include "Scheduler.hpp"
+#include "GeneratedScheduler.hpp"
 #include "PulseWidthModulator.hpp"
 #include "UARTTransmitter8N1.hpp"
 #include "UARTReceiver8N1.hpp"

@@ -1,6 +1,9 @@
 
 
 
+import os
+import sys
+import importlib
 
 
 
@@ -84,21 +87,19 @@ def Schedule( channels ):
 if __name__ == '__main__':
     """
     """
-    print('Scheduler')
 
-    channels    = [
-                    {'ID':0, 'Duration':1, 'Period':8,   'AcceptableError':0.1} ,
-                    {'ID':1, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
-                    {'ID':2, 'Duration':2, 'Period':8,   'AcceptableError':0.1} ,
-                    {'ID':3, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
-                    {'ID':4, 'Duration':1, 'Period':32,  'AcceptableError':0.1} ,
-                    {'ID':5, 'Duration':1, 'Period':3,   'AcceptableError':0.1} ,
-                    {'ID':6, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
-                    {'ID':7, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
-                  ]
+    #
+    # Import the settings file.
+    #
+    settingsFile    = sys.argv[1]
+    sys.path.append(os.path.dirname(settingsFile))
+    moduleName,moduleExt      = os.path.splitext(os.path.basename(settingsFile))
+    settings = importlib.import_module(moduleName)
 
-    result    = Schedule(channels)
-    #print(result)
+    #
+    #
+    #
+    result    = Schedule(settings.channels)
     schedule    = result['Schedule']
     text        = ''
 
@@ -108,16 +109,16 @@ if __name__ == '__main__':
         i   = 0
         for channel in schedule:
             if channel != -1:
-                text    += '        PROCESS_SCHEDULEE(%d, schedulee%d); // %d) ch%d\n'%(channel,channel+1, i, channel)
+                text    += '        PROCESS_SCHEDULEE(%d, schedulee%d);   // %d) ch%d\n'%(channel,channel+1, i, channel)
             else:
-                text    += '        IDLE(); // %d) ch%d\n'%(i, channel)
+                text    += '        WAIT_FOR_NEXT_TIMESLOT();             // %d) \n'%(i)
 
             i = i + 1
 
     #
+    # Fill in the template.
     #
-    #
-    template    = open('Scheduler.Template').read()
+    template    = open(sys.argv[2]).read()
     print(template%text)
 
 
