@@ -18,6 +18,53 @@ def lcm(*numbers):
     return reduce(lcm, numbers, 1)
 
 
+
+def FindFirstEmptyTimeslot(timeslots):
+    """
+    """
+    for i in range(0,len(timeslots)):
+        if timeslots[i] == -1:
+            return i
+
+    return -1
+
+
+
+def FindClosestEmptyTimeslot(timeslot, timeslots):
+    """
+    """
+    for i in range(0,8):
+        if timeslots[timeslot+i] == -1:
+            return timeslot+i
+        if timeslots[timeslot-i] == -1:
+            return timeslot-i
+
+    return -1
+
+
+def AllocateChannelsToTimeslots(numberOfTimeSlots, channels):
+    """
+    """
+
+    timeslots   = [-1]*numberOfTimeSlots
+
+    for channel in channels:
+        timeslot    = FindFirstEmptyTimeslot(timeslots)
+
+        while timeslot < len(timeslots):
+
+            closestTimeslot = FindClosestEmptyTimeslot(timeslot, timeslots)
+            print('@%d -> %d = %d'%(timeslot,closestTimeslot, closestTimeslot-timeslot))
+            timeslots[closestTimeslot] = channel['ID']
+
+            timeslot    = timeslot + channel['Period']
+
+
+    return timeslots
+
+
+
+
 def Schedule( channels ):
     """
     """
@@ -29,13 +76,7 @@ def Schedule( channels ):
 
     totalPeriod     = lcm(*periodSet)
 
-    schedule    = []
-    for iteration in range(0,totalPeriod):
-        activeSet   = set()
-        for channel in channels:
-            if iteration%channel['Period'] == 0:
-                activeSet.add(channel['ID'])
-        schedule.append(activeSet)
+    schedule    = AllocateChannelsToTimeslots( totalPeriod, channels )
 
     return {'totalPeriod':totalPeriod, 'Utilisation':utilisation, 'Periods':periodSet, 'Schedule':schedule} 
 
@@ -46,18 +87,18 @@ if __name__ == '__main__':
     print('Scheduler')
 
     channels    = [
-                    {'ID':0, 'Duration':1, 'Period':8} ,
-                    {'ID':1, 'Duration':1, 'Period':16} ,
-                    {'ID':2, 'Duration':2, 'Period':8} ,
-                    {'ID':3, 'Duration':1, 'Period':16} ,
-                    {'ID':4, 'Duration':1, 'Period':32} ,
-                    {'ID':5, 'Duration':1, 'Period':3} ,
-                    {'ID':6, 'Duration':1, 'Period':16} ,
-                    {'ID':7, 'Duration':1, 'Period':16} ,
+                    {'ID':0, 'Duration':1, 'Period':8,   'AcceptableError':0.1} ,
+                    {'ID':1, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
+                    {'ID':2, 'Duration':2, 'Period':8,   'AcceptableError':0.1} ,
+                    {'ID':3, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
+                    {'ID':4, 'Duration':1, 'Period':32,  'AcceptableError':0.1} ,
+                    {'ID':5, 'Duration':1, 'Period':3,   'AcceptableError':0.1} ,
+                    {'ID':6, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
+                    {'ID':7, 'Duration':1, 'Period':16,  'AcceptableError':0.1} ,
                   ]
 
     result    = Schedule(channels)
-    print(result)
+    #print(result)
     schedule    = result['Schedule']
 
     if result['Utilisation'] > 1.0:
