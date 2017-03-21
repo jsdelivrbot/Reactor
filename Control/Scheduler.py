@@ -108,12 +108,16 @@ if __name__ == '__main__':
         i   = 0
         for channel in schedule:
             if channel != -1:
-                text    += '\t\tPROCESS_SCHEDULEE(%d, schedulee%d); // %d) ch%d\n'%(channel,channel+1, i, channel)
+                text    += '        PROCESS_SCHEDULEE(%d, schedulee%d); // %d) ch%d\n'%(channel,channel+1, i, channel)
             else:
-                text    += '\t\tIDLE(); // %d) ch%d\n'%(i, channel)
+                text    += '        IDLE(); // %d) ch%d\n'%(i, channel)
 
             i = i + 1
 
-    print(text)
+    #
+    #
+    #
+    template    = open('Scheduler.Template').read()
+    print(template%text)
 
 
