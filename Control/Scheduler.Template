@@ -86,7 +86,8 @@ public:
             s.PeriodicProcessing( timestamp, inputValue, outputValue );         \
             previousTimestamps[bitNumber]   = timestamp;                        \
         }                                                                       \
-        previousBits[bitNumber]     = bits[bitNumber];        
+        previousBits[bitNumber]     = bits[bitNumber];                          \
+        WAIT_FOR_NEXT_TIMESLOT();
 
 %s
     }

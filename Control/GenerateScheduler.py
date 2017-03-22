@@ -50,6 +50,7 @@ def AllocateChannelsToTimeslots(numberOfTimeSlots, channels):
     """
 
     timeslots   = [-1]*numberOfTimeSlots
+    error       = [0]*numberOfTimeSlots
 
     for channel in channels:
         timeslot    = FindFirstEmptyTimeslot(timeslots)
@@ -59,11 +60,12 @@ def AllocateChannelsToTimeslots(numberOfTimeSlots, channels):
             closestTimeslot = FindClosestEmptyTimeslot(timeslot, timeslots)
             #print('@%d -> %d = %d'%(timeslot,closestTimeslot, closestTimeslot-timeslot))
             timeslots[closestTimeslot] = channel['ID']
+            error[closestTimeslot]  = timeslot-closestTimeslot
 
             timeslot    = timeslot + channel['Period']
 
 
-    return timeslots
+    return (timeslots,error)
 
 
 
@@ -79,9 +81,9 @@ def Schedule( channels ):
 
     totalPeriod     = lcm(*periodSet)
 
-    schedule    = AllocateChannelsToTimeslots( totalPeriod, channels )
+    schedule,error    = AllocateChannelsToTimeslots( totalPeriod, channels )
 
-    return {'totalPeriod':totalPeriod, 'Utilisation':utilisation, 'Periods':periodSet, 'Schedule':schedule} 
+    return {'totalPeriod':totalPeriod, 'Utilisation':utilisation, 'Periods':periodSet, 'Schedule':schedule, 'Error':error} 
 
 
 if __name__ == '__main__':
@@ -99,8 +101,9 @@ if __name__ == '__main__':
     #
     #
     #
-    result    = Schedule(settings.channels)
+    result      = Schedule(settings.channels)
     schedule    = result['Schedule']
+    error       = result['Error']
     text        = ''
 
     if result['Utilisation'] > 1.0:
@@ -109,7 +112,7 @@ if __name__ == '__main__':
         i   = 0
         for channel in schedule:
             if channel != -1:
-                text    += '        PROCESS_SCHEDULEE(%d, schedulee%d);   // %d) ch%d\n'%(channel,channel+1, i, channel)
+                text    += '        PROCESS_SCHEDULEE(%d, schedulee%d);   // %d) ch%d error = %d\n'%(channel,channel+1, i, channel, error[i])
             else:
                 text    += '        WAIT_FOR_NEXT_TIMESLOT();             // %d) \n'%(i)
 
