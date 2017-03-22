@@ -69,18 +69,19 @@ public:
     //
     // 8xTimeslots, each 24MHz/8 in duration = 8 channels at 1MHz.
     //
-    void PeriodicProcessing( uint64_t timestamp, uint8_t inputValue, uint8_t& outputValue )
+    void PeriodicProcessing( uint8_t inputValue, uint8_t& outputValue )
     {
-        timestamp   = GetCounter64();
+        uint64_t    timestamp = GetCounter64();
+        uint64_t    currentTimeslotStart = timestamp;
 
-#define WAIT_FOR_NEXT_TIMESLOT()        timestamp   = GetCounter64();
+#define WAIT_FOR_NEXT_TIMESLOT()        do{timestamp = GetCounter64();} while(currentTimeslotStart==timestamp);currentTimeslotStart=timestamp;
 #define PROCESS_SCHEDULEE(bitNumber, s)                                         \
         bits[bitNumber]     = (inputValue & (1<<bitNumber)) >> bitNumber;       \
-        if( (bits[bitNumber] == 0) && (previousBits[bitNumber == 1]) )          \
+        if( (bits[bitNumber] == 0) && (previousBits[bitNumber] != 0) )          \
         {                                                                       \
             s.ProcessNegativeEdge(timestamp);                                   \
         }                                                                       \
-        if( (bits[bitNumber] == 1) && (previousBits[bitNumber == 0]) )          \
+        if( (bits[bitNumber] != 0) && (previousBits[bitNumber] == 0) )          \
         {                                                                       \
             s.ProcessPositiveEdge(timestamp);                                   \
         }                                                                       \

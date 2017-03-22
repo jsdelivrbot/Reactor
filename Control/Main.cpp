@@ -103,7 +103,7 @@ uint64_t GetCounter64()
 //
 typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<50, 0, 0x08>                      PWMType;
+typedef PWM<1000, 0, 0x08>                      PWMType;
 typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
 //TxType          one;
 //RxType          two;
@@ -134,7 +134,7 @@ void* entryPoint(void*)
         previousValue   = thisValue;
 
 #endif
-#if 1
+#if 0
 
         //
         //
@@ -226,7 +226,7 @@ int main()
         //
         // Get the current timestamp.
         //
-        Timestamp    timestamp 	= GetTimestamp();
+        //Timestamp    timestamp 	= GetTimestamp();
         //uint64_t timestamp   = GetCounter64();
 
         //
@@ -238,7 +238,7 @@ int main()
         // Process the input.
         //
         uint8_t     outputValue;
-        scheduler.PeriodicProcessing( timestamp, value, outputValue );
+        scheduler.PeriodicProcessing( value, outputValue );
 
         //
         // Set the outputs.
