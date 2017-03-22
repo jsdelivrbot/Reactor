@@ -21,16 +21,10 @@ public:
 
     uint32_t    deltas[256];
     uint32_t    numberOfDeltas  = 0;
-    uint32_t    variablePeriod  = 1;
-
-    void SetPeriod(uint32_t _period)
-    {
-        variablePeriod  = _period;
-    }
 
     uint32_t GetPeriod()
     {
-        return variablePeriod;
+        return period;
     }
 
     void ProcessNegativeEdge( uint32_t timestamp )
@@ -44,7 +38,7 @@ public:
 
     void PeriodicProcessing( uint32_t timestamp, uint8_t inputValue, uint8_t& outputValue )
     {
-        /*
+#if 0
         static uint32_t     previousTimestamp = 0;
         if(timestamp>previousTimestamp)
         {
@@ -56,7 +50,7 @@ public:
         }
         previousTimestamp   = timestamp;
         numberOfDeltas  = (numberOfDeltas + 1)&0xff;
-        */
+#endif
 
         if( (bitNumber&0x01) == 0 )
         {

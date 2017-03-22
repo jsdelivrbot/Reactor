@@ -103,7 +103,7 @@ uint64_t GetCounter64()
 //
 typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<30, 0, 0x08>                      PWMType;
+typedef PWM<50, 0, 0x08>                      PWMType;
 typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
 //TxType          one;
 //RxType          two;
@@ -133,6 +133,8 @@ void* entryPoint(void*)
         //DebugPrintf("%lld.\n",delta);
         previousValue   = thisValue;
 
+#endif
+#if 1
 
         //
         //
@@ -142,6 +144,7 @@ void* entryPoint(void*)
             DebugPrintf("%d\n",pwm.deltas[i]);
         }
 #endif
+#if 0
         {
             static uint32_t     period;
             static int32_t      delta   = 1;
@@ -155,8 +158,9 @@ void* entryPoint(void*)
             }
             period  += delta;
 
-            pwm.SetPeriod(period);
+            //pwm.SetPeriod(period);
         }
+#endif
 
         usleep(1000);
         //sleep(1);
@@ -211,8 +215,8 @@ int main()
     //
     //
     //
-    pthread_t   threadId;
-    pthread_create(&threadId, NULL, entryPoint, NULL);
+    //pthread_t   threadId;
+    //pthread_create(&threadId, NULL, entryPoint, NULL);
 
     //
     //
@@ -222,8 +226,8 @@ int main()
         //
         // Get the current timestamp.
         //
-        //Timestamp    timestamp 	= GetTimestamp();
-        uint64_t timestamp   = GetCounter64();
+        Timestamp    timestamp 	= GetTimestamp();
+        //uint64_t timestamp   = GetCounter64();
 
         //
         // Get the current input values.
