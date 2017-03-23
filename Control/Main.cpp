@@ -248,7 +248,9 @@ int main()
         //
         uint32_t endTimestamp = 0;
         __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(endTimestamp) );
-        endTimestamp    += 250;
+        endTimestamp    /= 350;
+        endTimestamp++;
+        endTimestamp    *= 350;
 
         uint32_t timestamp = 0;
         do
