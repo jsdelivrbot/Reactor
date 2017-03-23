@@ -103,7 +103,7 @@ uint64_t GetCounter64()
 //
 typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<1000, 0, 0x08>                      PWMType;
+typedef PWM<1000000, 0, 0x08>                      PWMType;
 typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
 //TxType          one;
 //RxType          two;
@@ -229,16 +229,43 @@ int main()
         //Timestamp    timestamp 	= GetTimestamp();
         //uint64_t timestamp   = GetCounter64();
 
+
         //
         // Get the current input values.
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
 
+
         //
         // Process the input.
         //
         uint8_t     outputValue;
-        scheduler.PeriodicProcessing( value, outputValue );
+        //scheduler.PeriodicProcessing( value, outputValue );
+
+
+        //
+        //
+        //
+        uint32_t endTimestamp = 0;
+        __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(endTimestamp) );
+        endTimestamp    += 40;
+
+        uint32_t timestamp = 0;
+        do
+        {
+            __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(timestamp) );
+        } while(timestamp < endTimestamp);
+
+        static uint8_t  state   = 0;
+        if( (state&0x01) == 0)
+        {
+            outputValue     &= ~0x08;
+        }
+        else
+        {
+            outputValue     |= 0x08;
+        }
+        state++;
 
         //
         // Set the outputs.

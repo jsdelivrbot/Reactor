@@ -71,10 +71,10 @@ public:
     //
     void PeriodicProcessing( uint8_t inputValue, uint8_t& outputValue )
     {
-        uint64_t    timestamp = GetCounter64();
+        uint64_t    timestamp = GetTimestamp();
         uint64_t    currentTimeslotStart = timestamp;
 
-#define WAIT_FOR_NEXT_TIMESLOT()        do{timestamp = GetCounter64();} while(currentTimeslotStart==timestamp);currentTimeslotStart=timestamp;
+#define WAIT_FOR_NEXT_TIMESLOT()        do{timestamp = GetTimestamp();} while(timestamp<currentTimeslotStart+1000);currentTimeslotStart=timestamp;
 #define PROCESS_SCHEDULEE(bitNumber, s)                                         \
         bits[bitNumber]     = (inputValue & (1<<bitNumber)) >> bitNumber;       \
         if( (bits[bitNumber] == 0) && (previousBits[bitNumber] != 0) )          \
