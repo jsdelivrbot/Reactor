@@ -78,15 +78,15 @@ public:
         bits[bitNumber]     = (inputValue & (1<<bitNumber)) >> bitNumber;       \
         if( (bits[bitNumber] == 0) && (previousBits[bitNumber] == 1) )          \
         {                                                                       \
-            s.ProcessNegativeEdge(timestamp);                                   \
+            s.ProcessNegativeEdge();                                            \
         }                                                                       \
         if( (bits[bitNumber] == 1) && (previousBits[bitNumber] == 0) )          \
         {                                                                       \
-            s.ProcessPositiveEdge(timestamp);                                   \
+            s.ProcessPositiveEdge();                                            \
         }                                                                       \
         if( (timestamp-previousTimestamps[bitNumber]) >= s.GetPeriod() )        \
         {                                                                       \
-            s.PeriodicProcessing( timestamp, inputValue, outputValue );         \
+            s.PeriodicProcessing( inputValue, outputValue );                    \
             previousTimestamps[bitNumber]   = timestamp;                        \
         }                                                                       \
         previousBits[bitNumber]     = bits[bitNumber];        

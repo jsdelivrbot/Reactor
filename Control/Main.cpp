@@ -104,14 +104,15 @@ uint64_t GetCounter64()
 //
 typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<1, 0, 0x08>                      PWMType;
-typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
+typedef PWM<1, 0, 0x08>                      PWMType1;
+typedef PWM<1, 0, 0x10>                      PWMType2;
+typedef I2CMaster<5, 0x04,0x02>             I2CMasterType;
 //TxType          one;
 //RxType          two;
 NoOperation     nop;
-PWMType         pwm;
-PWMType         pwm2;
-//I2CMasterType   i2cMaster;
+PWMType1         pwm;
+PWMType2         pwm2;
+I2CMasterType   i2cMaster;
 
 
 
@@ -204,14 +205,14 @@ int main()
 
 
     Scheduler<  100, 
-                PWMType, 
-                PWMType,
-                PWMType,
-                PWMType,
-                PWMType,
-                PWMType,
-                PWMType,
-                PWMType >  scheduler(pwm, pwm2, pwm2, pwm2, pwm2,pwm2, pwm2, pwm2);    
+                PWMType1, 
+                PWMType2,
+                PWMType2,
+                PWMType2,
+                PWMType2,
+                PWMType2,
+                I2CMasterType,
+                PWMType2 >  scheduler(pwm, pwm2, pwm2, pwm2, pwm2,pwm2, i2cMaster, pwm2);    
 
 
     //

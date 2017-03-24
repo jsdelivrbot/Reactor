@@ -14,7 +14,7 @@
 
 
 
-template <uint32_t period, uint32_t ticksPerBit, uint8_t sdaMask, uint8_t sclMask>
+template <uint32_t period, uint8_t sdaMask, uint8_t sclMask>
 class I2CMaster
 {
 public:
@@ -24,12 +24,12 @@ public:
         return period;
     }
 
-    void ProcessNegativeEdge( uint32_t timestamp )
+    void ProcessNegativeEdge()
     {
         currentLevel    = 0;
     }
 
-    void ProcessPositiveEdge( uint32_t timestamp )
+    void ProcessPositiveEdge()
     {
         currentLevel    = 1;
     }
@@ -56,9 +56,8 @@ public:
     }
 
 
-    void PeriodicProcessing( uint32_t timestamp, uint8_t inputValue, uint8_t& outputValue )
+    void PeriodicProcessing( uint8_t inputValue, uint8_t& outputValue )
     {
-
         #define SET_SDA_ACCORDING_TO_BIT_NUMBER(bitMask) \
                 if( (currentByte&bitMask) != 0)          \
                 {                                        \
@@ -221,9 +220,7 @@ public:
             case 30:            // Pause, then restart.
                 state   = 0;
                 break;
-
         }
-
     }
 
     uint8_t     currentByte             = 0;

@@ -27,31 +27,17 @@ public:
         return period;
     }
 
-    void ProcessNegativeEdge( uint32_t timestamp )
+    void ProcessNegativeEdge()
     {
     }
 
-    void ProcessPositiveEdge( uint32_t timestamp )
+    void ProcessPositiveEdge()
     {
     }
 
 
-    void PeriodicProcessing( uint32_t timestamp, uint8_t inputValue, uint8_t& outputValue )
+    void PeriodicProcessing( uint8_t inputValue, uint8_t& outputValue )
     {
-#if 0
-        static uint32_t     previousTimestamp = 0;
-        if(timestamp>previousTimestamp)
-        {
-            deltas[numberOfDeltas]  = timestamp - previousTimestamp;
-        }
-        else
-        {
-            deltas[numberOfDeltas]  = timestamp + (0xffffffff-previousTimestamp);
-        }
-        previousTimestamp   = timestamp;
-        numberOfDeltas  = (numberOfDeltas + 1)&0xff;
-#endif
-
         if( (bitNumber&0x01) == 0 )
         {
             SetTxLow( outputValue );
