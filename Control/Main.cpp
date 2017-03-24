@@ -106,7 +106,7 @@ typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
 typedef PWM<1, 0, 0x08>                      PWMType1;
 typedef PWM<1, 0, 0x10>                      PWMType2;
-typedef I2CMaster<5, 0x04,0x02>             I2CMasterType;
+typedef I2CMaster<1, 0x04,0x02>             I2CMasterType;
 //TxType          one;
 //RxType          two;
 NoOperation     nop;
@@ -206,13 +206,13 @@ int main()
 
     Scheduler<  100, 
                 PWMType1, 
-                PWMType2,
-                PWMType2,
-                PWMType2,
-                PWMType2,
-                PWMType2,
                 I2CMasterType,
-                PWMType2 >  scheduler(pwm, pwm2, pwm2, pwm2, pwm2,pwm2, i2cMaster, pwm2);    
+                I2CMasterType,
+                I2CMasterType,
+                I2CMasterType,
+                I2CMasterType,
+                I2CMasterType,
+                I2CMasterType >  scheduler(pwm, i2cMaster, i2cMaster, i2cMaster, i2cMaster,i2cMaster, i2cMaster, i2cMaster);    
 
 
     //
