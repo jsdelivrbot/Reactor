@@ -22,7 +22,8 @@
 #include <pthread.h>
 
 #include "Reactor.h"
-#include "GeneratedScheduler.hpp"
+//#include "GeneratedScheduler.hpp"
+#include "Scheduler.hpp"
 #include "PulseWidthModulator.hpp"
 #include "UARTTransmitter8N1.hpp"
 #include "UARTReceiver8N1.hpp"
@@ -103,12 +104,13 @@ uint64_t GetCounter64()
 //
 typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<1000000, 0, 0x08>                      PWMType;
+typedef PWM<1, 0, 0x08>                      PWMType;
 typedef I2CMaster<5, 10, 0x04,0x08>             I2CMasterType;
 //TxType          one;
 //RxType          two;
 NoOperation     nop;
 PWMType         pwm;
+PWMType         pwm2;
 //I2CMasterType   i2cMaster;
 
 
@@ -203,13 +205,13 @@ int main()
 
     Scheduler<  100, 
                 PWMType, 
-                NoOperation,
-                NoOperation,
-                NoOperation,
-                NoOperation,
-                NoOperation,
-                NoOperation,
-                NoOperation >  scheduler(pwm, nop, nop, nop, nop,nop, nop, nop);    
+                PWMType,
+                PWMType,
+                PWMType,
+                PWMType,
+                PWMType,
+                PWMType,
+                PWMType >  scheduler(pwm, pwm2, pwm2, pwm2, pwm2,pwm2, pwm2, pwm2);    
 
 
     //
@@ -223,28 +225,15 @@ int main()
     //
     while(true)
     {
-        //
-        // Get the current timestamp.
-        //
-        //Timestamp    timestamp 	= GetTimestamp();
-        //uint64_t timestamp   = GetCounter64();
-
+        uint8_t     outputValue;
 
         //
         // Get the current input values.
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
 
-
         //
-        // Process the input.
-        //
-        uint8_t     outputValue;
-        //scheduler.PeriodicProcessing( value, outputValue );
-
-
-        //
-        //
+        // Wait until a 1uSec boundary.
         //
         uint32_t endTimestamp = 0;
         __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(endTimestamp) );
@@ -258,16 +247,10 @@ int main()
             __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(timestamp) );
         } while(timestamp < endTimestamp);
 
-        static uint8_t  state   = 0;
-        if( (state&0x01) == 0)
-        {
-            outputValue     &= ~0x08;
-        }
-        else
-        {
-            outputValue     |= 0x08;
-        }
-        state++;
+        //
+        // Process the input.
+        //
+        scheduler.PeriodicProcessing( value, outputValue );
 
         //
         // Set the outputs.
