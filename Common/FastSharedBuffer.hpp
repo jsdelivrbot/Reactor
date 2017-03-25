@@ -81,6 +81,42 @@ public:
         return value;
     }
 
+    ContainedType NonBlockingGet(bool& dataAvailable)
+    {
+        IndexType   newTail     = tail + 1;
+
+        //
+        // Wait until there is data in the buffer.
+        //
+        if(head == newTail)
+        {
+            dataAvailable   = false;
+            return 0;
+        }
+        else
+        {
+            //
+            // Get the data out of the buffer.
+            //
+            ContainedType     value   = data[tail];
+            tail    = newTail;
+            dataAvailable   = true;
+
+            return value;
+        }
+
+    }
+
+    bool DataAvailable()
+    {
+        if(head == tail)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 private:
 public:
 

@@ -99,21 +99,7 @@ uint64_t GetCounter64()
 
 
 
-//
-//
-//
-typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
-typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<1, 0, 0x02>                      PWMType1;
-typedef PWM<1, 0, 0x10>                      PWMType2;
-typedef I2CMaster<1, 0x04,0x08, 64>             I2CMasterType;
-//TxType          one;
-//RxType          two;
-NoOperation     nop;
-PWMType1         pwm;
-PWMType2         pwm2;
-I2CMasterType   i2cMaster;
-
+SharedMemoryLayout*   sharedMemory;
 
 
 void* entryPoint(void*)
@@ -121,6 +107,16 @@ void* entryPoint(void*)
     while(true)
     {
 #if 1
+        sharedMemory->channel0In.Put( 0x01 );
+        sharedMemory->channel0In.Put( 0x02 );
+        sharedMemory->channel0In.Put( 0x04 );
+        sharedMemory->channel0In.Put( 0x08 );
+        sharedMemory->channel0In.Put( 0x10 );
+        sharedMemory->channel0In.Put( 0x20 );
+        sharedMemory->channel0In.Put( 0x40 );
+        sharedMemory->channel0In.Put( 0x80 );
+#endif
+#if 0
         i2cMaster.InsertIntoTxFIFO( 0x01 );
         i2cMaster.InsertIntoTxFIFO( 0x02 );
         i2cMaster.InsertIntoTxFIFO( 0x04 );
@@ -198,7 +194,7 @@ int main()
     //
     //
     //
-    SharedMemoryLayout*   sharedMemory    = (SharedMemoryLayout*)SharedMemoryMasterInitialise(0x00000001);
+    sharedMemory    = (SharedMemoryLayout*)SharedMemoryMasterInitialise(0x00000001);
 
 
     sharedMemory->inletToControl.InitialiseAsReader();
@@ -214,6 +210,21 @@ int main()
     }
     DebugPrintf("Connected.\n");
 
+
+    //
+    //
+    //
+    typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
+    typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
+    typedef PWM<1, 0, 0x02>                      PWMType1;
+    typedef PWM<1, 0, 0x10>                      PWMType2;
+    typedef I2CMaster<1, 0x04,0x08, ChannelBufferType>             I2CMasterType;
+    //TxType          one;
+    //RxType          two;
+    NoOperation     nop;
+    PWMType1         pwm;
+    PWMType2         pwm2;
+    I2CMasterType   i2cMaster(sharedMemory->channel0In, sharedMemory->channel0Out );
 
     Scheduler<  100, 
                 PWMType1, 

@@ -14,33 +14,16 @@
 
 
 
-template <uint32_t period, uint8_t sdaMask, uint8_t sclMask, uint32_t fifoDepth>
+template <uint32_t period, uint8_t sdaMask, uint8_t sclMask, typename FIFOType>
 class I2CMaster
 {
 public:
 
-
-    void InsertIntoTxFIFO(uint8_t value)
+    I2CMaster( FIFOType& _inFIFO, FIFOType& _outFIFO ) :
+        inFIFO(_inFIFO),
+        outFIFO(_outFIFO)
     {
-        if(fifoHead<fifoDepth)
-        {
-            fifo[fifoHead]  = value;
-            fifoHead++;
-        }
     }
-
-
-    void Transmit()
-    {
-        if(fifoTail < fifoHead)
-        {
-            fifoTail    = 0;
-            currentByte = fifo[fifoTail];
-            fifoTail++;
-            state       = 0;
-        }
-    }
-
 
     uint32_t GetPeriod()
     {
@@ -242,18 +225,11 @@ public:
                 break;
 
             case 29:            // Pause, then restart if there is more data.
-                if(fifoTail < fifoHead)
+                bool    dataAvailable;
+                currentByte = inFIFO.NonBlockingGet(dataAvailable);
+                if( dataAvailable == true )
                 {
-                    currentByte     = fifo[fifoTail];
-                    fifoTail++;
                     state           = 0;
-                }
-                else
-                {
-                    currentByte = 0xa5;
-                    state       = 30;
-                    fifoHead    = 0;
-                    fifoTail    = 0;
                 }
                 break;
             
@@ -262,13 +238,12 @@ public:
         }
     }
 
-    volatile uint8_t    fifo[fifoDepth]         = {0};
-    volatile uint8_t    fifoHead                = 0;
-    volatile uint8_t    fifoTail                = 0;
+    FIFOType&           inFIFO;
+    FIFOType&           outFIFO;
 
     volatile uint8_t    currentByte             = 0;
     uint8_t             currentLevel            = 0;
-    volatile uint8_t    state                   = 0;
+    volatile uint8_t    state                   = 29;
     bool                ack                     = 0;
 };
 

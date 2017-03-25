@@ -594,23 +594,23 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x2a7a
+.debug_info     0x0000000000000000     0x2cf5
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000     0x195b Main.o
- .debug_info    0x000000000000195b      0x55a CircularBuffer.o
- .debug_info    0x0000000000001eb5       0xba Timestamp.o
- .debug_info    0x0000000000001f6f      0x3b5 SharedMemory.o
- .debug_info    0x0000000000002324       0xa0 ErrorHandling.o
- .debug_info    0x00000000000023c4      0x6b6 DebugText.o
+ .debug_info    0x0000000000000000     0x1bd6 Main.o
+ .debug_info    0x0000000000001bd6      0x55a CircularBuffer.o
+ .debug_info    0x0000000000002130       0xba Timestamp.o
+ .debug_info    0x00000000000021ea      0x3b5 SharedMemory.o
+ .debug_info    0x000000000000259f       0xa0 ErrorHandling.o
+ .debug_info    0x000000000000263f      0x6b6 DebugText.o
 
-.debug_abbrev   0x0000000000000000      0xb13
+.debug_abbrev   0x0000000000000000      0xb55
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x4e6 Main.o
- .debug_abbrev  0x00000000000004e6      0x17b CircularBuffer.o
- .debug_abbrev  0x0000000000000661       0x76 Timestamp.o
- .debug_abbrev  0x00000000000006d7      0x193 SharedMemory.o
- .debug_abbrev  0x000000000000086a       0x6a ErrorHandling.o
- .debug_abbrev  0x00000000000008d4      0x23f DebugText.o
+ .debug_abbrev  0x0000000000000000      0x528 Main.o
+ .debug_abbrev  0x0000000000000528      0x17b CircularBuffer.o
+ .debug_abbrev  0x00000000000006a3       0x76 Timestamp.o
+ .debug_abbrev  0x0000000000000719      0x193 SharedMemory.o
+ .debug_abbrev  0x00000000000008ac       0x6a ErrorHandling.o
+ .debug_abbrev  0x0000000000000916      0x23f DebugText.o
 
 .debug_line     0x0000000000000000      0xd6a
  *(.debug_line .debug_line.* .debug_line_end)
@@ -631,21 +631,21 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .debug_frame   0x0000000000000210       0x28 ErrorHandling.o
  .debug_frame   0x0000000000000238       0xb4 DebugText.o
 
-.debug_str      0x0000000000000000     0x1d70
+.debug_str      0x0000000000000000     0x1fd0
  *(.debug_str)
- .debug_str     0x0000000000000000     0x1827 Main.o
-                                       0x1950 (size before relaxing)
- .debug_str     0x0000000000001827       0xa4 Common.o
+ .debug_str     0x0000000000000000     0x1a87 Main.o
+                                       0x1bbb (size before relaxing)
+ .debug_str     0x0000000000001a87       0xa4 Common.o
                                          0xd0 (size before relaxing)
- .debug_str     0x00000000000018cb      0x1ac CircularBuffer.o
+ .debug_str     0x0000000000001b2b      0x1ac CircularBuffer.o
                                         0x34c (size before relaxing)
- .debug_str     0x0000000000001a77       0x82 Timestamp.o
+ .debug_str     0x0000000000001cd7       0x82 Timestamp.o
                                         0x1bd (size before relaxing)
- .debug_str     0x0000000000001af9       0xd7 SharedMemory.o
+ .debug_str     0x0000000000001d59       0xd7 SharedMemory.o
                                         0x2a2 (size before relaxing)
- .debug_str     0x0000000000001bd0       0x61 ErrorHandling.o
+ .debug_str     0x0000000000001e30       0x61 ErrorHandling.o
                                         0x19b (size before relaxing)
- .debug_str     0x0000000000001c31      0x13f DebugText.o
+ .debug_str     0x0000000000001e91      0x13f DebugText.o
                                         0x4ca (size before relaxing)
 
 .debug_loc      0x0000000000000000      0xc3a
