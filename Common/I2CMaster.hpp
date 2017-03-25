@@ -32,7 +32,7 @@ public:
 
     void Transmit()
     {
-        //if(fifoTail < fifoHead)
+        if(fifoTail < fifoHead)
         {
             fifoTail    = 0;
             currentByte = fifo[fifoTail];
@@ -226,6 +226,7 @@ public:
             case 26:             // ACK bit
                 // stop driving SDA so we can detect ACK state in next state.
                 SetSCLHigh(outputValue);
+                SetSDALow(outputValue);
                 state   = 27;
                 break;
 
@@ -249,6 +250,7 @@ public:
                 }
                 else
                 {
+                    currentByte = 0xa5;
                     state       = 30;
                     fifoHead    = 0;
                     fifoTail    = 0;
@@ -260,14 +262,14 @@ public:
         }
     }
 
-    volatile uint8_t     fifo[fifoDepth]         = {0};
-    volatile uint8_t     fifoHead                = 0;
-    volatile uint8_t     fifoTail                = 0;
+    volatile uint8_t    fifo[fifoDepth]         = {0};
+    volatile uint8_t    fifoHead                = 0;
+    volatile uint8_t    fifoTail                = 0;
 
-    uint8_t     currentByte             = 0;
-    uint8_t     currentLevel            = 0;
-    volatile uint8_t     state                   = 0;
-    bool        ack                     = 0;
+    volatile uint8_t    currentByte             = 0;
+    uint8_t             currentLevel            = 0;
+    volatile uint8_t    state                   = 0;
+    bool                ack                     = 0;
 };
 
 #endif

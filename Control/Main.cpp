@@ -124,8 +124,8 @@ void* entryPoint(void*)
         i2cMaster.InsertIntoTxFIFO( 0x01 );
         i2cMaster.InsertIntoTxFIFO( 0x02 );
         i2cMaster.InsertIntoTxFIFO( 0x04 );
-        i2cMaster.InsertIntoTxFIFO( 0x08 );
-        i2cMaster.InsertIntoTxFIFO( 0x10 );
+        i2cMaster.InsertIntoTxFIFO( 0xff );
+        i2cMaster.InsertIntoTxFIFO( 0xff );
         i2cMaster.InsertIntoTxFIFO( 0x20 );
         i2cMaster.InsertIntoTxFIFO( 0x40 );
         i2cMaster.InsertIntoTxFIFO( 0x80 );
