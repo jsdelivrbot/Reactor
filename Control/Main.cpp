@@ -106,7 +106,7 @@ void* entryPoint(void*)
 {
     while(true)
     {
-#if 1
+#if 0
         sharedMemory->channel0In.Put( 0x01 );
         sharedMemory->channel0In.Put( 0x02 );
         sharedMemory->channel0In.Put( 0x04 );
@@ -240,8 +240,8 @@ int main()
     //
     //
     //
-    pthread_t   threadId;
-    pthread_create(&threadId, NULL, entryPoint, NULL);
+    //pthread_t   threadId;
+    //pthread_create(&threadId, NULL, entryPoint, NULL);
 
     //
     //
