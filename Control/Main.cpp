@@ -104,9 +104,9 @@ uint64_t GetCounter64()
 //
 typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
 typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-typedef PWM<1, 0, 0x08>                      PWMType1;
+typedef PWM<1, 0, 0x02>                      PWMType1;
 typedef PWM<1, 0, 0x10>                      PWMType2;
-typedef I2CMaster<1, 0x04,0x02>             I2CMasterType;
+typedef I2CMaster<1, 0x04,0x08, 64>             I2CMasterType;
 //TxType          one;
 //RxType          two;
 NoOperation     nop;
@@ -120,6 +120,17 @@ void* entryPoint(void*)
 {
     while(true)
     {
+#if 1
+        i2cMaster.InsertIntoTxFIFO( 0x01 );
+        i2cMaster.InsertIntoTxFIFO( 0x02 );
+        i2cMaster.InsertIntoTxFIFO( 0x04 );
+        i2cMaster.InsertIntoTxFIFO( 0x08 );
+        i2cMaster.InsertIntoTxFIFO( 0x10 );
+        i2cMaster.InsertIntoTxFIFO( 0x20 );
+        i2cMaster.InsertIntoTxFIFO( 0x40 );
+        i2cMaster.InsertIntoTxFIFO( 0x80 );
+        i2cMaster.Transmit();
+#endif
 #if 0        
         static uint64_t     previousValue   = 0;
         uint64_t            thisValue       = GetTimestamp();
@@ -165,7 +176,7 @@ void* entryPoint(void*)
         }
 #endif
 
-        usleep(1000);
+        usleep(100000);
         //sleep(1);
     }
 }
@@ -207,19 +218,19 @@ int main()
     Scheduler<  100, 
                 PWMType1, 
                 I2CMasterType,
-                I2CMasterType,
-                I2CMasterType,
-                I2CMasterType,
-                I2CMasterType,
-                I2CMasterType,
-                I2CMasterType >  scheduler(pwm, i2cMaster, i2cMaster, i2cMaster, i2cMaster,i2cMaster, i2cMaster, i2cMaster);    
+                PWMType2,
+                PWMType2,
+                PWMType2,
+                PWMType2,
+                PWMType2,
+                PWMType2 >  scheduler(pwm, i2cMaster, pwm2, pwm2, pwm2,pwm2, pwm2, pwm2);    
 
 
     //
     //
     //
-    //pthread_t   threadId;
-    //pthread_create(&threadId, NULL, entryPoint, NULL);
+    pthread_t   threadId;
+    pthread_create(&threadId, NULL, entryPoint, NULL);
 
     //
     //
