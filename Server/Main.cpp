@@ -23,6 +23,7 @@
 
 
 #include "Reactor.h"
+#include "PCF8574.hpp"
 
 extern "C"
 {
@@ -73,10 +74,18 @@ SharedMemoryLayout*   sharedMemory;
 
 void* entryPoint(void*)
 {
+    PCF8574<ChannelBufferType, ChannelBufferType, 0x40>     pcf8574(sharedMemory->channel0In, sharedMemory->channel0Out);
+
+    //
+    //
+    //
     while(true)
     {
+        //pcf8574.SetOutputs(0x00);
+        //pcf8574.SetOutputs(0x01);
 #if 1
         DebugPrintf("Tick...\n");
+
         sharedMemory->channel0In.Put( 0x01 );
         sharedMemory->channel0In.Put( 0x02 );
         sharedMemory->channel0In.Put( 0x04 );
@@ -85,65 +94,15 @@ void* entryPoint(void*)
         sharedMemory->channel0In.Put( 0x20 );
         sharedMemory->channel0In.Put( 0x40 );
         sharedMemory->channel0In.Put( 0x80 );
-#endif
-#if 0
-        i2cMaster.InsertIntoTxFIFO( 0x01 );
-        i2cMaster.InsertIntoTxFIFO( 0x02 );
-        i2cMaster.InsertIntoTxFIFO( 0x04 );
-        i2cMaster.InsertIntoTxFIFO( 0xff );
-        i2cMaster.InsertIntoTxFIFO( 0xff );
-        i2cMaster.InsertIntoTxFIFO( 0x20 );
-        i2cMaster.InsertIntoTxFIFO( 0x40 );
-        i2cMaster.InsertIntoTxFIFO( 0x80 );
-        i2cMaster.Transmit();
-#endif
-#if 0        
-        static uint64_t     previousValue   = 0;
-        uint64_t            thisValue       = GetTimestamp();
-        uint64_t            delta;
-        if(thisValue > previousValue)
-        {
-            delta           = thisValue - previousValue;
-        }
-        else
-        {
-            delta           = thisValue + (0xffffffff-previousValue);
-        }
 
-        //DebugPrintf("%lld.\n",delta);
-        previousValue   = thisValue;
+        sharedMemory->channel0Command.Put( 0xfe );
+        sharedMemory->channel0Command.Put( 0x08 );
 
-#endif
-#if 0
-
-        //
-        //
-        //
-        for(uint32_t i=0; i<256; i++)
-        {
-            DebugPrintf("%d\n",pwm.deltas[i]);
-        }
-#endif
-#if 0
-        {
-            static uint32_t     period;
-            static int32_t      delta   = 1;
-            if(period < 1)
-            {
-                delta   = 1;
-            }
-            if(period >= 500)
-            {
-                delta   = -1;
-            }
-            period  += delta;
-
-            //pwm.SetPeriod(period);
-        }
+        sharedMemory->channel0Command.Put( 0xff );
+        sharedMemory->channel0Command.Put( 0xfd );
 #endif
 
         usleep(100000);
-        //sleep(1);
     }
 }
 

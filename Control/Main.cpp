@@ -224,7 +224,7 @@ int main()
     NoOperation     nop;
     PWMType1         pwm;
     PWMType2         pwm2;
-    I2CMasterType   i2cMaster(sharedMemory->channel0In, sharedMemory->channel0Out );
+    I2CMasterType   i2cMaster(sharedMemory->channel0In, sharedMemory->channel0Out, sharedMemory->channel0Command );
 
     Scheduler<  100, 
                 PWMType1, 

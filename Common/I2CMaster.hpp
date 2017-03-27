@@ -19,9 +19,10 @@ class I2CMaster
 {
 public:
 
-    I2CMaster( FIFOType& _inFIFO, FIFOType& _outFIFO ) :
+    I2CMaster( FIFOType& _inFIFO, FIFOType& _outFIFO, FIFOType& _cmdFIFO ) :
         inFIFO(_inFIFO),
-        outFIFO(_outFIFO)
+        outFIFO(_outFIFO),
+        cmdFIFO(_cmdFIFO)
     {
     }
 
@@ -74,6 +75,7 @@ public:
                     SetSDALow(outputValue);                        \
                 }
 
+        if(state != 30) DebugPrintf("%d\n",state);
         switch(state)
         {
             case 0: 
@@ -83,7 +85,7 @@ public:
 
             case 1: 
                 SetSCLLow(outputValue);
-                state   = 2;
+                state   = 30;
                 break;
 
             case 2:             // bit 7
@@ -210,40 +212,79 @@ public:
                 // stop driving SDA so we can detect ACK state in next state.
                 SetSCLHigh(outputValue);
                 SetSDALow(outputValue);
+                //SetSDAHigh(outputValue);
                 state   = 27;
                 break;
 
             case 27:             
                 ack     = currentLevel;
                 // drive SDA again now we have detected ACK.
-                state   = 28;
+                state   = 30;
                 break;
 
             case 28:            // STOP condition.   SDA +ve edge while SCL high.
-                SetSDAHigh(outputValue);
+                SetSCLHigh(outputValue);
                 state   = 29;
                 break;
 
-            case 29:            // Pause, then restart if there is more data.
+            case 29:            // STOP condition.   SDA +ve edge while SCL high.
+                SetSDAHigh(outputValue);
+                state   = 30;
+                break;
+
+            case 30:            // Enter command mode.
                 bool    dataAvailable;
-                currentByte = inFIFO.NonBlockingGet(dataAvailable);
-                if( dataAvailable == true )
+
+                if(numberOfBytes > 0)
                 {
-                    state           = 0;
+                    currentByte = inFIFO.NonBlockingGet(dataAvailable);
+                    if( dataAvailable == true )
+                    {
+                DebugPrintf("30 (1, %02x)\n", currentByte);
+                        state           = 2;    // goto data transfer mode.
+                    }
+                    numberOfBytes--;
+                }
+                else
+                {
+                    currentCmd = cmdFIFO.NonBlockingGet(dataAvailable);
+                    if( dataAvailable == true )
+                    {
+                DebugPrintf("30 (2)\n");
+                        if(currentCmd == 0xfe)
+                        {
+                            state           = 0;    // Start condtion.
+                        }
+                        else if(currentCmd == 0xff)
+                        {
+                            state           = 28;    // Stop condition.
+                        }
+                        else if(currentCmd == 0xfd)
+                        {
+                            state           = 30;    // NOP TODO: We shouldn't need this to be pumped thru.
+                        }
+                        else
+                        {
+                            numberOfBytes   = currentCmd;   // number of bytes to transfer.
+                        }
+                    }
                 }
                 break;
             
-            case 30:
+            case 31:
                 break;
         }
     }
 
     FIFOType&           inFIFO;
     FIFOType&           outFIFO;
+    FIFOType&           cmdFIFO;
 
+    volatile uint32_t   numberOfBytes           = 0;
+    volatile uint8_t    currentCmd              = 0;
     volatile uint8_t    currentByte             = 0;
     uint8_t             currentLevel            = 0;
-    volatile uint8_t    state                   = 29;
+    volatile uint8_t    state                   = 30;
     bool                ack                     = 0;
 };
 
