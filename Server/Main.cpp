@@ -93,7 +93,7 @@ void* entryPoint(void*)
         sharedMemory->channel0In.Put( 0x10 );
         sharedMemory->channel0In.Put( 0x20 );
         sharedMemory->channel0In.Put( 0x40 );
-        sharedMemory->channel0In.Put( 0x80 );
+        sharedMemory->channel0In.Put( 0x83 );
 
         sharedMemory->channel0Command.Put( 0xfe );
         sharedMemory->channel0Command.Put( 0x08 );

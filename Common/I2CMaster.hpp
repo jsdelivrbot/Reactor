@@ -75,15 +75,21 @@ public:
                     SetSDALow(outputValue);                        \
                 }
 
-        if(state != 30) DebugPrintf("%d\n",state);
+        //if(state != 30) DebugPrintf("%d\n",state);
         switch(state)
         {
-            case 0: 
-                SetSDALow(outputValue);    // SCL is already high from previous. Generate START condition (-ve edge on SDA while SCL high)
-                state   = 1;
+            case 40: 
+                SetSCLHigh(outputValue);    // SCL is not already high from previous.
+                SetSDAHigh(outputValue);    // SDA is not already high from previous.
+                state   = 41;
                 break;
 
-            case 1: 
+            case 41: 
+                SetSDALow(outputValue);    // SCL is already high from previous. Generate START condition (-ve edge on SDA while SCL high)
+                state   = 42;
+                break;
+
+            case 42: 
                 SetSCLLow(outputValue);
                 state   = 30;
                 break;
@@ -235,12 +241,13 @@ public:
             case 30:            // Enter command mode.
                 bool    dataAvailable;
 
+                SetSCLLow(outputValue);
+
                 if(numberOfBytes > 0)
                 {
                     currentByte = inFIFO.NonBlockingGet(dataAvailable);
                     if( dataAvailable == true )
                     {
-                DebugPrintf("30 (1, %02x)\n", currentByte);
                         state           = 2;    // goto data transfer mode.
                     }
                     numberOfBytes--;
@@ -250,10 +257,9 @@ public:
                     currentCmd = cmdFIFO.NonBlockingGet(dataAvailable);
                     if( dataAvailable == true )
                     {
-                DebugPrintf("30 (2)\n");
                         if(currentCmd == 0xfe)
                         {
-                            state           = 0;    // Start condtion.
+                            state           = 40;    // Start condtion.
                         }
                         else if(currentCmd == 0xff)
                         {
