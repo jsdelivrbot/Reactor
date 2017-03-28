@@ -95,6 +95,7 @@ public:
                 break;
 
             case 2:             // bit 7
+                //DebugPrintf("+ %d\n",numberOfBytes);
                 SET_SDA_ACCORDING_TO_BIT_NUMBER( 0x80 );
                 state   = 3;
                 break;
@@ -250,6 +251,10 @@ public:
                     {
                         state           = 2;    // goto data transfer mode.
                     }
+                    else
+                    {
+                        DebugPrintf("No data available %d %d.\n", inFIFO.head, inFIFO.tail);
+                    }
                     numberOfBytes--;
                 }
                 else
@@ -272,6 +277,7 @@ public:
                         else
                         {
                             numberOfBytes   = currentCmd;   // number of bytes to transfer.
+                            //DebugPrintf("start %d\n",numberOfBytes);
                         }
                     }
                 }

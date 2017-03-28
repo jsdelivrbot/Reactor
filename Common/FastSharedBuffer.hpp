@@ -69,7 +69,7 @@ public:
         //
         // Wait until there is data in the buffer.
         //
-        while(head == newTail);
+        while(head == tail);
 
         //
         // Get the data out of the buffer.
@@ -88,7 +88,7 @@ public:
         //
         // Wait until there is data in the buffer.
         //
-        if(head == newTail)
+        if(head == tail)
         {
             dataAvailable   = false;
             return 0;
