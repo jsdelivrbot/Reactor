@@ -105,6 +105,22 @@ void* entryPoint(void*)
 
         sharedMemory->channel1In.Put( 0xff );
 
+
+
+        sharedMemory->channel2In.Put( 0x83 );
+        sharedMemory->channel2Command.Put( 0xfe );
+        sharedMemory->channel2Command.Put( 0x01 );
+        sharedMemory->channel2Command.Put( 0xff );
+        sharedMemory->channel2Command.Put( 0xfd );
+
+        sharedMemory->channel2In.Put( 0x83 );
+        sharedMemory->channel2Command.Put( 0xfe );
+        sharedMemory->channel2Command.Put( 0x01 );
+        sharedMemory->channel2Command.Put( 0xff );
+        sharedMemory->channel2Command.Put( 0xfd );
+
+
+
         usleep(100000);
     }
 }

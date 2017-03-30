@@ -223,6 +223,7 @@ int main()
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
     typedef PWM<1, 0, 0x02, ChannelBufferType>                      PWMType1;
     typedef PWM<1, 0, 0x10, ChannelBufferType>                      PWMType2;
+    typedef I2CMaster<1, 0x01,0x10, ChannelBufferType>             I2CMasterType2;
     typedef I2CMaster<1, 0x04,0x08, ChannelBufferType>             I2CMasterType;
     //TxType          one;
     //RxType          two;
@@ -230,16 +231,17 @@ int main()
     PWMType1         pwm(sharedMemory->channel1In);
     PWMType2         pwm2(sharedMemory->channel2In);
     I2CMasterType   i2cMaster(sharedMemory->channel0In, sharedMemory->channel0Out, sharedMemory->channel0Command );
+    I2CMasterType2  i2cMaster2(sharedMemory->channel2In, sharedMemory->channel2Out, sharedMemory->channel2Command );
 
     Scheduler<  100, 
                 PWMType1, 
                 I2CMasterType,
+                I2CMasterType2,
+                I2CMasterType2,
+                I2CMasterType2,
+                I2CMasterType2,
                 PWMType2,
-                PWMType2,
-                PWMType2,
-                PWMType2,
-                PWMType2,
-                PWMType2 >  scheduler(pwm, i2cMaster, pwm2, pwm2, pwm2,pwm2, pwm2, pwm2);    
+                PWMType2 >  scheduler(pwm, i2cMaster, i2cMaster2, i2cMaster2, i2cMaster2,i2cMaster2, pwm2, pwm2);    
 
 
     //
