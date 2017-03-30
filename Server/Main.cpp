@@ -102,6 +102,9 @@ void* entryPoint(void*)
         sharedMemory->channel0Command.Put( 0xfd );
 #endif
 
+
+        sharedMemory->channel1In.Put( 0xff );
+
         usleep(100000);
     }
 }

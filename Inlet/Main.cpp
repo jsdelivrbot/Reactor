@@ -32,6 +32,7 @@ extern "C"
 #include "CircularBuffer.h"
 #include "Utilities.h"
 #include <pthread.h>
+#include "MessageBox.h"
 }
 
 #include "FastSharedBuffer.hpp"
@@ -247,8 +248,27 @@ int main()
 
     while(true)
     {
+
+        //
+        // Wait until a 1uSec boundary.
+        //
+        const uint32_t  resolution  = 100;
+        uint32_t endTimestamp = 0;
+        __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(endTimestamp) );
+        endTimestamp    /= resolution;
+        endTimestamp++;
+        endTimestamp    *= resolution;
+
+        uint32_t timestamp = 0;
+        do
+        {
+            __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(timestamp) );
+        } while(timestamp < endTimestamp);
+
+
         uint16_t   inputValue  = *portA_DAT16;
         sharedMemory->inletToControl.Put( (uint8_t)inputValue );
+        //MessageBoxWrite(1, (uint32_t)inputValue);
     }
 }
 

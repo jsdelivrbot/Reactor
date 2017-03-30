@@ -38,6 +38,7 @@ extern "C"
 #include "SharedMemory.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
+#include "MessageBox.h"
 
 }
 
@@ -196,9 +197,13 @@ int main()
     //
     sharedMemory    = (SharedMemoryLayout*)SharedMemoryMasterInitialise(0x00000001);
 
-
     sharedMemory->inletToControl.InitialiseAsReader();
     sharedMemory->controlToOutlet.InitialiseAsWriter();
+
+    //
+    //
+    //
+    MessageBoxInitialise();
 
     //
     // Wait until we are fully connected.
@@ -216,14 +221,14 @@ int main()
     //
     typedef UARTTransmitter8N1<10,3, 0x01, 1024>    TxType;
     typedef UARTReceiver8N1<8,3, 0x02, 1024>        RxType;
-    typedef PWM<1, 0, 0x02>                      PWMType1;
-    typedef PWM<1, 0, 0x10>                      PWMType2;
+    typedef PWM<1, 0, 0x02, ChannelBufferType>                      PWMType1;
+    typedef PWM<1, 0, 0x10, ChannelBufferType>                      PWMType2;
     typedef I2CMaster<1, 0x04,0x08, ChannelBufferType>             I2CMasterType;
     //TxType          one;
     //RxType          two;
     NoOperation     nop;
-    PWMType1         pwm;
-    PWMType2         pwm2;
+    PWMType1         pwm(sharedMemory->channel1In);
+    PWMType2         pwm2(sharedMemory->channel2In);
     I2CMasterType   i2cMaster(sharedMemory->channel0In, sharedMemory->channel0Out, sharedMemory->channel0Command );
 
     Scheduler<  100, 
@@ -254,21 +259,10 @@ int main()
         // Get the current input values.
         //
         uint8_t value   = sharedMemory->inletToControl.Get();
-
-        //
-        // Wait until a 1uSec boundary.
-        //
-        uint32_t endTimestamp = 0;
-        __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(endTimestamp) );
-        endTimestamp    /= 350;
-        endTimestamp++;
-        endTimestamp    *= 350;
-
-        uint32_t timestamp = 0;
-        do
-        {
-            __asm volatile("mrc p15, 0, %0, c9, c13, 0" : "=r"(timestamp) );
-        } while(timestamp < endTimestamp);
+        //uint32_t value32 = 0;
+        //MessageBoxRead(1, &value32);
+        //uint8_t value   = value32&0xff;
+        //DebugPrintf("rx %02x\n",value);
 
         //
         // Process the input.

@@ -14,13 +14,15 @@
 #include <stdint.h>
 
 
-template <uint32_t period, uint32_t ticksPerBit, uint8_t txMask>
+template <uint32_t period, uint32_t ticksPerBit, uint8_t txMask, typename BufferType>
 class PWM
 {
 public:
 
-    uint32_t    deltas[256];
-    uint32_t    numberOfDeltas  = 0;
+    PWM(BufferType& _cmdFIFO) :
+        cmdFIFO(_cmdFIFO)
+    {
+    }
 
     uint32_t GetPeriod()
     {
@@ -38,6 +40,9 @@ public:
 
     void PeriodicProcessing( uint8_t inputValue, uint8_t& outputValue )
     {
+        bool    dataAvailable   = false;
+        uint8_t currentCmd = cmdFIFO.NonBlockingGet(dataAvailable);
+
         if( (bitNumber&0x01) == 0 )
         {
             SetTxLow( outputValue );
@@ -63,6 +68,8 @@ public:
 
     uint32_t    nextBitTimestamp    = 0;
     uint32_t    bitNumber           = 0;
+
+    BufferType& cmdFIFO;
 };
 
 

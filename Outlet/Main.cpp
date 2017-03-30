@@ -73,6 +73,7 @@ extern "C"
 #include "CircularBuffer.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
+#include "MessageBox.h"
 #include <pthread.h>
 }
 
@@ -181,6 +182,11 @@ int main()
     //
     //
     sharedMemory    = (SharedMemoryLayout*)SharedMemorySlaveInitialise(0x00000001);
+
+    //
+    //
+    //
+    MessageBoxInitialise();
 
     //
     // Wait until we are fully connected.

@@ -44,7 +44,7 @@ public:
         DSB;
     }
 
-    void Put(ContainedType value)
+    inline void Put(ContainedType value)
     {
         IndexType    newHead     = head + 1;
 
@@ -62,7 +62,7 @@ public:
     }
 
 
-    ContainedType Get()
+    inline ContainedType Get()
     {
         IndexType   newTail     = tail + 1;
 
@@ -83,7 +83,6 @@ public:
 
     ContainedType NonBlockingGet(bool& dataAvailable)
     {
-        IndexType   newTail     = tail + 1;
 
         //
         // Wait until there is data in the buffer.
@@ -95,11 +94,13 @@ public:
         }
         else
         {
+            //static IndexType   newTail     = tail + 1;
             //
             // Get the data out of the buffer.
             //
             ContainedType     value   = data[tail];
-            tail    = newTail;
+            //tail    = newTail;
+            tail++;
             dataAvailable   = true;
 
             return value;
@@ -107,15 +108,6 @@ public:
 
     }
 
-    bool DataAvailable()
-    {
-        if(head == tail)
-        {
-            return false;
-        }
-
-        return true;
-    }
 
 private:
 public:

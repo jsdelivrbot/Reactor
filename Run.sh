@@ -9,10 +9,10 @@ insmod ~/Projects/enable_arm_pmu/ko/enable_arm_pmu.ko
 #
 #
 #
-cpufreq-set -c 0 -f 720MHz
-cpufreq-set -c 1 -f 720MHz
-cpufreq-set -c 2 -f 720MHz
-cpufreq-set -c 3 -f 720MHz
+cpufreq-set -c 0 -f 912MHz
+cpufreq-set -c 1 -f 912MHz
+cpufreq-set -c 2 -f 912MHz
+cpufreq-set -c 3 -f 912MHz
 
 #
 #

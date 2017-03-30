@@ -30,13 +30,14 @@ HEX2BIN   		= hex2bin
 ECHO      		= echo
 ECHO_RED  		= echo -e "\033[0;31m"
 ECHO_GREEN		= echo -e "\033[0;32m"
+OBJDUMP   		= arm-linux-gnueabihf-objdump
 
 
 #
 # Build flags.
 #
-CFLAGS 			= -O2 -g --std=c99   -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
-CPPFLAGS 		= -O2 -g --std=c++17 -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
+CFLAGS 			= -O3 -flto -g --std=c99   -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
+CPPFLAGS 		= -O3 -flto -g --std=c++17 -Wno-unused-result -D_GNU_SOURCE -mfpu=neon
 LDFLAGS			= -g
 
 
@@ -50,6 +51,7 @@ include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
+include $(SOURCE_LIBRARY)/Implementations/AllwinnerH3MessageBox/Build.mk
 
 
 #
@@ -95,6 +97,7 @@ clean:
 #
 Main.elf: $(OBJS)
 	@ $(LD) $(LDFLAGS) -Xlinker -Map=$@.map -o $@ $^ $(LIBS)
+	@ $(OBJDUMP) -d -S -l $@ > $@.s
 	@ $(SIZE) -d $@
 
 

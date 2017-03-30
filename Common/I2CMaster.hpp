@@ -78,6 +78,45 @@ public:
         //if(state != 30) DebugPrintf("%d\n",state);
         switch(state)
         {
+            case 30:            // Enter command mode.
+                bool    dataAvailable;
+
+                SetSCLLow(outputValue);
+
+                if(numberOfBytes > 0)
+                {
+                    currentByte = inFIFO.NonBlockingGet(dataAvailable);
+                    if( dataAvailable == true )
+                    {
+                        state           = 2;    // goto data transfer mode.
+                    }
+                    numberOfBytes--;
+                }
+                else
+                {
+                    currentCmd = cmdFIFO.NonBlockingGet(dataAvailable);
+                    if( dataAvailable == true )
+                    {
+                        if(currentCmd == 0xfe)
+                        {
+                            state           = 40;    // Start condtion.
+                        }
+                        else if(currentCmd == 0xff)
+                        {
+                            state           = 28;    // Stop condition.
+                        }
+                        else if(currentCmd == 0xfd)
+                        {
+                            state           = 30;    // NOP TODO: We shouldn't need this to be pumped thru.
+                        }
+                        else
+                        {
+                            numberOfBytes   = currentCmd;   // number of bytes to transfer.
+                        }
+                    }
+                }
+                break;
+            
             case 40: 
                 SetSCLHigh(outputValue);    // SCL is not already high from previous.
                 SetSDAHigh(outputValue);    // SDA is not already high from previous.
@@ -95,7 +134,6 @@ public:
                 break;
 
             case 2:             // bit 7
-                //DebugPrintf("+ %d\n",numberOfBytes);
                 SET_SDA_ACCORDING_TO_BIT_NUMBER( 0x80 );
                 state   = 3;
                 break;
@@ -239,50 +277,6 @@ public:
                 state   = 30;
                 break;
 
-            case 30:            // Enter command mode.
-                bool    dataAvailable;
-
-                SetSCLLow(outputValue);
-
-                if(numberOfBytes > 0)
-                {
-                    currentByte = inFIFO.NonBlockingGet(dataAvailable);
-                    if( dataAvailable == true )
-                    {
-                        state           = 2;    // goto data transfer mode.
-                    }
-                    else
-                    {
-                        DebugPrintf("No data available %d %d.\n", inFIFO.head, inFIFO.tail);
-                    }
-                    numberOfBytes--;
-                }
-                else
-                {
-                    currentCmd = cmdFIFO.NonBlockingGet(dataAvailable);
-                    if( dataAvailable == true )
-                    {
-                        if(currentCmd == 0xfe)
-                        {
-                            state           = 40;    // Start condtion.
-                        }
-                        else if(currentCmd == 0xff)
-                        {
-                            state           = 28;    // Stop condition.
-                        }
-                        else if(currentCmd == 0xfd)
-                        {
-                            state           = 30;    // NOP TODO: We shouldn't need this to be pumped thru.
-                        }
-                        else
-                        {
-                            numberOfBytes   = currentCmd;   // number of bytes to transfer.
-                            //DebugPrintf("start %d\n",numberOfBytes);
-                        }
-                    }
-                }
-                break;
-            
             case 31:
                 break;
         }
