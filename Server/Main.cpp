@@ -86,20 +86,17 @@ void* entryPoint(void*)
 #if 1
         DebugPrintf("Tick...\n");
 
-        sharedMemory->channel0In.Put( 0x01 );
-        sharedMemory->channel0In.Put( 0x02 );
-        sharedMemory->channel0In.Put( 0x04 );
-        sharedMemory->channel0In.Put( 0x08 );
-        sharedMemory->channel0In.Put( 0x10 );
-        sharedMemory->channel0In.Put( 0x20 );
+        static uint8_t     value   = 0x00;
         sharedMemory->channel0In.Put( 0x40 );
-        sharedMemory->channel0In.Put( 0x83 );
+        sharedMemory->channel0In.Put( value );
+        sharedMemory->channel0In.Put( value );
 
         sharedMemory->channel0Command.Put( 0xfe );
-        sharedMemory->channel0Command.Put( 0x08 );
+        sharedMemory->channel0Command.Put( 0x03 );
 
         sharedMemory->channel0Command.Put( 0xff );
         sharedMemory->channel0Command.Put( 0xfd );
+        value   = ~value;
 #endif
 
 

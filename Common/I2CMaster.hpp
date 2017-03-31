@@ -81,10 +81,11 @@ public:
             case 30:            // Enter command mode.
                 bool    dataAvailable;
 
-                SetSCLLow(outputValue);
 
                 if(numberOfBytes > 0)
                 {
+                    SetSCLLow(outputValue);
+
                     currentByte = inFIFO.NonBlockingGet(dataAvailable);
                     if( dataAvailable == true )
                     {
@@ -262,6 +263,7 @@ public:
                 break;
 
             case 27:             
+                SetSCLLow(outputValue);
                 ack     = currentLevel;
                 // drive SDA again now we have detected ACK.
                 state   = 30;
