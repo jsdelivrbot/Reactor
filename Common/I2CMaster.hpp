@@ -264,6 +264,7 @@ public:
 
             case 27:             
                 SetSCLLow(outputValue);
+                //SetSDAHigh(outputValue);
                 ack     = currentLevel;
                 // drive SDA again now we have detected ACK.
                 state   = 30;

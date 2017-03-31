@@ -224,7 +224,7 @@ int main()
     typedef PWM<1, 0, 0x02, ChannelBufferType>                      PWMType1;
     typedef PWM<1, 0, 0x10, ChannelBufferType>                      PWMType2;
     typedef I2CMaster<10, 0x01,0x10, ChannelBufferType>             I2CMasterType2;
-    typedef I2CMaster<10, 0x04,0x08, ChannelBufferType>             I2CMasterType;
+    typedef I2CMaster<100, 0x04,0x08, ChannelBufferType>             I2CMasterType;
     //TxType          one;
     //RxType          two;
     NoOperation     nop;

@@ -87,12 +87,11 @@ void* entryPoint(void*)
         DebugPrintf("Tick...\n");
 
         static uint8_t     value   = 0x00;
-        sharedMemory->channel0In.Put( 0x40 );
-        sharedMemory->channel0In.Put( value );
+        sharedMemory->channel0In.Put( 0x7e );
         sharedMemory->channel0In.Put( value );
 
         sharedMemory->channel0Command.Put( 0xfe );
-        sharedMemory->channel0Command.Put( 0x03 );
+        sharedMemory->channel0Command.Put( 0x02 );
 
         sharedMemory->channel0Command.Put( 0xff );
         sharedMemory->channel0Command.Put( 0xfd );
@@ -118,7 +117,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(100000);
+        usleep(1000000);
     }
 }
 
