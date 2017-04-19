@@ -25,10 +25,10 @@ rm -f /tmp/Server.log
 #
 # Control *must* be first. Order is important.
 #
-taskset -c 0 ./Control > /tmp/Control.log &
+taskset -c 3 ./Control > /tmp/Control.log &
 sleep 1
 taskset -c 1 ./Outlet > /tmp/Outlet.log &
 sleep 1
 taskset -c 2 ./Inlet > /tmp/Inlet.log &
 sleep 1
-taskset -c 3 ./Server > /tmp/Server.log &
+taskset -c 0 ./Server > /tmp/Server.log &
