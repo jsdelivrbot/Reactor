@@ -72,6 +72,7 @@ void ProcessValue( CircularBuffer* circularBuffer, uint32_t value )
 
 
 SharedMemoryLayout*   sharedMemory;
+static uint8_t      data[1024*1024];
 
 
 void* entryPoint(void*)
@@ -86,7 +87,7 @@ void* entryPoint(void*)
         //pcf8574.SetOutputs(0x00);
         //pcf8574.SetOutputs(0x01);
 #if 1
-        DebugPrintf("Tick... %lld\n", totalBytes);
+        DebugPrintf("Tick... %lld %02x\n", totalBytes, data[0]);
         totalBytes  = 0;
 
         uint8_t     sequence[]  =
@@ -142,7 +143,6 @@ void* entryPoint(void*)
 
 int Callback(uint8_t *buffer, int length, FTDIProgressInfo *progress, void *userdata)
 {
-    //printf("%d,%p ", length,progress);
     totalBytes  += length;
     return 0;
 }
@@ -178,7 +178,6 @@ int main()
     //
     // Start up the FTDI data source.
     //
-    static uint8_t      data[1024*1024];
     FTDIDevice          dev;
     int                 err;
     int                 c;

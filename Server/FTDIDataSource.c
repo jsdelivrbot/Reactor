@@ -294,8 +294,6 @@ ReadStreamCallback(struct libusb_transfer *transfer)
 
             state->result = state->callback(ptr + FTDI_HEADER_SIZE, payloadLen,
                                             NULL, state->userdata);
-            if (state->result)
-               break;
 
             ptr += packetLen;
             length -= packetLen;
