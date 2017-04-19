@@ -149,6 +149,7 @@ int Callback(uint8_t *buffer, int length, FTDIProgressInfo *progress, void *user
         {
             //printf("%02d\n", *buffer);
         }
+        data[0] = buffer[0];
 
         totalBytes  += length;
     }
@@ -198,6 +199,9 @@ int main()
         return 1;
     }
 
+    FTDIDevice_SetMode( &dev, FTDI_INTERFACE_A,
+                   FTDI_BITMODE_BITBANG, 0xff,
+                   1000000);
     FTDIDevice_ReadStream( &dev, FTDI_INTERFACE_A, Callback, &data, 16, 512);
 
     //
