@@ -347,7 +347,8 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
    transfers = calloc(numTransfers, sizeof *transfers);
    if (!transfers) {
       err = LIBUSB_ERROR_NO_MEM;
-      goto cleanup;
+      printf("<1>\n");
+      exit(-1);
    }
 
    for (xferIndex = 0; xferIndex < numTransfers; xferIndex++) {
@@ -357,22 +358,30 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
       transfers[xferIndex] = transfer;
       if (!transfer) {
          err = LIBUSB_ERROR_NO_MEM;
-         goto cleanup;
+         printf("<2>\n");
+         exit(-1);
       }
 
+      //void* buffer  = userdata + (512 * xferIndex);
+      void* buffer  = malloc(bufferSize);
       libusb_fill_bulk_transfer(transfer, dev->handle, FTDI_EP_IN(interface),
-                                malloc(bufferSize), bufferSize, ReadStreamCallback,
+                                buffer, bufferSize, ReadStreamCallback,
                                 &state, 0);
 
-      if (!transfer->buffer) {
+      if (!transfer->buffer)
+      {
          err = LIBUSB_ERROR_NO_MEM;
-         goto cleanup;
+         printf("<3>\n");
+         exit(-1);
       }
 
       transfer->status = -1;
       err = libusb_submit_transfer(transfer);
       if (err)
-         goto cleanup;
+      {
+          printf("<4>\n");
+          exit(-1);
+      }
    }
 
    /*
@@ -389,16 +398,19 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
 
       int err = libusb_handle_events_timeout(dev->libusb, &timeout);
       if (!state.result) {
-         state.result = err;
+         //printf("<5>\n");
+         //exit(-1);
+         //state.result = err;
       }
 
       // If enough time has elapsed, update the progress
       gettimeofday(&now, NULL);
-      if (TimevalDiff(&now, &progress->current.time) >= progressInterval) {
-
+      if (TimevalDiff(&now, &progress->current.time) >= progressInterval)
+      {
          progress->current.time = now;
 
-         if (progress->prev.totalBytes) {
+         if (progress->prev.totalBytes)
+         {
             // We have enough information to calculate rates
 
             double currentTime;
@@ -413,15 +425,15 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
                                      progress->prev.totalBytes) / currentTime;
          }
 
-         state.result = state.callback(NULL, 0, progress, state.userdata);
          progress->prev = progress->current;
       }
-   } while (!state.result);
+   } while (true);
 
    /*
     * Cancel any outstanding transfers, and free memory.
     */
 
+   /*
  cleanup:
    if (transfers) {
       for (xferIndex = 0; xferIndex < numTransfers; xferIndex++) {
@@ -436,6 +448,7 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
       }
       free(transfers);
    }
+   */
 
    if (err)
       return err;

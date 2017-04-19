@@ -143,7 +143,16 @@ void* entryPoint(void*)
 
 int Callback(uint8_t *buffer, int length, FTDIProgressInfo *progress, void *userdata)
 {
-    totalBytes  += length;
+    if(buffer != NULL)
+    {
+        for(uint32_t i=0; i<length; i++)
+        {
+            //printf("%02d\n", *buffer);
+        }
+
+        totalBytes  += length;
+    }
+
     return 0;
 }
 
@@ -189,7 +198,7 @@ int main()
         return 1;
     }
 
-    FTDIDevice_ReadStream( &dev, FTDI_INTERFACE_A, Callback, NULL, 16, 512);
+    FTDIDevice_ReadStream( &dev, FTDI_INTERFACE_A, Callback, &data, 16, 512);
 
     //
     //
