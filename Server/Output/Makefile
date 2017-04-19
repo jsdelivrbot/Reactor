@@ -56,7 +56,8 @@ include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
 #
 #
 #
-LIBS		+= -lc -lgcc -lrt -lpthread
+LIBS		+= -lc -lgcc -lrt -lpthread 
+
 
 
 #########################################################################################################

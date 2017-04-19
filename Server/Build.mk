@@ -8,17 +8,19 @@ VPATH		+=	$(PROJECT_BASE)/
 #
 # Include directories.
 #
-INCLUDES	+=	-I$(PROJECT_BASE)/
+INCLUDES	+=	-I$(PROJECT_BASE)/ \
+				-I/usr/include/libusb-1.0
 
 
 #
 # Objects to build.
 #
-OBJS		+=	Main.o
+OBJS		+=	Main.o \
+				FTDIDataSource.o
     		  		
 
 #
 # Libraries.
 #
-LIBS		+=
+LIBS		+= -lusb-1.0 -lpthread
 
