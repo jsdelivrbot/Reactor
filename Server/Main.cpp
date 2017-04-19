@@ -87,6 +87,7 @@ void* entryPoint(void*)
         //pcf8574.SetOutputs(0x01);
 #if 1
         DebugPrintf("Tick... %lld\n", totalBytes);
+        totalBytes  = 0;
 
         uint8_t     sequence[]  =
         {
@@ -131,7 +132,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(500000);
+        usleep(1000000);
     }
 }
 
