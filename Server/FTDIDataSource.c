@@ -446,6 +446,7 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
 }
 
 
+#if 0
 
 uint64_t    totalBytes  = 0;
 
@@ -471,7 +472,6 @@ void* entryPoint(void* p)
     }
 }
 
-#if 0
 
 uint8_t             data[1024*1024];
 

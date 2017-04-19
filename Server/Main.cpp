@@ -33,9 +33,11 @@ extern "C"
 #include "CircularBuffer.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
+#include "FTDIDataSource.h"
 }
 
 
+uint64_t    totalBytes  = 0;
 
 
 uint32_t 		checkValue 	= 0;
@@ -84,7 +86,7 @@ void* entryPoint(void*)
         //pcf8574.SetOutputs(0x00);
         //pcf8574.SetOutputs(0x01);
 #if 1
-        DebugPrintf("Tick...\n");
+        DebugPrintf("Tick... %lld\n", totalBytes);
 
         uint8_t     sequence[]  =
         {
@@ -137,6 +139,15 @@ void* entryPoint(void*)
 
 
 
+int Callback(uint8_t *buffer, int length, FTDIProgressInfo *progress, void *userdata)
+{
+    //printf("%d,%p ", length,progress);
+    totalBytes  += length;
+    return 0;
+}
+
+
+
 
 //
 //
@@ -162,6 +173,23 @@ int main()
     //
     pthread_t   threadId;
     pthread_create(&threadId, NULL, entryPoint, NULL);
+
+    //
+    // Start up the FTDI data source.
+    //
+    static uint8_t      data[1024*1024];
+    FTDIDevice          dev;
+    int                 err;
+    int                 c;
+
+    err = FTDIDevice_Open(&dev);
+    if (err)
+    {
+        fprintf(stderr, "USB: Error opening device\n");
+        return 1;
+    }
+
+    FTDIDevice_ReadStream( &dev, FTDI_INTERFACE_A, Callback, NULL, 16, 512);
 
     //
     //
