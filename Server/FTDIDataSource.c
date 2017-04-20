@@ -388,67 +388,13 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
     * Run the transfers, and periodically assess progress.
     */
 
-   gettimeofday(&state.progress.first.time, NULL);
-
-   do {
-      FTDIProgressInfo  *progress = &state.progress;
-      const double progressInterval = 0.1;
+   do
+   {
       struct timeval timeout = { 0, 10000 };
-      struct timeval now;
 
       int err = libusb_handle_events_timeout(dev->libusb, &timeout);
-      if (!state.result) {
-         //printf("<5>\n");
-         //exit(-1);
-         //state.result = err;
-      }
 
-      // If enough time has elapsed, update the progress
-      gettimeofday(&now, NULL);
-      if (TimevalDiff(&now, &progress->current.time) >= progressInterval)
-      {
-         progress->current.time = now;
-
-         if (progress->prev.totalBytes)
-         {
-            // We have enough information to calculate rates
-
-            double currentTime;
-
-            progress->totalTime = TimevalDiff(&progress->current.time,
-                                              &progress->first.time);
-            currentTime = TimevalDiff(&progress->current.time,
-                                      &progress->prev.time);
-
-            progress->totalRate = progress->current.totalBytes / progress->totalTime;
-            progress->currentRate = (progress->current.totalBytes -
-                                     progress->prev.totalBytes) / currentTime;
-         }
-
-         progress->prev = progress->current;
-      }
    } while (true);
-
-   /*
-    * Cancel any outstanding transfers, and free memory.
-    */
-
-   /*
- cleanup:
-   if (transfers) {
-      for (xferIndex = 0; xferIndex < numTransfers; xferIndex++) {
-         struct libusb_transfer *transfer = transfers[xferIndex];
-
-         if (transfer) {
-            if (transfer->status == -1)
-               libusb_cancel_transfer(transfer);
-            free(transfer->buffer);
-            libusb_free_transfer(transfer);
-         }
-      }
-      free(transfers);
-   }
-   */
 
    if (err)
       return err;
