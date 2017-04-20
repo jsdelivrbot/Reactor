@@ -391,7 +391,6 @@ FTDIDevice_ReadStream(FTDIDevice *dev, FTDIInterface interface,
    do
    {
       struct timeval timeout = { 0, 10000 };
-
       int err = libusb_handle_events_timeout(dev->libusb, &timeout);
 
    } while (true);
