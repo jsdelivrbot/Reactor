@@ -6,8 +6,8 @@ Archive member included to satisfy reference by file (symbol)
 As-needed library included to satisfy reference by file (symbol)
 
 libc.so.6                     /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o (abort@@GLIBC_2.4)
-librt.so.1                    /tmp/ccUsACPb.ltrans0.ltrans.o (shm_open@@GLIBC_2.4)
-libgcc_s.so.1                 /tmp/ccUsACPb.ltrans0.ltrans.o (__aeabi_unwind_cpp_pr0@@GCC_3.5)
+librt.so.1                    /tmp/ccldE1GH.ltrans0.ltrans.o (shm_open@@GLIBC_2.4)
+libgcc_s.so.1                 /tmp/ccldE1GH.ltrans0.ltrans.o (__aeabi_unwind_cpp_pr0@@GCC_3.5)
 
 Discarded input sections
 
@@ -27,9 +27,9 @@ Discarded input sections
  .gnu.linkonce.t._ZZN9SchedulerILj100E3PWMILj1ELj0ELh2E16FastSharedBufferIhhEE9I2CMasterILj100ELh4ELh8ES2_ES4_ILj10ELh1ELh16ES2_ES6_S6_S6_S0_ILj1ELj0ELh16ES2_ES7_E18PeriodicProcessingEhRhE10cycleCount
                 0x0000000000000000        0x0 Main.o (symbol from plugin)
  .note.GNU-stack
-                0x0000000000000000        0x0 /tmp/ccUsACPb.ltrans0.ltrans.o
+                0x0000000000000000        0x0 /tmp/ccldE1GH.ltrans0.ltrans.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /tmp/ccUsACPb.ltrans1.ltrans.o
+                0x0000000000000000        0x0 /tmp/ccldE1GH.ltrans1.ltrans.o
  .text          0x0000000000000000        0x0 Common.o (symbol from plugin)
  .text          0x0000000000000000        0x0 CircularBuffer.o (symbol from plugin)
  .text          0x0000000000000000        0x0 Timestamp.o (symbol from plugin)
@@ -55,8 +55,8 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
 LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
 LOAD Main.o
-LOAD /tmp/ccUsACPb.ltrans0.ltrans.o
-LOAD /tmp/ccUsACPb.ltrans1.ltrans.o
+LOAD /tmp/ccldE1GH.ltrans0.ltrans.o
+LOAD /tmp/ccldE1GH.ltrans1.ltrans.o
 LOAD Common.o
 LOAD CircularBuffer.o
 LOAD Timestamp.o
@@ -216,7 +216,7 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
- .text.startup  0x0000000000010644     0x14a8 /tmp/ccUsACPb.ltrans0.ltrans.o
+ .text.startup  0x0000000000010644     0x14a8 /tmp/ccldE1GH.ltrans0.ltrans.o
                 0x0000000000010644                main
  *(.text.hot .text.hot.*)
  *(.text .stub .text.* .gnu.linkonce.t.*)
@@ -224,8 +224,8 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
                 0x0000000000011aec                _start
  .text          0x0000000000011b1c       0x24 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
  .text          0x0000000000011b40       0x8c /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
- .text          0x0000000000011bcc        0x0 /tmp/ccUsACPb.ltrans0.ltrans.o
- .text          0x0000000000011bcc       0x64 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .text          0x0000000000011bcc        0x0 /tmp/ccldE1GH.ltrans0.ltrans.o
+ .text          0x0000000000011bcc       0x64 /tmp/ccldE1GH.ltrans1.ltrans.o
                 0x0000000000011bcc                DebugPrintf
                 0x0000000000011c20                PANIC
  .text          0x0000000000011c30       0x40 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
@@ -257,9 +257,9 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .rodata.cst4   0x0000000000011c78        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
                 0x0000000000011c78                _IO_stdin_used
  .rodata.str1.4
-                0x0000000000011c7c       0x98 /tmp/ccUsACPb.ltrans0.ltrans.o
+                0x0000000000011c7c       0x98 /tmp/ccldE1GH.ltrans0.ltrans.o
  .rodata.str1.4
-                0x0000000000011d14       0x14 /tmp/ccUsACPb.ltrans1.ltrans.o
+                0x0000000000011d14       0x14 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .rodata1
  *(.rodata1)
@@ -268,14 +268,14 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.ARM.extab* .gnu.linkonce.armextab.*)
  .ARM.extab     0x0000000000011d28        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
  .ARM.extab.text.startup
-                0x0000000000011d28        0x0 /tmp/ccUsACPb.ltrans0.ltrans.o
+                0x0000000000011d28        0x0 /tmp/ccldE1GH.ltrans0.ltrans.o
                 [!provide]                        PROVIDE (__exidx_start, .)
 
 .ARM.exidx      0x0000000000011d28       0x10
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
  .ARM.exidx     0x0000000000011d30        0x8 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o
  .ARM.exidx.text.startup
-                0x0000000000011d28        0x8 /tmp/ccUsACPb.ltrans0.ltrans.o
+                0x0000000000011d28        0x8 /tmp/ccldE1GH.ltrans0.ltrans.o
                 [!provide]                        PROVIDE (__exidx_end, .)
 
 .eh_frame_hdr
@@ -384,8 +384,8 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .data          0x000000000002204c        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
  .data          0x000000000002204c        0x4 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
                 0x000000000002204c                __dso_handle
- .data          0x0000000000022050        0x0 /tmp/ccUsACPb.ltrans0.ltrans.o
- .data          0x0000000000022050        0x0 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .data          0x0000000000022050        0x0 /tmp/ccldE1GH.ltrans0.ltrans.o
+ .data          0x0000000000022050        0x0 /tmp/ccldE1GH.ltrans1.ltrans.o
  .data          0x0000000000022050        0x0 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
  .data          0x0000000000022050        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
  .data          0x0000000000022050        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
@@ -414,8 +414,8 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .bss           0x0000000000022054        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crti.o
  .bss           0x0000000000022054        0x1 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
  *fill*         0x0000000000022055        0x3 
- .bss           0x0000000000022058        0x8 /tmp/ccUsACPb.ltrans0.ltrans.o
- .bss           0x0000000000022060      0x100 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .bss           0x0000000000022058        0x8 /tmp/ccldE1GH.ltrans0.ltrans.o
+ .bss           0x0000000000022060      0x100 /tmp/ccldE1GH.ltrans1.ltrans.o
  .bss           0x0000000000022160        0x0 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
  .bss           0x0000000000022160        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
  .bss           0x0000000000022160        0x0 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o
@@ -453,8 +453,8 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  *(.comment)
  .comment       0x0000000000000000       0x2d /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
                                          0x2e (size before relaxing)
- .comment       0x000000000000002d       0x2e /tmp/ccUsACPb.ltrans0.ltrans.o
- .comment       0x000000000000002d       0x2e /tmp/ccUsACPb.ltrans1.ltrans.o
+ .comment       0x000000000000002d       0x2e /tmp/ccldE1GH.ltrans0.ltrans.o
+ .comment       0x000000000000002d       0x2e /tmp/ccldE1GH.ltrans1.ltrans.o
  .comment       0x000000000000002d       0x2e /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtend.o
 
 .ARM.attributes
@@ -466,9 +466,9 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
  .ARM.attributes
                 0x000000000000005a       0x33 /usr/lib/gcc-cross/arm-linux-gnueabihf/6/crtbegin.o
  .ARM.attributes
-                0x000000000000008d       0x33 /tmp/ccUsACPb.ltrans0.ltrans.o
+                0x000000000000008d       0x33 /tmp/ccldE1GH.ltrans0.ltrans.o
  .ARM.attributes
-                0x00000000000000c0       0x33 /tmp/ccUsACPb.ltrans1.ltrans.o
+                0x00000000000000c0       0x33 /tmp/ccldE1GH.ltrans1.ltrans.o
  .ARM.attributes
                 0x00000000000000f3       0x35 /usr/arm-linux-gnueabihf/lib/libc_nonshared.a(elf-init.oS)
  .ARM.attributes
@@ -491,44 +491,44 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 .debug_aranges  0x0000000000000000       0x40
  *(.debug_aranges)
  .debug_aranges
-                0x0000000000000000       0x20 /tmp/ccUsACPb.ltrans0.ltrans.o
+                0x0000000000000000       0x20 /tmp/ccldE1GH.ltrans0.ltrans.o
  .debug_aranges
-                0x0000000000000020       0x20 /tmp/ccUsACPb.ltrans1.ltrans.o
+                0x0000000000000020       0x20 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
 .debug_info     0x0000000000000000     0x30b3
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000     0x2e75 /tmp/ccUsACPb.ltrans0.ltrans.o
- .debug_info    0x0000000000002e75      0x23e /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_info    0x0000000000000000     0x2e75 /tmp/ccldE1GH.ltrans0.ltrans.o
+ .debug_info    0x0000000000002e75      0x23e /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_abbrev   0x0000000000000000      0x5c8
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x412 /tmp/ccUsACPb.ltrans0.ltrans.o
- .debug_abbrev  0x0000000000000412      0x1b6 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_abbrev  0x0000000000000000      0x412 /tmp/ccldE1GH.ltrans0.ltrans.o
+ .debug_abbrev  0x0000000000000412      0x1b6 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_line     0x0000000000000000      0xed4
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x0000000000000000      0xd1e /tmp/ccUsACPb.ltrans0.ltrans.o
- .debug_line    0x0000000000000d1e      0x1b6 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_line    0x0000000000000000      0xd1e /tmp/ccldE1GH.ltrans0.ltrans.o
+ .debug_line    0x0000000000000d1e      0x1b6 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_frame    0x0000000000000000       0xa0
  *(.debug_frame)
- .debug_frame   0x0000000000000000       0x3c /tmp/ccUsACPb.ltrans0.ltrans.o
- .debug_frame   0x000000000000003c       0x64 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_frame   0x0000000000000000       0x3c /tmp/ccldE1GH.ltrans0.ltrans.o
+ .debug_frame   0x000000000000003c       0x64 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_str      0x0000000000000000      0xd00
  *(.debug_str)
- .debug_str     0x0000000000000000      0xc53 /tmp/ccUsACPb.ltrans0.ltrans.o
+ .debug_str     0x0000000000000000      0xc53 /tmp/ccldE1GH.ltrans0.ltrans.o
                                         0xcd7 (size before relaxing)
- .debug_str     0x0000000000000c53       0xad /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_str     0x0000000000000c53       0xad /tmp/ccldE1GH.ltrans1.ltrans.o
                                         0x25d (size before relaxing)
 
 .debug_loc      0x0000000000000000     0x3820
  *(.debug_loc)
- .debug_loc     0x0000000000000000     0x37ae /tmp/ccUsACPb.ltrans0.ltrans.o
- .debug_loc     0x00000000000037ae       0x72 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_loc     0x0000000000000000     0x37ae /tmp/ccldE1GH.ltrans0.ltrans.o
+ .debug_loc     0x00000000000037ae       0x72 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -550,8 +550,8 @@ LOAD /usr/lib/gcc-cross/arm-linux-gnueabihf/6/../../../../arm-linux-gnueabihf/li
 
 .debug_ranges   0x0000000000000000      0xf18
  *(.debug_ranges)
- .debug_ranges  0x0000000000000000      0xed0 /tmp/ccUsACPb.ltrans0.ltrans.o
- .debug_ranges  0x0000000000000ed0       0x48 /tmp/ccUsACPb.ltrans1.ltrans.o
+ .debug_ranges  0x0000000000000000      0xed0 /tmp/ccldE1GH.ltrans0.ltrans.o
+ .debug_ranges  0x0000000000000ed0       0x48 /tmp/ccldE1GH.ltrans1.ltrans.o
 
 .debug_macro
  *(.debug_macro)

@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <panel.h>
+#include <pthread.h>
 
 
 
@@ -12,6 +13,88 @@
 uint8_t         data[256];
 
 
+
+//
+//
+//
+void* DataUpdateThread(void*)
+{
+    while(true)
+    {
+        //
+        // Get some new data.
+        //
+        static uint32_t     iteration   = 0;
+        iteration++;
+        for(uint32_t k=0; k<sizeof(data)-1; k++)
+        {
+            data[k] = data[k+1];
+        }
+        if(iteration%5 == 0)
+        {
+            data[sizeof(data)-1] = rand();
+        }
+
+        usleep(1000000/30);
+    }
+}
+
+
+
+//
+//
+//
+void DrawTraces(WINDOW* traceWin)
+{
+    int         maxX;
+    int         maxY;
+
+
+    wclear(traceWin);
+    getmaxyx(traceWin, maxY,maxX);
+
+    uint32_t traceHeight = maxY/8;
+    for(uint32_t i=0; i<8; i++)
+    {
+        attron(COLOR_PAIR(i));
+
+        //
+        //
+        //
+        for(uint32_t j=0; j<maxX; j++)
+        {
+            uint32_t     sample  = 0;
+            static uint32_t     previousSample  = sample;
+
+            sample  = (data[j] & (1<<i)) != 0;
+
+
+            int     ty  = (traceHeight*(i+1)) - 1 - (sample*(traceHeight-2));
+            mvwaddch(traceWin, ty,j, '-');
+
+            if((previousSample != sample) && (j>0))
+            {
+                ty  = (traceHeight*(i+1)) - 1;
+                for(uint32_t k=0; k<traceHeight-2; k++)
+                {
+                    mvwaddch(traceWin, ty-k-1,j, '|');
+                }
+                mvwaddch(traceWin, ty,j, '+');
+                mvwaddch(traceWin, ty-(traceHeight-2),j, '+');
+            }
+
+            previousSample  = sample;
+        }
+
+        attroff(COLOR_PAIR(i));
+    }
+}
+
+
+
+//
+//
+//
 int main(void) 
 {
     
@@ -22,6 +105,12 @@ int main(void)
     PANEL*   childPanel;
     PANEL*   tracePanel;
     int      ch;
+
+    //
+    //
+    //
+    pthread_t   threadId;
+    pthread_create(&threadId, NULL, DataUpdateThread, NULL);
 
 
     /*  Set the dimensions and initial
@@ -85,62 +174,9 @@ int main(void)
     while (true)
     {
         //
-        // Get some new data.
-        //
-        static uint32_t     iteration   = 0;
-        iteration++;
-        for(uint32_t k=0; k<sizeof(data)-1; k++)
-        {
-            data[k] = data[k+1];
-        }
-        if(iteration%5 == 0)
-        {
-            data[sizeof(data)-1] = rand();
-        }
-
-
-        //
         // Draw the traces.
         //
-        wclear(traceWin);
-        getmaxyx(traceWin, maxY,maxX);
-
-        uint32_t traceHeight = maxY/8;
-        for(uint32_t i=0; i<8; i++)
-        {
-            attron(COLOR_PAIR(i));
-
-            //
-            //
-            //
-            for(uint32_t j=0; j<maxX; j++)
-            {
-                uint32_t     sample  = 0;
-                static uint32_t     previousSample  = sample;
-
-                sample  = (data[j] & (1<<i)) != 0;
-
-
-                int     ty  = (traceHeight*(i+1)) - 1 - (sample*(traceHeight-2));
-                mvwaddch(traceWin, ty,j, '-');
-
-                if((previousSample != sample) && (j>0))
-                {
-                    ty  = (traceHeight*(i+1)) - 1;
-                    for(uint32_t k=0; k<traceHeight-2; k++)
-                    {
-                        mvwaddch(traceWin, ty-k-1,j, '|');
-                    }
-                    mvwaddch(traceWin, ty,j, '+');
-                    mvwaddch(traceWin, ty-(traceHeight-2),j, '+');
-                }
-
-                previousSample  = sample;
-            }
-
-            attroff(COLOR_PAIR(i));
-        }
-
+        DrawTraces(traceWin);
 
         //touchwin(childwin);
         //wnoutrefresh(traceWin);
