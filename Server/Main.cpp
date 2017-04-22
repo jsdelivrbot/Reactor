@@ -24,10 +24,10 @@
 
 #include "Reactor.h"
 #include "PCF8574.hpp"
+#include "TCPServer.hpp"
 
 extern "C"
 {
-#include "TCPServer.h"
 #include "Timestamp.h"
 #include "DebugText.h"
 #include "SharedMemory.h"
