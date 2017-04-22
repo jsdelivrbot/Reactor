@@ -19,3 +19,7 @@ pushd Server/Output
 make SOURCE_LIBRARY=~/BlockWorks/ProjectLayout/SourceLibrary PROJECT_BASE=../../Server clean all
 popd
 
+pushd CursesUI/Output
+make SOURCE_LIBRARY=~/BlockWorks/ProjectLayout/SourceLibrary PROJECT_BASE=../../CursesUI clean all
+popd
+
