@@ -134,6 +134,7 @@ int main(void)
     /*  Switch of echoing and enable keypad (for arrow keys)  */
 
     noecho();
+    nodelay(mainwin, TRUE);
     keypad(mainwin, TRUE);
 
 
@@ -173,6 +174,18 @@ int main(void)
     uint32_t    wx   = 100;
     while (true)
     {
+        //
+        //
+        //
+        int ch  = getch();
+        if(ch != ERR)
+        {
+            if(ch == 'q')
+            {
+                break;
+            }
+        }
+
         //
         // Draw the traces.
         //
