@@ -16,7 +16,8 @@ INCLUDES	+=	-I$(PROJECT_BASE)/ \
 # Objects to build.
 #
 OBJS		+=	Main.o \
-				FTDIDataSource.o
+				FTDIDataSource.o \
+				TCPServer.o
     		  		
 
 #

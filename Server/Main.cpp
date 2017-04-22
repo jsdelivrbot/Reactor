@@ -27,6 +27,7 @@
 
 extern "C"
 {
+#include "TCPServer.h"
 #include "Timestamp.h"
 #include "DebugText.h"
 #include "SharedMemory.h"
@@ -184,6 +185,11 @@ int main()
     //
     pthread_t   threadId;
     pthread_create(&threadId, NULL, entryPoint, NULL);
+
+    //
+    //
+    //
+    pthread_create(&threadId, NULL, TCPServer, NULL);
 
     //
     // Start up the FTDI data source.

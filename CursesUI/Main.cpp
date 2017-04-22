@@ -10,8 +10,10 @@
 
 
 
-uint8_t         data[256];
+uint8_t         data[1024*4];
 bool            runFlag     = true;
+uint32_t        scale       = 1;
+uint32_t        offset      = 0;
 
 
 //
@@ -69,7 +71,7 @@ void DrawTraces(WINDOW* traceWin)
             uint32_t     sample  = 0;
             static uint32_t     previousSample  = sample;
 
-            sample  = (data[j] & (1<<i)) != 0;
+            sample  = (data[j*scale+offset] & (1<<i)) != 0;
 
 
             int     ty  = (traceHeight*(i+1)) - 1 - (sample*(traceHeight-2));
@@ -121,6 +123,15 @@ int main(void)
     PANEL*   childPanel;
     PANEL*   tracePanel;
     int      ch;
+
+
+    //
+    //
+    //
+    for(uint32_t i=0; i<sizeof(data); i++)
+    {
+        data[i] = rand();
+    }
 
     //
     //
@@ -204,6 +215,29 @@ int main(void)
             if(ch == ' ')
             {
                 TogglePauseRun();
+            }
+
+            if(ch == KEY_UP)
+            {
+                if(scale > 0)
+                {
+                    scale--;
+                }
+            }
+            if(ch == KEY_DOWN)
+            {
+                scale++;
+            }
+            if(ch == KEY_LEFT)
+            {
+                if(offset > 0)
+                {
+                    offset-=scale;
+                }
+            }
+            if(ch == KEY_RIGHT)
+            {
+                offset+=scale;
             }
         }
 
