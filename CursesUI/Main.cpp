@@ -11,7 +11,7 @@
 
 
 uint8_t         data[256];
-
+bool            runFlag     = true;
 
 
 //
@@ -21,18 +21,21 @@ void* DataUpdateThread(void*)
 {
     while(true)
     {
-        //
-        // Get some new data.
-        //
-        static uint32_t     iteration   = 0;
-        iteration++;
-        for(uint32_t k=0; k<sizeof(data)-1; k++)
+        if(runFlag == true)
         {
-            data[k] = data[k+1];
-        }
-        if(iteration%5 == 0)
-        {
-            data[sizeof(data)-1] = rand();
+            //
+            // Get some new data.
+            //
+            static uint32_t     iteration   = 0;
+            iteration++;
+            for(uint32_t k=0; k<sizeof(data)-1; k++)
+            {
+                data[k] = data[k+1];
+            }
+            if(iteration%5 == 0)
+            {
+                data[sizeof(data)-1] = rand();
+            }
         }
 
         usleep(1000000/30);
@@ -90,6 +93,19 @@ void DrawTraces(WINDOW* traceWin)
     }
 }
 
+
+
+void TogglePauseRun()
+{
+    if(runFlag == true)
+    {
+        runFlag = false;
+    }
+    else
+    {
+        runFlag = true;
+    }
+}
 
 
 //
@@ -183,6 +199,11 @@ int main(void)
             if(ch == 'q')
             {
                 break;
+            }
+
+            if(ch == ' ')
+            {
+                TogglePauseRun();
             }
         }
 
