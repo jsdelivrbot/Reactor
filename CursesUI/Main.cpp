@@ -6,6 +6,7 @@
 #include <string.h>
 #include <panel.h>
 #include <pthread.h>
+#include "TCPClient.hpp"
 
 
 
