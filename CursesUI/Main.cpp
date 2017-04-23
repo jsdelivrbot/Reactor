@@ -22,13 +22,16 @@ uint32_t        offset      = 0;
 //
 void* DataUpdateThread(void*)
 {
+    TCPClientConnect((char*)"192.168.1.141",1234);
     while(true)
     {
         if(runFlag == true)
         {
+
             //
             // Get some new data.
             //
+#if 0
             static uint32_t     iteration   = 0;
             iteration++;
             for(uint32_t k=0; k<sizeof(data)-1; k++)
@@ -39,9 +42,13 @@ void* DataUpdateThread(void*)
             {
                 data[sizeof(data)-1] = rand();
             }
+#else
+            TCPRead( &data[0], sizeof(data) );
+#endif
+
         }
 
-        usleep(1000000/30);
+        //usleep(1000000/30);
     }
 }
 

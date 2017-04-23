@@ -1,6 +1,10 @@
 
 
+extern "C"
+{
 #include "DebugText.h"
+}
+
 #include <stdlib.h>
 #include <sys/socket.h> /* for socket(), connect(), send(), and recv() */
 #include <arpa/inet.h>  /* for sockaddr_in and inet_addr() */
@@ -14,6 +18,9 @@
 int     sockfd;
 
 
+//
+//
+//
 void TCPClientConnect(char* hostname, int portno)
 {
     struct sockaddr_in  serveraddr;
