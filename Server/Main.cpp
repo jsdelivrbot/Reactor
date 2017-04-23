@@ -25,6 +25,7 @@
 #include "Reactor.h"
 #include "PCF8574.hpp"
 #include "TCPServer.hpp"
+#include "FastSharedBuffer.hpp"
 
 extern "C"
 {
@@ -39,6 +40,9 @@ extern "C"
 
 
 uint64_t    totalBytes  = 0;
+
+
+FastSharedBuffer<uint8_t,uint16_t>     lowRateBuffer;
 
 
 uint32_t 		checkValue 	= 0;
@@ -142,13 +146,21 @@ void* entryPoint(void*)
 
 
 
+//
+// Called with data received over USB from teh FT232H.
+// This is full rate 40MB/sec data.
+//
 int Callback(uint8_t *buffer, int length, FTDIProgressInfo *progress, void *userdata)
 {
     if(buffer != NULL)
     {
-        for(uint32_t i=0; i<length; i++)
+        //
+        // Decimate the high-rate data into low-rate data for streaming.
+        //
+        for(uint32_t i=0; i<length; i+=10)
         {
-            //printf("%02d\n", *buffer);
+            uint8_t     byte    = buffer[i];
+            lowRateBuffer.NonBlockingPut(byte);
         }
         data[0] = buffer[0];
 

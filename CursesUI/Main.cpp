@@ -239,6 +239,23 @@ int main(void)
             {
                 offset+=scale;
             }
+
+
+            if(ch == KEY_NPAGE)
+            {
+                offset+=scale*10;
+            }
+            if(ch == KEY_PPAGE)
+            {
+                if(offset > scale*10)
+                {
+                    offset-=scale*10;
+                }
+                else
+                {
+                    offset  = 0;
+                }
+            }
         }
 
         //

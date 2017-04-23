@@ -11,10 +11,13 @@ extern "C"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include "FastSharedBuffer.hpp"
+
 
 #define BUFFER_SIZE 1024
 
 
+extern FastSharedBuffer<uint8_t,uint16_t>     lowRateBuffer;
 
 
 void* TCPServer (void* p) 
@@ -54,13 +57,18 @@ void* TCPServer (void* p)
 
         while (1) 
         {
-            int read = recv(client_fd, buf, BUFFER_SIZE, 0);
+            //int read = recv(client_fd, buf, BUFFER_SIZE, 0);
 
-            if (!read) break; // done reading
-            if (read < 0) DebugPrintf("Client read failed\n");
+            //if (!read) break; // done reading
+            //if (read < 0) DebugPrintf("Client read failed\n");
+            //
 
-            err = send(client_fd, buf, read, 0);
+            uint8_t     byte    = lowRateBuffer.Get();
+            err = send(client_fd, &byte, 1, 0);
             if (err < 0) DebugPrintf("Client write failed\n");
+
+            //err = send(client_fd, buf, read, 0);
+            //if (err < 0) DebugPrintf("Client write failed\n");
         }
     }
 

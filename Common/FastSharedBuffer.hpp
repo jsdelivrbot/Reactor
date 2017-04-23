@@ -62,6 +62,25 @@ public:
     }
 
 
+    inline void NonBlockingPut(ContainedType value)
+    {
+        IndexType    newHead     = head + 1;
+
+        //
+        // *Don't* Wait until there is space in the buffer.
+        //
+        if(newHead != tail)
+        {
+            //
+            // Put the data in the buffer.
+            //
+            data[head]  = value;
+            head    = newHead;
+            //DSB;
+        }
+    }
+
+
     inline ContainedType Get()
     {
         IndexType   newTail     = tail + 1;
