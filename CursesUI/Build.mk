@@ -14,7 +14,8 @@ INCLUDES	+=	-I$(PROJECT_BASE)/
 #
 # Objects to build.
 #
-OBJS		+=	Main.o
+OBJS		+=	Main.o \
+				TCPClient.o
     		  		
 
 #
