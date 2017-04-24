@@ -48,7 +48,7 @@ void* DataUpdateThread(void*)
 
         }
 
-        //usleep(1000000/30);
+        usleep(1000000/100);
     }
 }
 
