@@ -41,10 +41,16 @@ void* TCPServer (void* p)
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof opt_val);
 
     err = bind(server_fd, (struct sockaddr *) &server, sizeof(server));
-    if (err < 0) DebugPrintf("Could not bind socket\n");
+    if (err < 0) 
+    {
+        DebugPrintf("Could not bind socket\n");
+    }
 
     err = listen(server_fd, 128);
-    if (err < 0) DebugPrintf("Could not listen on socket\n");
+    if (err < 0) 
+    {
+        DebugPrintf("Could not listen on socket\n");
+    }
 
     DebugPrintf("Server is listening on %d\n", port);
 
@@ -53,9 +59,12 @@ void* TCPServer (void* p)
         socklen_t client_len = sizeof(client);
         client_fd = accept(server_fd, (struct sockaddr *) &client, &client_len);
 
-        if (client_fd < 0) DebugPrintf("Could not establish new connection\n");
+        if (client_fd < 0) 
+        {
+            DebugPrintf("Could not establish new connection\n");
+        }
 
-        while (1) 
+        while (true) 
         {
             //int read = recv(client_fd, buf, BUFFER_SIZE, 0);
 
@@ -65,7 +74,11 @@ void* TCPServer (void* p)
 
             uint8_t     byte    = lowRateBuffer.Get();
             err = send(client_fd, &byte, 1, 0);
-            if (err < 0) DebugPrintf("Client write failed\n");
+            if (err < 0) 
+            {
+                DebugPrintf("Client write failed\n");
+                break;
+            }
 
             //err = send(client_fd, buf, read, 0);
             //if (err < 0) DebugPrintf("Client write failed\n");
