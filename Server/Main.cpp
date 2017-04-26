@@ -218,7 +218,7 @@ int main()
     }
 
     FTDIDevice_SetMode( &dev, FTDI_INTERFACE_A,
-                   FTDI_BITMODE_BITBANG, 0xff,
+                   FTDI_BITMODE_BITBANG, 0x00,
                    4000000);
     FTDIDevice_ReadStream( &dev, FTDI_INTERFACE_A, Callback, &data, 512, 32);
 

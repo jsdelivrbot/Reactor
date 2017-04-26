@@ -172,8 +172,8 @@ int main()
 	portG->DAT  	= 0xffffffff;
 	portG->DRV0 	= 0x33333333;
 	portG->DRV1 	= 0x33333333;
-	portG->PUL0 	= 0x00000000;
-	portG->PUL1 	= 0x00000000;
+	portG->PUL0 	= 0x11111111;
+	portG->PUL1 	= 0x11111111;
 
 	portG->CFG0 	&= ~0xff000000;
 	portG->CFG0 	|=  0x11000000;
@@ -201,11 +201,24 @@ int main()
 	uint32_t 	outputStates 	= portA->DAT&0xffffff00;
 	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
 
+#if 1
+    outputStates    &= ~(1<<0);
+#endif
 	uint8_t 	i = 0;
     while(true)
     {
 		uint8_t 	b = sharedMemory->controlToOutlet.Get();
-		//DebugPrintf("[%02x]\n",b);
+#if 1
+        static uint32_t     i=0;
+        static uint8_t      v   = 0;
+        if( (i%10000000) == 0)
+        {
+            v   = ~v;
+        }
+        b   &= ~(1<<0);
+        b   |= v&(1<<0);
+        i++;
+#endif
         portA->DAT  = outputStates|(uint32_t)(b);
     }
 

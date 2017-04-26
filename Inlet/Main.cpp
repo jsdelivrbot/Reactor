@@ -286,17 +286,17 @@ int main()
     //
     gpio 	= (GPIOPort*)SetupGPIO();
     portA	= &gpio[0];
-
+/*
     portA->CFG0 	= 0x11311111;
     portA->CFG1 	= 0x22211111;
     portA->CFG2 	= 0x11111111;
     portA->CFG3 	= 0x11111111;
     portA->DAT  	= 0xffffffff;
-    portA->DRV0 	= 0x22222222;
-    portA->DRV1 	= 0x22222222;
-    portA->PUL0 	= 0x22222222;
-    portA->PUL1 	= 0x22222222;
-
+    portA->DRV0 	= 0x33333333;
+    portA->DRV1 	= 0x33333333;
+    portA->PUL0 	= 0x11111111;
+    portA->PUL1 	= 0x11111111;
+*/
     uint16_t*   portA_DAT16   = (uint16_t*)&portA->DAT;
 
     //
