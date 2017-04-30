@@ -201,14 +201,14 @@ int main()
 	uint32_t 	outputStates 	= portA->DAT&0xffffff00;
 	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
 
-#if 1
+#if 0
     outputStates    &= ~(1<<0);
 #endif
 	uint8_t 	i = 0;
     while(true)
     {
 		uint8_t 	b = sharedMemory->controlToOutlet.Get();
-#if 1
+#if 0
         static uint32_t     i=0;
         static uint8_t      v   = 0;
         if( (i%10000000) == 0)

@@ -157,7 +157,7 @@ int Callback(uint8_t *buffer, int length, FTDIProgressInfo *progress, void *user
         //
         // Decimate the high-rate data into low-rate data for streaming.
         //
-        for(uint32_t i=0; i<length; i+=20)
+        for(uint32_t i=0; i<length; i+=5)
         {
             uint8_t     byte    = buffer[i];
             lowRateBuffer.NonBlockingPut(byte);
