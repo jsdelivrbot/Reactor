@@ -153,16 +153,6 @@ Text Label 2500 3650 0    28   ~ 0
 USBDM2
 Text Label 2500 3750 0    28   ~ 0
 USBDP2
-NoConn ~ 6300 1300
-NoConn ~ 6350 1300
-NoConn ~ 6400 1300
-NoConn ~ 6450 1300
-NoConn ~ 6500 1300
-NoConn ~ 6550 1300
-NoConn ~ 6600 1300
-NoConn ~ 6650 1300
-NoConn ~ 6700 1300
-NoConn ~ 6750 1300
 NoConn ~ 7850 5350
 NoConn ~ 8350 5450
 NoConn ~ 8350 4550
@@ -188,17 +178,6 @@ F 2 "Connectors_Molex:Molex_KK-6410-03_03x2.54mm_Straight" H 10400 4350 50  0001
 F 3 "" H 10400 4350 50  0000 C CNN
 	1    10400 4350
 	1    0    0    -1  
-$EndComp
-$Comp
-L AdafruitFT232H U1
-U 1 1 58C47A87
-P 6250 1450
-F 0 "U1" H 6500 1450 28  0000 C CNN
-F 1 "AdafruitFT232H" H 6500 1350 28  0000 C CNN
-F 2 "ReactorProject:AdafruitFT232h" H 6650 1600 28  0001 C CNN
-F 3 "" H 6650 1600 28  0001 C CNN
-	1    6250 1450
-	0    1    1    0   
 $EndComp
 $Comp
 L CONN_02X13 P1
@@ -365,14 +344,6 @@ Wire Wire Line
 	5650 3800 9400 3800
 Wire Wire Line
 	5650 3700 9400 3700
-Connection ~ 6650 4000
-Connection ~ 6600 3900
-Connection ~ 6550 3800
-Connection ~ 6500 3700
-Connection ~ 6450 3600
-Connection ~ 6400 3500
-Connection ~ 6350 3400
-Connection ~ 6300 3300
 Wire Wire Line
 	8850 4450 10200 4450
 Wire Wire Line
@@ -398,9 +369,9 @@ Wire Wire Line
 Wire Wire Line
 	2450 2300 2450 3750
 Wire Wire Line
-	2450 2300 7350 2300
+	7350 2300 2450 2300
 Wire Wire Line
-	2500 2350 7300 2350
+	7300 2350 2500 2350
 Wire Wire Line
 	9000 4850 9000 5950
 Wire Wire Line
@@ -410,21 +381,9 @@ Wire Wire Line
 Wire Wire Line
 	9050 6000 4450 6000
 Wire Wire Line
-	7300 2350 7300 1750
+	7300 1650 7300 2350
 Wire Wire Line
-	7350 2300 7350 1650
-Wire Wire Line
-	7300 1750 7000 1750
-Wire Wire Line
-	7350 1650 7000 1650
-Wire Wire Line
-	6650 4000 6650 2100
-Wire Wire Line
-	6450 3600 6450 2100
-Wire Wire Line
-	6500 3700 6500 2100
-Wire Wire Line
-	6400 3500 6400 2100
+	7350 1600 7350 2300
 Wire Wire Line
 	5650 3600 9400 3600
 Wire Wire Line
@@ -515,8 +474,6 @@ Wire Wire Line
 Wire Wire Line
 	4100 5800 4100 5850
 Wire Wire Line
-	6600 3900 6600 2100
-Wire Wire Line
 	7550 5050 7550 3900
 Connection ~ 7550 3900
 Wire Wire Line
@@ -550,8 +507,6 @@ Wire Wire Line
 	7200 5650 7200 3600
 Connection ~ 7200 3600
 Wire Wire Line
-	6550 2100 6550 3800
-Wire Wire Line
 	8350 5550 8650 5550
 Wire Wire Line
 	8650 5550 8650 3800
@@ -571,19 +526,6 @@ Wire Wire Line
 Wire Wire Line
 	5650 3300 9400 3300
 Wire Wire Line
-	6350 2100 6350 3150
-Wire Wire Line
-	6350 3150 5750 3150
-Wire Wire Line
-	5750 3150 5750 3400
-Wire Wire Line
-	6300 2100 6300 3100
-Wire Wire Line
-	6300 3100 5700 3100
-Wire Wire Line
-	5700 3100 5700 3300
-Connection ~ 5700 3300
-Wire Wire Line
 	7850 4850 7600 4850
 Wire Wire Line
 	7600 4850 7600 3400
@@ -593,11 +535,10 @@ Wire Wire Line
 Wire Wire Line
 	8600 5050 8600 3300
 Connection ~ 8600 3300
-Connection ~ 5750 3400
 Wire Wire Line
 	2300 1800 2300 1900
 Wire Wire Line
-	2300 1900 5200 1900
+	2300 1900 6150 1900
 Wire Wire Line
 	5200 1900 5200 7100
 Wire Wire Line
@@ -722,13 +663,96 @@ Wire Wire Line
 	8450 2700 5150 2700
 Connection ~ 5150 2700
 Wire Wire Line
-	6700 2100 6700 2150
+	3000 1700 3000 1900
+Connection ~ 3000 1900
 Wire Wire Line
-	6700 2150 5200 2150
-Connection ~ 5200 2150
+	3100 1700 3100 1950
+Connection ~ 3100 1950
+$Comp
+L CONN_01X02 P4
+U 1 1 5906537A
+P 3050 1500
+F 0 "P4" H 3050 1650 50  0000 C CNN
+F 1 "CONN_01X02" V 3150 1500 50  0000 C CNN
+F 2 "sip:SIP2" H 3050 1500 50  0000 C CNN
+F 3 "" H 3050 1500 50  0000 C CNN
+	1    3050 1500
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X10 P7
+U 1 1 5908EF0E
+P 6500 1550
+F 0 "P7" H 6500 2100 50  0000 C CNN
+F 1 "CONN_01X10" V 6600 1550 50  0000 C CNN
+F 2 "Connectors_Molex:Molex_SPOX-5267_22-03-5105_10x2.54mm_Straight" H 6500 1550 50  0001 C CNN
+F 3 "" H 6500 1550 50  0000 C CNN
+	1    6500 1550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 P8
+U 1 1 5908F039
+P 7300 1400
+F 0 "P8" H 7300 1550 50  0000 C CNN
+F 1 "CONN_01X02" V 7400 1400 50  0000 C CNN
+F 2 "sip:SIP2" H 7300 1400 50  0001 C CNN
+F 3 "" H 7300 1400 50  0000 C CNN
+	1    7300 1400
+	0    -1   -1   0   
+$EndComp
 Wire Wire Line
-	6750 2100 6750 2200
+	7300 1650 7250 1650
 Wire Wire Line
-	6750 2200 5100 2200
-Connection ~ 5100 2200
+	7250 1650 7250 1600
+Wire Wire Line
+	6050 1750 5100 1750
+Connection ~ 5100 1750
+Wire Wire Line
+	6150 1900 6150 1750
+Connection ~ 5200 1900
+Wire Wire Line
+	6950 1750 6950 3300
+Connection ~ 6950 3300
+Wire Wire Line
+	6850 1750 6850 3400
+Connection ~ 6850 3400
+Wire Wire Line
+	6750 1750 6750 3500
+Connection ~ 6750 3500
+Wire Wire Line
+	6650 1750 6650 3600
+Connection ~ 6650 3600
+Wire Wire Line
+	6550 1750 6550 3700
+Connection ~ 6550 3700
+Wire Wire Line
+	6450 1750 6450 3800
+Connection ~ 6450 3800
+Wire Wire Line
+	6350 1750 6350 3900
+Connection ~ 6350 3900
+Wire Wire Line
+	6250 1750 6250 4000
+Connection ~ 6250 4000
+$Comp
+L CONN_01X10 P9
+U 1 1 59092009
+P 6500 1250
+F 0 "P9" H 6500 1800 50  0000 C CNN
+F 1 "CONN_01X10" V 6600 1250 50  0000 C CNN
+F 2 "Connectors_Molex:Molex_SPOX-5267_22-03-5105_10x2.54mm_Straight" H 6500 1250 50  0001 C CNN
+F 3 "" H 6500 1250 50  0000 C CNN
+	1    6500 1250
+	0    1    1    0   
+$EndComp
+NoConn ~ 6950 1050
+NoConn ~ 6850 1050
+NoConn ~ 6750 1050
+NoConn ~ 6650 1050
+NoConn ~ 6550 1050
+NoConn ~ 6450 1050
+NoConn ~ 6350 1050
+NoConn ~ 6250 1050
+NoConn ~ 6150 1050
 $EndSCHEMATC
