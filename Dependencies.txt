@@ -1,6 +1,6 @@
 
 
-apt-get install g++-arm-linux-gnueabihf gcc-arm-linux-gnueabihf
+apt-get install g++-arm-linux-gnueabihf gcc-arm-linux-gnueabihf libncurses-dev
 
 
 apt-get install automake
@@ -9,6 +9,9 @@ sudo apt-get install libtool
 cd libusb
 ./bootstrap.sh
 ./configure --host=arm-linux-gnueabihf -disable-udev --prefix=/usr/arm-linux-gnueabihf
+
+git clone https://github.com/gittup/ncurses.git 
+./configure --host=arm-linux-gnueabihf --prefix=/usr/arm-linux-gnueabihf
 
 
 
