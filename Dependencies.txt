@@ -8,7 +8,7 @@ git clone https://github.com/libusb/libusb.git
 sudo apt-get install libtool
 cd libusb
 ./bootstrap.sh
-./configure --host=arm-linux-gnueabihf -disable-udev 
+./configure --host=arm-linux-gnueabihf -disable-udev --prefix=/usr/arm-linux-gnueabihf
 
 
 
