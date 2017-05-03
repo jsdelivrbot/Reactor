@@ -1,0 +1,14 @@
+
+
+apt-get install g++-arm-linux-gnueabihf gcc-arm-linux-gnueabihf
+
+
+apt-get install automake
+git clone https://github.com/libusb/libusb.git
+sudo apt-get install libtool
+cd libusb
+./bootstrap.sh
+./configure --host=arm-linux-gnueabihf -disable-udev 
+
+
+
