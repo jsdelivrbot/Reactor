@@ -3,8 +3,8 @@
 FROM ubuntu:16.04
 
 RUN apt-get update
-RUN apt-get install -y build-essential git 
-RUN apt-get install -y g++-arm-linux-gnueabihf gcc-arm-linux-gnueabihf libncurses-dev automake libtool
+RUN apt-get install -y build-essential git python
+RUN apt-get install -y g++-arm-linux-gnueabihf gcc-arm-linux-gnueabihf libncurses-dev automake libtool libusb-1.0-0-dev
 
 RUN git clone https://github.com/libusb/libusb.git
 RUN cd libusb && ./bootstrap.sh
