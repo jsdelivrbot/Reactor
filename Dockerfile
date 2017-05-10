@@ -16,8 +16,10 @@ RUN cd ncurses && ./configure --host=arm-linux-gnueabihf --prefix=/usr/arm-linux
 
 
 
-ENTRYPOINT ["make"]
-CMD ["--help"]
+WORKDIR "/BuildArea"
+#ENTRYPOINT ["Build.sh"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["Build.sh"]
 
 
 
