@@ -43,22 +43,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Text Label 6350 3300 0    60   ~ 0
-D7
-Text Label 6350 3400 0    60   ~ 0
-D6
-Text Label 6350 3500 0    60   ~ 0
-D5
-Text Label 6350 3600 0    60   ~ 0
-D4
-Text Label 6350 3700 0    60   ~ 0
-D3
-Text Label 6350 3800 0    60   ~ 0
-D2
-Text Label 6350 3900 0    60   ~ 0
-D1
-Text Label 6350 4000 0    60   ~ 0
-D0
 $Comp
 L R R4
 U 1 1 587D5596
@@ -123,8 +107,6 @@ Text Label 7750 5250 0    28   ~ 0
 PA3
 Text Label 7750 5450 0    28   ~ 0
 PA15
-Text Label 7750 5550 0    28   ~ 0
-PA16
 Text Label 7750 5650 0    28   ~ 0
 PA14
 Text Label 8400 5750 0    28   ~ 0
@@ -596,11 +578,6 @@ Wire Wire Line
 	2600 3250 5100 3250
 Connection ~ 5100 3250
 Wire Wire Line
-	7850 5550 7650 5550
-Wire Wire Line
-	7650 5550 7650 3400
-Connection ~ 7650 3400
-Wire Wire Line
 	7850 5750 5200 5750
 Connection ~ 5200 5750
 Wire Wire Line
@@ -755,4 +732,11 @@ NoConn ~ 6450 1050
 NoConn ~ 6350 1050
 NoConn ~ 6250 1050
 NoConn ~ 6150 1050
+Text Label 7750 5550 0    28   ~ 0
+PA16
+Wire Wire Line
+	7850 5550 7250 5550
+Wire Wire Line
+	7250 5550 7250 3400
+Connection ~ 7250 3400
 $EndSCHEMATC
