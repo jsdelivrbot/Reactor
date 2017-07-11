@@ -150,9 +150,8 @@ SharedMemoryLayout*   sharedMemory;
 static uint8_t      data[1024*1024];
 
 
-void* entryPoint(void*)
+void* I2CThread(void*)
 {
-    PCF8574<ChannelBufferType, ChannelBufferType, 0x40>     pcf8574(sharedMemory->channel0In, sharedMemory->channel0Out);
     I2CMaster<100, 1<<6, 1<<7, ChannelBufferType>  i2cMaster(ioIn,ioOut,ioCmd);
 	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();
 	portA	= &gpio[0];
@@ -168,13 +167,28 @@ void* entryPoint(void*)
 	portG->CFG0 	|=  0x11000000;
 
 
+    while(true)
+    {
+        uint8_t inputValue  = 0;
+        uint8_t outputValue = 0;
+        i2cMaster.PeriodicProcessing( inputValue, outputValue );
+
+        portG->DAT  = outputValue;
+
+        usleep(1000);
+    }
+}
+
+
+
+
+void* entryPoint(void*)
+{
     //
     //
     //
     while(true)
     {
-        //pcf8574.SetOutputs(0x00);
-        //pcf8574.SetOutputs(0x01);
 #if 1
         //DebugPrintf("Tick... %lld %02x\n", totalBytes, data[0]);
         totalBytes  = 0;
@@ -193,14 +207,14 @@ void* entryPoint(void*)
         uint8_t     value   = sequence[index%sizeof(sequence)];
         index++;
 
-        sharedMemory->channel0In.Put( 0x7e );
-        sharedMemory->channel0In.Put( value );
+        ioIn.Put( 0x7e );
+        ioIn.Put( value );
 
-        sharedMemory->channel0Command.Put( 0xfe );
-        sharedMemory->channel0Command.Put( 0x02 );
+        ioCmd.Put( 0xfe );
+        ioCmd.Put( 0x02 );
 
-        sharedMemory->channel0Command.Put( 0xff );
-        sharedMemory->channel0Command.Put( 0xfd );
+        ioCmd.Put( 0xff );
+        ioCmd.Put( 0xfd );
 #endif
 
 
@@ -286,6 +300,11 @@ int main()
     //
     //
     pthread_create(&threadId, NULL, TCPServer, NULL);
+
+    //
+    //
+    //
+    pthread_create(&threadId, NULL, I2CThread, NULL);
 
     //
     // Start up the FTDI data source.
