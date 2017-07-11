@@ -26,6 +26,7 @@
 #include "PCF8574.hpp"
 #include "TCPServer.hpp"
 #include "FastSharedBuffer.hpp"
+#include "I2CMaster.hpp"
 
 extern "C"
 {
@@ -38,8 +39,77 @@ extern "C"
 #include "FTDIDataSource.h"
 }
 
+ChannelBufferType   ioCmd;
+ChannelBufferType   ioIn;
+ChannelBufferType   ioOut;
 
 uint64_t    totalBytes  = 0;
+
+
+//
+//
+//
+typedef struct
+{
+	volatile uint32_t	CFG0;
+	volatile uint32_t	CFG1;
+	volatile uint32_t	CFG2;
+	volatile uint32_t	CFG3;
+
+	volatile uint32_t	DAT;
+	volatile uint32_t	DRV0;
+	volatile uint32_t	DRV1;
+
+	volatile uint32_t	PUL0;
+	volatile uint32_t	PUL1;
+
+} GPIOPort;
+
+
+volatile GPIOPort*	portA 	= (GPIOPort*)0;
+volatile GPIOPort*	portG 	= (GPIOPort*)0;
+
+
+//
+//
+//
+uint32_t* SetupGPIO()
+{
+	const unsigned long	GPIO_BASE 		= 0x01C20800;
+	const unsigned long 	PAGE_SIZE 		= 4096;
+	const unsigned long	GPIO_BASEPage 		= GPIO_BASE & ~(PAGE_SIZE-1);
+	uint32_t 		GPIO_BASEOffsetIntoPage	= GPIO_BASE - GPIO_BASEPage;
+  	int			mem_fd			= 0;
+  	uint8_t*			regAddrMap 		= NULL;
+
+
+	if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
+	{
+		perror("can't open /dev/mem");
+		exit (1);
+	}
+
+  	regAddrMap = (uint8_t*)mmap(
+      		NULL,          
+      		0xffff,       	
+			PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writting to mapped memory
+			MAP_SHARED,       //Shared with other processes
+      		mem_fd,           
+		GPIO_BASEPage);
+
+  	if (regAddrMap == NULL) 
+	{
+          	perror("mmap error");
+          	close(mem_fd);
+          	exit (1);
+  	}
+
+	printf("gpio mapped to %p = %08x\n", regAddrMap, (uint32_t)GPIO_BASEPage);
+
+	return (uint32_t*)(regAddrMap + GPIO_BASEOffsetIntoPage);
+}
+
+    
 
 
 FastSharedBuffer<uint8_t,uint16_t>     lowRateBuffer;
@@ -83,6 +153,20 @@ static uint8_t      data[1024*1024];
 void* entryPoint(void*)
 {
     PCF8574<ChannelBufferType, ChannelBufferType, 0x40>     pcf8574(sharedMemory->channel0In, sharedMemory->channel0Out);
+    I2CMaster<100, 1<<6, 1<<7, ChannelBufferType>  i2cMaster(ioIn,ioOut,ioCmd);
+	volatile GPIOPort* 	gpio 	= (GPIOPort*)SetupGPIO();
+	portA	= &gpio[0];
+	portG 	= &gpio[6];
+
+	portG->DAT  	= 0xffffffff;
+	portG->DRV0 	= 0x33333333;
+	portG->DRV1 	= 0x33333333;
+	portG->PUL0 	= 0x11111111;
+	portG->PUL1 	= 0x11111111;
+
+	portG->CFG0 	&= ~0xff000000;
+	portG->CFG0 	|=  0x11000000;
+
 
     //
     //
