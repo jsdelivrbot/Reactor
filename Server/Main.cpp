@@ -222,10 +222,10 @@ void* entryPoint(void*)
     //
     while(true)
     {
-#if 1
         //DebugPrintf("Tick... %lld %02x\n", totalBytes, data[0]);
         totalBytes  = 0;
 
+#if 0
         uint8_t     sequence[]  =
         {
             LED0_OFF    | LED1_OFF      | LED2_OFF      | LED3_OFF,
@@ -233,6 +233,31 @@ void* entryPoint(void*)
             LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
             LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
         };
+#endif
+#if 1
+        uint8_t     sequence[]  =
+        {
+            LED0_OFF    | LED1_OFF      | LED2_OFF      | LED3_BLUE,
+            LED0_OFF    | LED1_OFF      | LED2_BLUE     | LED3_BLUE,
+            LED0_OFF    | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
+            LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
+
+            LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_PINK,
+            LED0_BLUE   | LED1_BLUE     | LED2_PINK     | LED3_PINK,
+            LED0_BLUE   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
+            LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
+
+            LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_ORANGE  ,
+            LED0_PINK   | LED1_PINK     | LED2_ORANGE   | LED3_ORANGE  ,
+            LED0_PINK   | LED1_ORANGE   | LED2_ORANGE   | LED3_ORANGE  ,
+            LED0_ORANGE | LED1_ORANGE   | LED2_ORANGE   | LED3_ORANGE  ,
+
+            LED0_ORANGE | LED1_ORANGE   | LED2_ORANGE   | LED3_OFF  ,
+            LED0_ORANGE | LED1_ORANGE   | LED2_OFF      | LED3_OFF  ,
+            LED0_ORANGE | LED1_OFF      | LED2_OFF      | LED3_OFF  ,
+            LED0_OFF    | LED1_OFF      | LED2_OFF      | LED3_OFF  ,
+        };
+#endif
         static uint8_t     index   = 0;
         uint8_t     value   = sequence[index%sizeof(sequence)];
         index++;
@@ -245,13 +270,12 @@ void* entryPoint(void*)
 
         ioCmd.Put( 0xff );
         ioCmd.Put( 0xfd );
-#endif
+
 
 
         sharedMemory->channel1In.Put( 0xff );
 
 
-
         sharedMemory->channel2In.Put( 0x83 );
         sharedMemory->channel2Command.Put( 0xfe );
         sharedMemory->channel2Command.Put( 0x01 );
@@ -266,7 +290,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(2000000);
+        usleep(100000);
     }
 }
 
