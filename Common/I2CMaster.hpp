@@ -100,10 +100,12 @@ public:
                     {
                         if(currentCmd == 0xfe)
                         {
+                            printf("START\n");
                             state           = 40;    // Start condtion.
                         }
                         else if(currentCmd == 0xff)
                         {
+                            printf("STOP\n");
                             state           = 28;    // Stop condition.
                         }
                         else if(currentCmd == 0xfd)
@@ -113,6 +115,7 @@ public:
                         else
                         {
                             numberOfBytes   = currentCmd;   // number of bytes to transfer.
+                            printf("NumberOfBytes = %d\n", numberOfBytes);
                         }
                     }
                 }

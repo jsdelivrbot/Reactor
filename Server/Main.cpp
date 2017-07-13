@@ -167,15 +167,17 @@ void* I2CThread(void*)
 	portG->CFG0 	|=  0x11000000;
 
 
+    uint32_t    originalValue   = portG->DAT & ~((1<<6) | (1<<7));
     while(true)
     {
-        uint8_t inputValue  = 0;
-        uint8_t outputValue = 0;
+        static uint8_t inputValue  = 0;
+        static uint8_t outputValue = 0;
         i2cMaster.PeriodicProcessing( inputValue, outputValue );
 
-        portG->DAT  = outputValue;
+        uint32_t    newValue    = originalValue | outputValue;
+        portG->DAT  = newValue;
 
-        usleep(1000);
+        usleep(100);
     }
 }
 
@@ -207,7 +209,7 @@ void* entryPoint(void*)
         uint8_t     value   = sequence[index%sizeof(sequence)];
         index++;
 
-        ioIn.Put( 0x7e );
+        ioIn.Put( 0x70 );
         ioIn.Put( value );
 
         ioCmd.Put( 0xfe );
@@ -236,7 +238,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(1000);
+        usleep(1000000);
     }
 }
 
@@ -305,7 +307,7 @@ int main()
     //
     //
     pthread_create(&threadId, NULL, I2CThread, NULL);
-
+#if 0
     //
     // Start up the FTDI data source.
     //
@@ -324,7 +326,7 @@ int main()
                    FTDI_BITMODE_BITBANG, 0x00,
                    4000000);
     FTDIDevice_ReadStream( &dev, FTDI_INTERFACE_A, Callback, &data, 512, 32);
-
+#endif
     //
     //
     //
