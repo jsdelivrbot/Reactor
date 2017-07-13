@@ -183,6 +183,37 @@ void* I2CThread(void*)
 
 
 
+#define OFF         (3)
+#define PINK        (0)
+#define BLUE        (2)
+#define ORANGE      (1)
+
+#define LED0        (0)
+#define LED1        (2)
+#define LED2        (6)
+#define LED3        (4)
+
+
+#define LED0_OFF        (OFF<<LED0)
+#define LED0_BLUE       (BLUE<<LED0)
+#define LED0_ORANGE     (ORANGE<<LED0)
+#define LED0_PINK       (PINK<<LED0)
+
+#define LED1_OFF        (OFF<<LED1)
+#define LED1_BLUE       (1<<LED1)
+#define LED1_ORANGE     (2<<LED1)
+#define LED1_PINK       (PINK<<LED1)
+
+#define LED2_OFF        (OFF<<LED2)
+#define LED2_BLUE       (BLUE<<LED2)
+#define LED2_ORANGE     (ORANGE<<LED2)
+#define LED2_PINK       (PINK<<LED2)
+
+#define LED3_OFF        (OFF<<LED3)
+#define LED3_BLUE       (BLUE<<LED3)
+#define LED3_ORANGE     (ORANGE<<LED3)
+#define LED3_PINK       (PINK<<LED3)
+
 
 void* entryPoint(void*)
 {
@@ -197,13 +228,10 @@ void* entryPoint(void*)
 
         uint8_t     sequence[]  =
         {
-            0x12,
-            0x14,
-            0x18,
-            0x16,
-            0x02,
-            0x04,
-            0x16,
+            LED0_OFF    | LED1_OFF      | LED2_OFF      | LED3_OFF,
+            LED0_ORANGE | LED1_ORANGE   | LED2_ORANGE   | LED3_ORANGE,
+            LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
+            LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
         };
         static uint8_t     index   = 0;
         uint8_t     value   = sequence[index%sizeof(sequence)];
@@ -238,7 +266,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(1000000);
+        usleep(2000000);
     }
 }
 
