@@ -247,9 +247,14 @@ void* entryPoint(void*)
             LED0_BLUE   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
             LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
 
-            LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_ORANGE  ,
-            LED0_PINK   | LED1_PINK     | LED2_ORANGE   | LED3_ORANGE  ,
-            LED0_PINK   | LED1_ORANGE   | LED2_ORANGE   | LED3_ORANGE  ,
+            LED0_PINK   | LED1_PINK     | LED2_PINK     | LED3_PINK  ,
+            LED0_PINK   | LED1_PINK     | LED2_BLUE     | LED3_BLUE  ,
+            LED0_PINK   | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
+            LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
+
+            LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_ORANGE  ,
+            LED0_BLUE   | LED1_BLUE     | LED2_ORANGE   | LED3_ORANGE  ,
+            LED0_BLUE   | LED1_ORANGE   | LED2_ORANGE   | LED3_ORANGE  ,
             LED0_ORANGE | LED1_ORANGE   | LED2_ORANGE   | LED3_ORANGE  ,
 
             LED0_ORANGE | LED1_ORANGE   | LED2_ORANGE   | LED3_OFF  ,
