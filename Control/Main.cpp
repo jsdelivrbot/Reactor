@@ -255,7 +255,7 @@ int main()
     //
     while(true)
     {
-        uint8_t     outputValue;
+        static uint8_t     outputValue;
 
         //
         // Get the current input values.

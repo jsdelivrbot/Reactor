@@ -298,6 +298,7 @@ int main()
     portA->PUL1 	= 0x11111111;
 */
     uint16_t*   portA_DAT16   = (uint16_t*)&portA->DAT;
+    uint32_t*   portA_DAT32   = (uint32_t*)&portA->DAT;
 
     //
     //
@@ -348,10 +349,18 @@ int main()
 #endif
 
 #endif
-
+#if 0
         uint16_t   inputValue  = *portA_DAT16;
         sharedMemory->inletToControl.Put( (uint8_t)inputValue );
         //MessageBoxWrite(1, (uint32_t)inputValue);
+#else
+        uint32_t   inputValue  = *portA_DAT32;
+        uint32_t   rearrangedInput  = (inputValue<<10);
+        rearrangedInput &= 0x0000007f;
+        rearrangedInput |= (inputValue>>11) & 0x00000080;
+        sharedMemory->inletToControl.Put( (uint8_t)rearrangedInput );
+#endif
+
     }
 }
 
