@@ -159,10 +159,10 @@ int main()
 	portG 	= &gpio[6];
 
 
-	portA->CFG0 	= 0x11311111;
-	portA->CFG1 	= 0x22211111;
-	portA->CFG2 	= 0x11111111;
-	portA->CFG3 	= 0x11111111;
+	portA->CFG0 	= 0x11111111;
+	portA->CFG1 	= 0x00000000;
+	portA->CFG2 	= 0x00000000;
+	portA->CFG3 	= 0x00000000;
 	portA->DAT  	= 0xffffffff;
 	portA->DRV0 	= 0x22222222;
 	portA->DRV1 	= 0x22222222;
@@ -200,6 +200,7 @@ int main()
 	//
 	uint32_t 	outputStates 	= portA->DAT&0xffffff00;
 	volatile uint8_t*   portA_DAT8    = (uint8_t*)&portA->DAT;
+	volatile uint32_t*  portA_DAT32   = (uint32_t*)&portA->DAT;
 
 #if 0
     outputStates    &= ~(1<<0);
@@ -219,7 +220,40 @@ int main()
         b   |= v&(1<<0);
         i++;
 #endif
-        portA->DAT  = outputStates|(uint32_t)(b);
+        //portA->DAT  = outputStates|(uint32_t)(b);
+        *portA_DAT8     = 0x00;
+        uint32_t inValue    = *portA_DAT32;
+        printf("%08x\n",inValue&0x000fff00);
+
+        usleep(1000);
+        *portA_DAT8     = 0xff;
+
+        usleep(1000);
+
+        // 0x01 - 0
+        // 0x02 - 1
+        // 0x04 - 6
+        // 0x08 - 3
+        // 0x10 - 
+        // 0x20 - 5
+        // 0x40 - 1,2 (PIns 7 & 11 are mistakenly joined at connector!) just 2 after trace cut.
+        // 0x80 - 7
+        //
+
+        inValue    = *portA_DAT32;
+        printf("%08x\n",inValue&0x000fff00);
+
+        //
+        // 10110111100 00000000
+        //
+        // D0 PA10 = 1
+        // D1 PA11 = 1
+        // D2 PA12 = 1
+        // D3 PA13 = 1
+        // D4 PA14 = 
+        // D5 PA15 = 1
+        // D6 PA16 = 1
+        // D7 PA18 = 
     }
 
 }
