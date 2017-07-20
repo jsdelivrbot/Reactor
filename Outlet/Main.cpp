@@ -172,8 +172,8 @@ int main()
 	portG->DAT  	= 0xffffffff;
 	portG->DRV0 	= 0x33333333;
 	portG->DRV1 	= 0x33333333;
-	portG->PUL0 	= 0x11111111;
-	portG->PUL1 	= 0x11111111;
+	portG->PUL0 	= 0x22222222;
+	portG->PUL1 	= 0x22222222;
 
 	portG->CFG0 	&= ~0xff000000;
 	portG->CFG0 	|=  0x11000000;
@@ -226,7 +226,7 @@ int main()
         printf("%08x\n",inValue&0x000fff00);
 
         usleep(1000);
-        *portA_DAT8     = 0xff;
+        *portA_DAT8     = 0xf0;
 
         usleep(1000);
 
@@ -244,7 +244,7 @@ int main()
         printf("%08x\n",inValue&0x000fff00);
 
         //
-        // 10110111100 00000000
+        // 101 10111100 00000000
         //
         // D0 PA10 = 1
         // D1 PA11 = 1
