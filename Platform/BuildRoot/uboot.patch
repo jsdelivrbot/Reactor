@@ -283,7 +283,7 @@ diff -Naur uboot-2017.03.orig/configs/reactor_defconfig uboot-2017.03/configs/re
 +# CONFIG_SATA_BOOT is not set
 +CONFIG_SD_BOOT=y
 +# CONFIG_SPI_BOOT is not set
-+CONFIG_BOOTDELAY=2
++CONFIG_BOOTDELAY=0
 +
 +#
 +# Console
