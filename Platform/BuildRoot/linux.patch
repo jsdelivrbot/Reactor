@@ -1,7 +1,7 @@
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
 --- linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-05 10:47:15.073709582 +0100
-@@ -0,0 +1,153 @@
++++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-05 11:40:35.319273717 +0100
+@@ -0,0 +1,155 @@
 +/*
 + * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
 + *
@@ -104,12 +104,14 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linu
 +};
 +
 +&emac {
-+    pinctrl-names = "default";
-+    phy-supply = <&reg_vcc3v3>;
-+    phy-handle = <&int_mii_phy>;
++    phy = <&phy1>;
 +    phy-mode = "mii";
++    allwinner,use-internal-phy;
 +    allwinner,leds-active-low;
 +    status = "okay";
++    phy1: ethernet-phy@1 {
++        reg = <1>;
++    };  
 +};
 +
 +
@@ -157,7 +159,7 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linu
 +};
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi
 --- linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-05 10:40:01.673708015 +0100
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-05 10:47:15.073709582 +0100
++++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-05 11:40:35.319273717 +0100
 @@ -50,6 +50,10 @@
  / {
  	interrupt-parent = <&gic>;
@@ -350,7 +352,7 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
  		gic: interrupt-controller@01c81000 {
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi
 --- linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-05 10:40:01.673708015 +0100
-+++ linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-05 10:47:15.081709586 +0100
++++ linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-05 11:40:35.327273747 +0100
 @@ -132,6 +132,8 @@
  		regulator-name = "vcc3v0";
  		regulator-min-microvolt = <3000000>;
