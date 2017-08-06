@@ -1,6 +1,6 @@
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
 --- linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-06 13:16:35.561233386 +0100
++++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-06 18:54:20.616486853 +0100
 @@ -0,0 +1,143 @@
 +/*
 + * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
@@ -146,8 +146,8 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linu
 +	status = "okay";
 +};
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi
---- linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi	2016-12-11 19:17:54.000000000 +0000
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-06 13:16:35.561233386 +0100
+--- linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-06 18:49:29.747204425 +0100
++++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-06 18:54:20.616486853 +0100
 @@ -50,6 +50,10 @@
  / {
  	interrupt-parent = <&gic>;
@@ -285,7 +285,7 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
  		uart0: serial@01c28000 {
  			compatible = "snps,dw-apb-uart";
  			reg = <0x01c28000 0x400>;
-@@ -491,44 +464,29 @@
+@@ -491,44 +464,28 @@
  			status = "disabled";
  		};
  
@@ -338,7 +338,6 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
 +            clock-names = "ahb";
 +            #address-cells = <1>;
 +            #size-cells = <0>;
-+            status = "disabled";
 +
 +            mdio: mdio {
 +                #address-cells = <1>;
@@ -354,8 +353,8 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
  		gic: interrupt-controller@01c81000 {
  			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi
---- linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2016-12-11 19:17:54.000000000 +0000
-+++ linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-06 13:20:59.973732901 +0100
+--- linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-06 18:49:29.747204425 +0100
++++ linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-06 18:54:20.616486853 +0100
 @@ -132,6 +132,8 @@
  		regulator-name = "vcc3v0";
  		regulator-min-microvolt = <3000000>;
