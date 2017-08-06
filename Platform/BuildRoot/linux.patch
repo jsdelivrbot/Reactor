@@ -1,7 +1,7 @@
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
 --- linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-05 11:40:35.319273717 +0100
-@@ -0,0 +1,155 @@
++++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-06 13:16:35.561233386 +0100
+@@ -0,0 +1,143 @@
 +/*
 + * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
 + *
@@ -103,18 +103,6 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linu
 +	status = "okay";
 +};
 +
-+&emac {
-+    phy = <&phy1>;
-+    phy-mode = "mii";
-+    allwinner,use-internal-phy;
-+    allwinner,leds-active-low;
-+    status = "okay";
-+    phy1: ethernet-phy@1 {
-+        reg = <1>;
-+    };  
-+};
-+
-+
 +&mmc0 {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&mmc0_pins_a>;
@@ -158,8 +146,8 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linu
 +	status = "okay";
 +};
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi
---- linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-05 10:40:01.673708015 +0100
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-05 11:40:35.319273717 +0100
+--- linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi	2016-12-11 19:17:54.000000000 +0000
++++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-06 13:16:35.561233386 +0100
 @@ -50,6 +50,10 @@
  / {
  	interrupt-parent = <&gic>;
@@ -252,19 +240,19 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
  
 -			uart1_pins: uart1 {
 -				allwinner,pins = "PG6", "PG7";
--				allwinner,function = "uart1";
--				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
--				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
--			};
--
--			uart1_rts_cts_pins: uart1_rts_cts {
--				allwinner,pins = "PG8", "PG9";
 +			uart1_pins_a: uart1@0 {
 +				allwinner,pins = "PG6", "PG7", "PG8", "PG9";
  				allwinner,function = "uart1";
  				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
  				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
  			};
+-
+-			uart1_rts_cts_pins: uart1_rts_cts {
+-				allwinner,pins = "PG8", "PG9";
+-				allwinner,function = "uart1";
+-				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+-				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+-			};
 -
 -			uart2_pins: uart2 {
 -				allwinner,pins = "PA0", "PA1";
@@ -297,7 +285,7 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
  		uart0: serial@01c28000 {
  			compatible = "snps,dw-apb-uart";
  			reg = <0x01c28000 0x400>;
-@@ -491,43 +464,18 @@
+@@ -491,44 +464,29 @@
  			status = "disabled";
  		};
  
@@ -323,17 +311,8 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
 -			pinctrl-names = "default";
 -			pinctrl-0 = <&i2c1_pins>;
 -			status = "disabled";
-+		emac: ethernet@1c30000 {
-+			compatible = "allwinner,sun8i-h3-emac";
-+			reg = <0x01c30000 0x104>, <0x01c00030 0x4>;
-+			reg-names = "emac", "syscon";
-+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&ccu RST_BUS_EMAC>, <&ccu RST_BUS_EPHY>;
-+			reset-names = "ahb", "ephy";
-+			clocks = <&ccu CLK_BUS_EMAC>, <&ccu CLK_BUS_EPHY>;
-+			clock-names = "ahb", "ephy";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
 -		};
 -
 -		i2c2: i2c@01c2b400 {
@@ -344,21 +323,45 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boo
 -			resets = <&ccu RST_BUS_I2C2>;
 -			pinctrl-names = "default";
 -			pinctrl-0 = <&i2c2_pins>;
- 			status = "disabled";
+-			status = "disabled";
 -			#address-cells = <1>;
 -			#size-cells = <0>;
- 		};
+-		};
++        emac: ethernet@1c30000 {
++            compatible = "allwinner,sun8i-h3-emac";
++            syscon = <&syscon>;
++            reg = <0x01c30000 0x104>;
++            interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++            resets = <&ccu RST_BUS_EMAC>;
++            reset-names = "ahb";
++            clocks = <&ccu CLK_BUS_EMAC>;
++            clock-names = "ahb";
++            #address-cells = <1>;
++            #size-cells = <0>;
++            status = "disabled";
++
++            mdio: mdio {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                int_mii_phy: ethernet-phy@1 {
++                    reg = <1>;
++                    clocks = <&ccu CLK_BUS_EPHY>;
++                    resets = <&ccu RST_BUS_EPHY>;
++                };
++            };
++        };
  
  		gic: interrupt-controller@01c81000 {
+ 			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi
---- linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-05 10:40:01.673708015 +0100
-+++ linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-05 11:40:35.327273747 +0100
+--- linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2016-12-11 19:17:54.000000000 +0000
++++ linux-4.9/arch/arm/boot/dts/sunxi-common-regulators.dtsi	2017-08-06 13:20:59.973732901 +0100
 @@ -132,6 +132,8 @@
  		regulator-name = "vcc3v0";
  		regulator-min-microvolt = <3000000>;
  		regulator-max-microvolt = <3000000>;
 +		regulator-boot-on;
-+        regulator-always-on;
++		regulator-always-on;
  	};
  
  	reg_vcc3v3: vcc3v3 {
@@ -367,7 +370,7 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi linux-4
  		regulator-min-microvolt = <3300000>;
  		regulator-max-microvolt = <3300000>;
 +		regulator-boot-on;
-+        regulator-always-on;
++		regulator-always-on;
  	};
  
  	reg_vcc5v0: vcc5v0 {
@@ -376,6 +379,6 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sunxi-common-regulators.dtsi linux-4
  		regulator-min-microvolt = <5000000>;
  		regulator-max-microvolt = <5000000>;
 +		regulator-boot-on;
-+        regulator-always-on;
++		regulator-always-on;
  	};
  };
