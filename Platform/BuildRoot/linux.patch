@@ -1,7 +1,7 @@
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
 --- linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-07 22:24:47.844491790 +0100
-@@ -0,0 +1,143 @@
++++ linux-4.9/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts	2017-08-07 22:48:04.607105306 +0100
+@@ -0,0 +1,152 @@
 +/*
 + * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
 + *
@@ -145,6 +145,15 @@ diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts linu
 +	/* USB VBUS is always on */
 +	status = "okay";
 +};
++
++
++&emac {
++        phy-handle = <&int_mii_phy>;
++        phy-mode = "mii";
++        allwinner,leds-active-low;
++        status = "okay";
++};
++
 diff -Naur linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi
 --- linux-4.9.orig/arch/arm/boot/dts/sun8i-h3.dtsi	2016-12-11 19:17:54.000000000 +0000
 +++ linux-4.9/arch/arm/boot/dts/sun8i-h3.dtsi	2017-08-07 22:12:18.902589273 +0100
