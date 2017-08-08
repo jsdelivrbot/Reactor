@@ -1,12 +1,12 @@
 #!/bin/sh
 
 
-scp Inlet/Output/Main.elf steve@$1:~/Inlet
-scp Outlet/Output/Main.elf steve@$1:~/Outlet
-scp Control/Output/Main.elf steve@$1:~/Control
-scp Server/Output/Main.elf steve@$1:~/Server
-scp Run.sh steve@$1:~/
-scp Kill.sh steve@$1:~/
+scp Inlet/Output/Main.elf root@$1:/tmp/Inlet
+scp Outlet/Output/Main.elf root@$1:/tmp/Outlet
+scp Control/Output/Main.elf root@$1:/tmp/Control
+scp Server/Output/Main.elf root@$1:/tmp/Server
+scp Run.sh root@$1:/tmp
+scp Kill.sh root@$1:/tmp
 
 
 
