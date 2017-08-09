@@ -38,7 +38,7 @@ extern "C"
 #include "SharedMemory.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
-#include "MessageBox.h"
+//#include "MessageBox.h"
 
 }
 
@@ -203,7 +203,7 @@ int main()
     //
     //
     //
-    MessageBoxInitialise();
+    //MessageBoxInitialise();
 
     //
     // Wait until we are fully connected.

@@ -73,7 +73,7 @@ extern "C"
 #include "CircularBuffer.h"
 #include "ErrorHandling.h"
 #include "Utilities.h"
-#include "MessageBox.h"
+//#include "MessageBox.h"
 #include <pthread.h>
 }
 
@@ -186,7 +186,7 @@ int main()
     //
     //
     //
-    MessageBoxInitialise();
+    //MessageBoxInitialise();
 
     //
     // Wait until we are fully connected.

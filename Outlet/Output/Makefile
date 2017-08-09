@@ -51,7 +51,7 @@ include $(SOURCE_LIBRARY)/Implementations/ARMLinuxTimestamp/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/LinuxSharedMemory/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/ErrorHandling/Build.mk
 include $(SOURCE_LIBRARY)/Implementations/StdioDebugText/Build.mk
-include $(SOURCE_LIBRARY)/Implementations/AllwinnerH3MessageBox/Build.mk
+#include $(SOURCE_LIBRARY)/Implementations/AllwinnerH3MessageBox/Build.mk
 
 
 #

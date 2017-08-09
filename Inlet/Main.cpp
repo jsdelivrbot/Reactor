@@ -32,7 +32,7 @@ extern "C"
 #include "CircularBuffer.h"
 #include "Utilities.h"
 #include <pthread.h>
-#include "MessageBox.h"
+//#include "MessageBox.h"
 }
 
 #include "FastSharedBuffer.hpp"
