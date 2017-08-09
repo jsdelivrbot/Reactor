@@ -1,0 +1,4 @@
+
+make CROSS_COMPILE=arm-linux-gnueabihf-  ARCH=arm KDIR=$PWD/../Platform/BuildRoot/output/build/linux-4.9
+
+
