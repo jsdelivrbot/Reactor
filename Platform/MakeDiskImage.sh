@@ -6,7 +6,6 @@ set -xe
 # User parameters.
 #
 DISK_IMAGE=Platform.img
-
 TOTAL_DISK_SIZE=256
 BOOTFS_SIZE=16
 ROOTFS_SIZE=64
@@ -15,6 +14,8 @@ DATAFS_SIZE=128
 BOOT_ROOT=./BootFS
 ROOT_ROOT=./BuildRoot/output/target
 DATA_ROOT=./DataFS
+UBOOT_IMAGE=BuildRoot/output/images/u-boot-sunxi-with-spl.bin
+
 
 
 #
@@ -30,13 +31,21 @@ PARTITION1_OFFSET=1
 PARTITION2_OFFSET=$(( $PARTITION1_OFFSET + $BOOTFS_SIZE ))
 PARTITION3_OFFSET=$(( $PARTITION2_OFFSET + $ROOTFS_SIZE ))
 
+#
+# Copy the files to the correct fs 'root'.
+#
+cp BuildRoot/output/images/boot.scr $BOOT_ROOT
+cp BuildRoot/output/images/sun8i-h2-plus-orangepi-zero.dtb $BOOT_ROOT
+cp BuildRoot/output/images/zImage $BOOT_ROOT
 
 #
 # Generate the filesystem images
 #
-genext2fs --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs.ext2
-genext2fs --root=$BOOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $BOOTFS_SIZE_IN_BLOCKS bootfs.ext2
-genext2fs --root=$DATA_ROOT --block-size $BLOCK_SIZE --size-in-blocks $DATAFS_SIZE_IN_BLOCKS datafs.ext2
+genext2fs --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs
+genext2fs --root=$DATA_ROOT --block-size $BLOCK_SIZE --size-in-blocks $DATAFS_SIZE_IN_BLOCKS datafs
+dd if=/dev/zero of=bootfs bs=1M count=$BOOTFS_SIZE
+mkfs.vfat bootfs
+mcopy -i bootfs BootFS/* ::/
 
 #
 # Generate the disk image.
@@ -63,8 +72,13 @@ sfdisk $DISK_IMAGE < $PARTITION_TABLE_FILE
 #
 # Copy the filesystem images into the disk image partitions.
 #
-dd if=bootfs.ext2 of=$DISK_IMAGE bs=1M seek=$PARTITION1_OFFSET
-dd if=rootfs.ext2 of=$DISK_IMAGE bs=1M seek=$PARTITION2_OFFSET
-dd if=datafs.ext2 of=$DISK_IMAGE bs=1M seek=$PARTITION3_OFFSET
+dd if=bootfs of=$DISK_IMAGE bs=1M seek=$PARTITION1_OFFSET conv=notrunc
+dd if=rootfs of=$DISK_IMAGE bs=1M seek=$PARTITION2_OFFSET conv=notrunc
+dd if=datafs of=$DISK_IMAGE bs=1M seek=$PARTITION3_OFFSET conv=notrunc
+
+#
+# Make the disk bootable by copying u-boot into it.
+#
+dd if=$UBOOT_IMAGE of=$DISK_IMAGE bs=1K seek=8 conv=notrunc
 
 
