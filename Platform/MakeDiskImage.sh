@@ -41,9 +41,9 @@ cp BuildRoot/output/images/zImage $BOOT_ROOT
 #
 # Generate the filesystem images
 #
-#rm rootfs
-#rm datafs
-#rm bootfs
+rm -f rootfs
+rm -f datafs
+rm -f bootfs
 
 #genext2fs --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs
 cp ./BuildRoot/output/images/rootfs.ext4 rootfs
