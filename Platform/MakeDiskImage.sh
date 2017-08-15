@@ -41,8 +41,15 @@ cp BuildRoot/output/images/zImage $BOOT_ROOT
 #
 # Generate the filesystem images
 #
-genext2fs --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs
+#rm rootfs
+#rm datafs
+#rm bootfs
+
+#genext2fs --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs
+cp ./BuildRoot/output/images/rootfs.ext4 rootfs
+
 genext2fs --root=$DATA_ROOT --block-size $BLOCK_SIZE --size-in-blocks $DATAFS_SIZE_IN_BLOCKS datafs
+
 dd if=/dev/zero of=bootfs bs=1M count=$BOOTFS_SIZE
 mkfs.vfat bootfs
 mcopy -i bootfs BootFS/* ::/
