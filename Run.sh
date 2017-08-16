@@ -18,7 +18,7 @@ echo "0" > /proc/irq/119/smp_affinity_list
 #
 # Allow access to the cycle counter.
 #
-insmod ~/Projects/enable_arm_pmu/ko/enable_arm_pmu.ko
+insmod ./enable_arm_pmu.ko
 
 #
 # Set a lower-than-normal cpu freq to stop clock throttling.
