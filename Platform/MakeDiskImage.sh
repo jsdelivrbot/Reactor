@@ -45,8 +45,7 @@ rm -f rootfs
 rm -f datafs
 rm -f bootfs
 
-#genext2fs --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs
-cp ./BuildRoot/output/images/rootfs.ext4 rootfs
+genext2fs --squash-uids --root=$ROOT_ROOT --block-size $BLOCK_SIZE --size-in-blocks $ROOTFS_SIZE_IN_BLOCKS rootfs
 
 genext2fs --root=$DATA_ROOT --block-size $BLOCK_SIZE --size-in-blocks $DATAFS_SIZE_IN_BLOCKS datafs
 
