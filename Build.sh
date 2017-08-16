@@ -25,3 +25,7 @@ pushd CursesUI/Output
 make SOURCE_LIBRARY=$SOURCELIBRARY_BASE PROJECT_BASE=../../CursesUI clean all
 popd
 
+pushd enable_arm_pmu/ko
+make CROSS_COMPILE=$PWD/../../Platform/BuildRoot/output/host/usr/bin/arm-buildroot-linux-gnueabihf-  ARCH=arm  KDIR=$PWD/../../Platform/BuildRoot/output/build/linux-4.9 clean all
+popd
+
