@@ -234,7 +234,7 @@ void* entryPoint(void*)
             LED0_BLUE   | LED1_BLUE     | LED2_BLUE     | LED3_BLUE  ,
         };
 #endif
-#if 1
+#if 0
         uint8_t     sequence[]  =
         {
             LED0_OFF    | LED1_OFF      | LED2_OFF      | LED3_BLUE,
@@ -261,6 +261,16 @@ void* entryPoint(void*)
             LED0_ORANGE | LED1_ORANGE   | LED2_OFF      | LED3_OFF  ,
             LED0_ORANGE | LED1_OFF      | LED2_OFF      | LED3_OFF  ,
             LED0_OFF    | LED1_OFF      | LED2_OFF      | LED3_OFF  ,
+        };
+#endif
+#if 1
+        uint8_t     sequence[]  =
+        {
+            LED1_OFF    | LED0_BLUE     | LED3_PINK     | LED2_ORANGE,
+            LED0_OFF    | LED3_BLUE     | LED2_PINK     | LED1_ORANGE,
+            LED3_OFF    | LED2_BLUE     | LED1_PINK     | LED0_ORANGE,
+            LED2_OFF    | LED1_BLUE     | LED0_PINK     | LED3_ORANGE,
+
         };
 #endif
         static uint8_t     index   = 0;
@@ -295,7 +305,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(100000);
+        usleep(500000);
     }
 }
 
