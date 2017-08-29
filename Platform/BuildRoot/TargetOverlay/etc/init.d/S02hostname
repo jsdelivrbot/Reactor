@@ -1,5 +1,8 @@
 #!/bin/sh
 
-hostname Reactor_`ifconfig -a|grep eth0 |awk '{print $5}'`
+#hostname Reactor_`ifconfig -a|grep eth0 |awk '{print $5}'`
+hostname Reactor_`cat /etc/MAC`
+
+ifconfig eth0 hw ether `cat /etc/MAC`
 
 
