@@ -305,7 +305,7 @@ void* entryPoint(void*)
 
 
 
-        usleep(500000);
+        usleep(100000);
     }
 }
 
