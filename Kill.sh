@@ -1,6 +1,9 @@
-pkill Control
-pkill Inlet
-pkill Outlet
-pkill Server
+#!/bin/sh
+
+
+kill `pidof Control`
+kill `pidof Inlet`
+kill `pidof Outlet`
+kill `pidof Server`
 
 
